@@ -1,6 +1,6 @@
 # hexagonal_histograms
 
-## commands
+## Commands
 ```
 $ git clone git@github.com:ywkao/hexagonal_histograms.git
 $ cd hexagonal_histograms
@@ -22,6 +22,6 @@ $ make && ./exe.py
 - Fill entries & produce plots
 
 ## Reference
-https://root.cern/manual/python/
-https://root.cern/doc/master/th2polyEurope_8C.html
-https://github.com/cms-sw/cmssw/blob/master/Geometry/HGCalCommonData/src/HGCalCell.cc
+- https://root.cern/manual/python/
+- https://root.cern/doc/master/th2polyEurope_8C.html
+- https://github.com/cms-sw/cmssw/blob/master/Geometry/HGCalCommonData/src/HGCalCell.cc
