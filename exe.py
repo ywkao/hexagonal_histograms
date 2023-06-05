@@ -27,6 +27,8 @@ nCorner = 7 # one corner is repeated
 hexagon_base = {
 	'x': [2, 1, -1, -2, -1, 1, 2],
 	'y': [0, -1*s3, -1*s3, 0, s3, s3, 0]
+	# 'x': [0, 1*s3, 1*s3, 0, -1*s3, -1*s3, 0],
+	# 'y': [2, 1, -1, -2, -1, 1, 2]
 }
 
 # load geometry data
@@ -36,13 +38,13 @@ fin.close()
 
 # loop over all the cells
 counter = 0 # how many cells are drawn
-fout = ROOT.TFile("./data/hexagons.root", "RECREATE")
+collections = {} # key, value = SiCell, graph
 cell_helper = ROOT.HGCalCell(waferSize, nFine, nCoarse)
 for i, line in enumerate(contents):
 	if i==0: continue # omit heading
 	if counter==UNTIL_THIS_NUMBER : break # manually control
 
-	density, _, roc, half, seq, rocpin, _, _, _, iu, iv = tuple(line.split()[:11])
+	density, _, roc, half, seq, rocpin, sicell, _, _, iu, iv = tuple(line.split()[:11])
 	if(iu=="-1" and iv=="-1"): continue # ignore (-1,-1)
 	if("CALIB" in rocpin): continue # ignore calibration bins
 	if(density == "HD"): break # keep only first set of LD
@@ -56,20 +58,24 @@ for i, line in enumerate(contents):
 
 	graph = ROOT.TGraph(nCorner, np.array(hexagon['x']), np.array(hexagon['y']))
 	graph.SetTitle("")
-	graph.GetXaxis().SetTitle("x (cm)")
-	graph.GetYaxis().SetTitle("y (cm)")
+	graph.GetXaxis().SetTitle("x (arb. unit)")
+	graph.GetYaxis().SetTitle("y (arb. unit)")
 	
 	graph.SetMaximum(200)
 	graph.SetMinimum(-200)
 	graph.GetXaxis().SetLimits(-200, 200)
 	
-	graph.SetName("hex_%d"%i)
-	graph.Write()
-
+	graph.SetName("hex_%d" % int(sicell))
+	collections[int(sicell)] = graph
 	counter+=1
 
 	print "counter=%d, i=%d, (iu,iv) = (%d,%d), (x,y) = (%.2f, %.2f)" % (counter, i, int(iu), int(iv), x, y)
 
+# store graphs in order of sicell
+fout = ROOT.TFile("./data/hexagons.root", "RECREATE")
+for sicell, graph in collections.items():
+	#print "sicell = %d" % sicell
+	graph.Write()
 fout.Close()
 
 # execute root macro for TH2Poly

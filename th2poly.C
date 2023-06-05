@@ -8,8 +8,8 @@
 
     TH2Poly *p = new TH2Poly("hexagonal histograms", "hexagonal histograms", -30, 30, -40, 25);
     p->SetStats(0);
-    p->GetXaxis()->SetTitle("x (cm)");
-    p->GetYaxis()->SetTitle("y (cm)");
+    p->GetXaxis()->SetTitle("x (arb. unit)");
+    p->GetYaxis()->SetTitle("y (arb. unit)");
     p->GetZaxis()->SetTitle("Ordinal numbers");
 
 	int counter = 0;
