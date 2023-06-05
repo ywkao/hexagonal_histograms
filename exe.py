@@ -99,6 +99,17 @@ base = {
 	},
 }
 
+# Coordinates of calibration channels
+calib_distance_factor = 14.
+Coordinates_calib_channels = {
+	14  : (0, 2),
+	62  : (s3, 1),
+	154 : (s3, -1),
+	163 : (0, -2),
+	143 : (-1*s3, -1),
+	70  : (-1*s3, 1),
+}
+
 # LD wafer pentagons
 LD_pentapon_cells = {
 	type_pentagon_side1 : [2, 3, 4, 5, 6, 7],
@@ -186,6 +197,8 @@ for i, line in enumerate(contents):
 		type_polygon, nCorner = type_pentagon_side6, 5
 	elif("CALIB" in rocpin):
 		type_polygon, nCorner = type_circle, 12
+		x, y = Coordinates_calib_channels[sicell]
+		x, y = x * calib_distance_factor, y * calib_distance_factor
 	elif sicell in LD_pentapon_cells[type_pentagon_corner1]:
 		type_polygon, nCorner = type_pentagon_corner1, 5
 	elif sicell in LD_pentapon_cells[type_pentagon_corner2]:

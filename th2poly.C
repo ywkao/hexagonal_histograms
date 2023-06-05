@@ -6,7 +6,7 @@
 
     TFile *f = TFile::Open("./data/hexagons.root","R");
 
-    TH2Poly *p = new TH2Poly("hexagonal histograms", "hexagonal histograms", -30, 30, -30, 30);
+    TH2Poly *p = new TH2Poly("hexagonal histograms", "hexagonal histograms", -32, 32, -32, 32);
     p->SetStats(0);
     p->GetXaxis()->SetTitle("x (arb. unit)");
     p->GetYaxis()->SetTitle("y (arb. unit)");
