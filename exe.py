@@ -22,6 +22,12 @@ typeFine, typeCoarse = 0, 1
 placementIndex = 0
 
 # define type id
+type_pentagon_corner1 = 41
+type_pentagon_corner2 = 42
+type_pentagon_corner3 = 43
+type_pentagon_corner4 = 44
+type_pentagon_corner5 = 45
+type_pentagon_corner6 = 46
 type_pentagon_side1 = 51
 type_pentagon_side2 = 52
 type_pentagon_side3 = 53
@@ -59,6 +65,30 @@ base = {
 		'x': [0, 1*s3, 1*s3, 0, -1*s3, 0],
 	 	'y': [2, 1, -1, -2, -1, 2]
 	},
+	type_pentagon_corner1 : {
+		'x': [-1/s3, 1*s3, 1*s3, 0, -1*s3, -1/s3],
+	 	'y': [1, 1, -1, -2, -1, 1]
+	},
+	type_pentagon_corner2 : {
+		'x': [1/s3,1*s3, 0, -1*s3, -1*s3, 1/s3],
+	 	'y': [1, -1, -2, -1, 1, 1]
+	},
+	type_pentagon_corner3 : {
+		'x': [0, 2/s3, 0, -1*s3, -1*s3, 0],
+	 	'y': [2, 0, -2, -1, 1, 2]
+	},
+	type_pentagon_corner4 : {
+		'x': [0, 1*s3, 1/s3, -1*s3, -1*s3, 0],
+	 	'y': [2, 1, -1, -1, 1, 2]
+	},
+	type_pentagon_corner5 : {
+		'x': [0, 1*s3, 1*s3, -1/s3, -1*s3, 0],
+	 	'y': [2, 1, -1, -1, 1, 2]
+	},
+	type_pentagon_corner6 : {
+		'x': [0, 1*s3, 1*s3, 0, -2/s3, 0],
+	 	'y': [2, 1, -1, -2, 0, 2]
+	},
 	type_hexagon : {
 		'x': [0, 1*s3, 1*s3, 0, -1*s3, -1*s3, 0],
 	 	'y': [2, 1, -1, -2, -1, 1, 2]
@@ -77,6 +107,12 @@ LD_pentapon_cells = {
 	type_pentagon_side4 : [191, 192, 193, 194, 195, 196, 197],
 	type_pentagon_side5 : [112, 127, 141, 156, 169, 180],
  	type_pentagon_side6 : [9, 19, 29, 40, 52, 66, 81],
+	type_pentagon_corner1 : [1],
+	type_pentagon_corner2 : [8],
+	type_pentagon_corner3 : [111],
+	type_pentagon_corner4 : [198],
+	type_pentagon_corner5 : [190],
+	type_pentagon_corner6 : [96],
 }
 
 LD_pentapon_cells_all = []
@@ -150,6 +186,18 @@ for i, line in enumerate(contents):
 		type_polygon, nCorner = type_pentagon_side6, 5
 	elif("CALIB" in rocpin):
 		type_polygon, nCorner = type_circle, 12
+	elif sicell in LD_pentapon_cells[type_pentagon_corner1]:
+		type_polygon, nCorner = type_pentagon_corner1, 5
+	elif sicell in LD_pentapon_cells[type_pentagon_corner2]:
+		type_polygon, nCorner = type_pentagon_corner2, 5
+	elif sicell in LD_pentapon_cells[type_pentagon_corner3]:
+		type_polygon, nCorner = type_pentagon_corner3, 5
+	elif sicell in LD_pentapon_cells[type_pentagon_corner4]:
+		type_polygon, nCorner = type_pentagon_corner4, 5
+	elif sicell in LD_pentapon_cells[type_pentagon_corner5]:
+		type_polygon, nCorner = type_pentagon_corner5, 5
+	elif sicell in LD_pentapon_cells[type_pentagon_corner6]:
+		type_polygon, nCorner = type_pentagon_corner6, 5
 
 	graph = get_polygon(type_polygon, nCorner, x, y)	
 	graph.SetName("hex_%d" % sicell)
