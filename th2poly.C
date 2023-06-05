@@ -1,5 +1,5 @@
 {
-    TCanvas *c1 = new TCanvas("c1", "", 800, 600);
+    TCanvas *c1 = new TCanvas("c1", "", 1200, 900);
     c1->SetGridx();
     c1->SetGridy();
 	c1->SetRightMargin(0.15);
