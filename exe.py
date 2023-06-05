@@ -25,11 +25,16 @@ placementIndex = 0
 s3 = math.sqrt(3)
 nCorner = 7 # one corner is repeated
 hexagon_base = {
-	'x': [2, 1, -1, -2, -1, 1, 2],
-	'y': [0, -1*s3, -1*s3, 0, s3, s3, 0]
-	# 'x': [0, 1*s3, 1*s3, 0, -1*s3, -1*s3, 0],
-	# 'y': [2, 1, -1, -2, -1, 1, 2]
+#	'x': [2, 1, -1, -2, -1, 1, 2],
+#	'y': [0, -1*s3, -1*s3, 0, s3, s3, 0]
+	'x': [0, 1*s3, 1*s3, 0, -1*s3, -1*s3, 0],
+ 	'y': [2, 1, -1, -2, -1, 1, 2]
 }
+
+# translation & rotation
+global_correction_x, global_correction_y = 2*s3, -5 
+global_theta = 5.*math.pi/6. # 150 degree
+cos_theta, sin_theta = math.cos(global_theta), math.sin(global_theta)
 
 # load geometry data
 fin = open("./data/WaferCellMapTrg.txt", 'r')
@@ -52,6 +57,14 @@ for i, line in enumerate(contents):
 	coor = cell_helper.cellUV2XY1(int(iu), int(iv), 0, typeCoarse)
 	x, y = coor[0], coor[1]
 
+	# evaluate (r, phi) and apply rotation
+	r = math.sqrt(pow(x,2)+pow(y,2))
+	cos_phi, sin_phi = x/r, y/r
+	xprime = r*(cos_phi*cos_theta + sin_phi*sin_theta) + global_correction_x
+	yprime = r*(sin_phi*cos_theta - cos_phi*sin_theta) + global_correction_y
+	x, y = xprime, yprime
+
+	# create a hexagon
 	hexagon = {}
 	hexagon['x'] = [ element + x for element in hexagon_base['x'] ]
 	hexagon['y'] = [ element + y for element in hexagon_base['y'] ]
