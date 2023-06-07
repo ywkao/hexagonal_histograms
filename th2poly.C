@@ -1,12 +1,10 @@
-{
+void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=false){
     TCanvas *c1 = new TCanvas("c1", "", 1200, 900);
-    //c1->SetGridx();
-    //c1->SetGridy();
 	c1->SetRightMargin(0.15);
 
-    TFile *f = TFile::Open("./data/hexagons.root","R");
+    TFile *f = TFile::Open(inputfile,"R");
 
-    TH2Poly *p = new TH2Poly("hexagonal histograms", "hexagonal histograms", -32, 32, -32, 32);
+    TH2Poly *p = new TH2Poly("hexagonal histograms", "hexagonal histograms", -1*range, range, -1*range, range);
     p->SetStats(0);
     p->GetXaxis()->SetTitle("x (arb. unit)");
     p->GetYaxis()->SetTitle("y (arb. unit)");
@@ -33,31 +31,24 @@
         p->SetBinContent(i+1, i+1);
     }
 
-	//--------------------------------------------------
-	// p->GetNcells() are not consistent with counter
-	//--------------------------------------------------
+	//-----------------------------------------------------------------
+	// p->GetNcells() are not consistent with counter (likely nCells-9)
+	//-----------------------------------------------------------------
 	// printf("[INFO] nCells  = %d\n", p->GetNcells());
 	// printf("[INFO] counter = %d\n", counter);
-	//--------------------------------------------------
-    // fill th2poly
-	//--------------------------------------------------
-    // const int npoints = 10000;
-    // for(int i=0; i<npoints; ++i) {
-    //     double x = r.Uniform(-200, 200);
-    //     double y = r.Uniform(-200, 0);
-    //     p->Fill(x,y);
-    // }
-	//--------------------------------------------------
+	//-----------------------------------------------------------------
 
     p->Draw("colz;text");
 
-	TLine line;
-	line.SetLineStyle(2);
-	line.SetLineWidth(2);
-	line.DrawLine(0, 1, 14.7, 23.5);
-	line.DrawLine(0, 1, 12.2, -23);
-	line.DrawLine(0, 1, -27, 1);
+	if(drawLine) {
+		TLine line;
+		line.SetLineStyle(2);
+		line.SetLineWidth(2);
+		line.DrawLine(0, 1, 14.7, 23.5);
+		line.DrawLine(0, 1, 12.2, -23);
+		line.DrawLine(0, 1, -27, 1);
+	}
 
-    c1->SaveAs("output.png");
+    c1->SaveAs(outputfile);
 }
 
