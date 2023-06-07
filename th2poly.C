@@ -1,7 +1,7 @@
 {
     TCanvas *c1 = new TCanvas("c1", "", 1200, 900);
-    c1->SetGridx();
-    c1->SetGridy();
+    //c1->SetGridx();
+    //c1->SetGridy();
 	c1->SetRightMargin(0.15);
 
     TFile *f = TFile::Open("./data/hexagons.root","R");
@@ -50,6 +50,14 @@
 	//--------------------------------------------------
 
     p->Draw("colz;text");
+
+	TLine line;
+	line.SetLineStyle(2);
+	line.SetLineWidth(2);
+	line.DrawLine(0, 1, 14.7, 23.5);
+	line.DrawLine(0, 1, 12.2, -23);
+	line.DrawLine(0, 1, -27, 1);
+
     c1->SaveAs("output.png");
 }
 
