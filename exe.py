@@ -16,7 +16,7 @@ ROOT.gInterpreter.ProcessLine('#include "include/HGCalCell.h"')
 ROOT.gSystem.Load("./build/libHGCalCell.so")
 
 # input parameters
-waferSize = 60
+waferSize = 65
 nFine, nCoarse = 0, 10 #222
 typeFine, typeCoarse = 0, 1
 placementIndex = 0
@@ -56,12 +56,17 @@ fin = open("./data/WaferCellMapTrg.txt", 'r')
 contents = fin.readlines()[:223]
 fin.close()
 
-def get_polygon(type_polygon, nCorner, x, y):
+import json
+dict_my_coordinate_data = {}
+
+def get_polygon(sicell, type_polygon, nCorner, x, y):
 	polygon_base = base[type_polygon]
 	polygon = {}
 	factor = 1. if type_polygon != tg.type_circle else 0.6
 	polygon['x'] = [ element*factor + x for element in polygon_base['x'] ]
 	polygon['y'] = [ element*factor + y for element in polygon_base['y'] ]
+
+	dict_my_coordinate_data[sicell] = polygon
 
 	graph = ROOT.TGraph(nCorner+1, np.array(polygon['x']), np.array(polygon['y']))
 	graph.SetTitle("")
@@ -131,7 +136,7 @@ for i, line in enumerate(contents):
 	elif sicell in LD_pentapon_cells[tg.type_pentagon_corner6]:
 		type_polygon, nCorner = tg.type_pentagon_corner6, 5
 
-	graph = get_polygon(type_polygon, nCorner, x, y)	
+	graph = get_polygon(sicell, type_polygon, nCorner, x, y)	
 	graph.SetName("hex_%d" % sicell)
 	collections[sicell] = graph
 	counter+=1
@@ -145,6 +150,10 @@ for sicell, graph in collections.items():
 	graph.Write()
 fout.Close()
 
+# store coordinates
+with open("data/output_my_coordinate_data.json", 'w') as f:
+	json.dump(dict_my_coordinate_data, f, indent=4)
+
 # execute root macro for TH2Poly
 import subprocess
-subprocess.call("root -l -b -q th2poly.C'(\"./data/hexagons.root\", \"output.png\", 32, 1)'", shell=True)
+subprocess.call("root -l -b -q th2poly.C'(\"./data/hexagons.root\", \"output.png\", 32, 0)'", shell=True)
