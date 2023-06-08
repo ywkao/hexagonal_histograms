@@ -156,4 +156,4 @@ with open("data/output_my_coordinate_data.json", 'w') as f:
 
 # execute root macro for TH2Poly
 import subprocess
-subprocess.call("root -l -b -q th2poly.C'(\"./data/hexagons.root\", \"output.png\", 32, 0)'", shell=True)
+subprocess.call("root -l -b -q th2poly.C'(\"./data/hexagons.root\", \"output.png\", 32, 1)'", shell=True)
