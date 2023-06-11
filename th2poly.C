@@ -1,5 +1,5 @@
 void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=false){
-    TCanvas *c1 = new TCanvas("c1", "", 1200, 900);
+    TCanvas *c1 = new TCanvas("c1", "", 900, 900);
 	c1->SetRightMargin(0.15);
 
     TFile *f = TFile::Open(inputfile,"R");
@@ -38,7 +38,13 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
 	// printf("[INFO] counter = %d\n", counter);
 	//-----------------------------------------------------------------
 
+	p->SetMarkerSize(0.7);
     p->Draw("colz;text");
+
+	// the individual cell boundary will not shown without "text" draw option...
+	//p->SetLineColor(kBlack);
+	//p->SetLineWidth(2);
+    //p->Draw("colz");
 
 	if(drawLine) {
 		const int N = 16;
@@ -52,7 +58,7 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
 		TLine line;
 		line.SetLineStyle(1);
 		line.SetLineColor(2);
-		line.SetLineWidth(3);
+		line.SetLineWidth(2);
 
 		for(int i=0; i<N-1; ++i) {
 			line.DrawLine(x1[i], y1[i], x1[i+1], y1[i+1]);

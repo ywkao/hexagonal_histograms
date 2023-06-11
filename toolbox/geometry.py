@@ -1,6 +1,20 @@
 #!/usr/bin/env python2
 import math
 
+#--------------------------------------------------
+# Define constants and types
+#--------------------------------------------------
+s2 = math.sqrt(2)
+s3 = math.sqrt(3)
+pi = math.pi
+
+type_square = 4
+type_regular_pentagon = 5
+type_hexagon = 6
+type_hexagon_small = 7
+type_hollow = 8
+type_circle = 12 
+
 type_pentagon_corner1 = 41
 type_pentagon_corner2 = 42
 type_pentagon_corner3 = 43
@@ -14,13 +28,33 @@ type_pentagon_side4 = 54
 type_pentagon_side5 = 55
 type_pentagon_side6 = 56
 
-type_hexagon = 6
-type_hexagon_small = 7
-type_hollow = 8
-type_circle = 12 
+#--------------------------------------------------
+# Coordinates of calib and CM channels
+#--------------------------------------------------
+# calibration channels and hollow channels
+calibration_cells = [14, 62, 70, 143, 154, 163]
+hollow_cells = [13, 61, 69, 142, 153, 162]
 
-s3 = math.sqrt(3)
+# Coordinates of calibration channels
+calib_distance_factor = 14.
+Coordinates_calib_channels = {
+	14  : (0, 2),
+	62  : (s3, 1),
+	154 : (s3, -1),
+	163 : (0, -2),
+	143 : (-1*s3, -1),
+	70  : (-1*s3, 1),
+}
 
+# Coordinates of CM channels
+Coordinates_CM_channels = {
+	'x' : [-10, -5, 5, 10],
+	'y' : [30, 30, 30, 30],
+}
+
+#--------------------------------------------------
+# Define base polygons
+#--------------------------------------------------
 base = {
 	type_pentagon_side1 : {
 		'x': [1*s3, 1*s3, 0, -1*s3, -1*s3, 1*s3],
@@ -69,6 +103,14 @@ base = {
 	type_pentagon_corner6 : {
 		'x': [-0.5*s3, 1*s3, 1*s3, 0, -2/s3, -0.5*s3],
 	 	'y': [2.5, 1, -1, -2, 0, 2.5]
+	},
+	type_square : {
+		'x' : [s2, s2, -s2, -s2, s2],
+		'y' : [s2, -s2, -s2, s2, s2]
+	},
+	type_regular_pentagon : {
+		'x' : [0, 2*math.cos(pi/10.), 2*math.cos(17.*pi/10.), 2*math.cos(13.*pi/10.), 2*math.cos(9.*pi/10.), 0],
+		'y' : [2, 2*math.sin(pi/10.), 2*math.sin(17.*pi/10.), 2*math.sin(13.*pi/10.), 2*math.sin(9.*pi/10.), 2],
 	},
 	type_hexagon : {
 		'x': [0, 1*s3, 1*s3, 0, -1*s3, -1*s3, 0],
