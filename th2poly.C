@@ -4,11 +4,12 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
 
     TFile *f = TFile::Open(inputfile,"R");
 
-    TH2Poly *p = new TH2Poly("hexagonal histograms", "hexagonal histograms", -1*range, range, -1*range, range);
+    TH2Poly *p = new TH2Poly("hexagonal histograms", "Low density wafer map", -1*range, range, -1*range, range);
     p->SetStats(0);
     p->GetXaxis()->SetTitle("x (arb. unit)");
     p->GetYaxis()->SetTitle("y (arb. unit)");
-    p->GetZaxis()->SetTitle("Ordinal numbers");
+    //p->GetZaxis()->SetTitle("Ordinal numbers");
+    p->GetYaxis()->SetTitleOffset(1.1);
 
 	int counter = 0;
 
