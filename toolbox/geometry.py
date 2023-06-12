@@ -27,6 +27,12 @@ type_pentagon_side3 = 53
 type_pentagon_side4 = 54
 type_pentagon_side5 = 55
 type_pentagon_side6 = 56
+type_hexagon_corner1 = 61
+type_hexagon_corner2 = 62
+type_hexagon_corner3 = 63
+type_hexagon_corner4 = 64
+type_hexagon_corner5 = 65
+type_hexagon_corner6 = 66
 
 #--------------------------------------------------
 # Coordinates of calib and CM channels
@@ -49,7 +55,7 @@ Coordinates_calib_channels = {
 # Coordinates of CM channels
 Coordinates_CM_channels = {
 	'x' : [-10, -5, 5, 10],
-	'y' : [30, 30, 30, 30],
+	'y' : [27.5, 27.5, 27.5, 27.5],
 }
 
 #--------------------------------------------------
@@ -80,29 +86,53 @@ base = {
 		'x': [-0.5*s3, 1*s3, 1*s3, 0, -1.5*s3, -0.5*s3],
 	 	'y': [2.5, 1, -1, -2, -0.5, 2.5]
 	},
+	type_hexagon_corner1 : {
+		'x': [-11.*s3/58., 1*s3, 1*s3, 0, -1.5*s3, -5.*s3/6., -11.*s3/58.],
+	 	'y': [127./58., 1, -1, -2, -0.5, 1.5, 127./58.]
+	},
+	type_hexagon_corner2 : {
+		'x': [11.*s3/58., 5.*s3/6., 1.5*s3, 0, -1*s3, -1*s3, 11.*s3/58.],
+	 	'y': [127./58., 1.5, -0.5, -2, -1, 1, 127./58.]
+	},
+	type_hexagon_corner3 : {
+		'x': [0.5*s3, 7.*s3/6., 69.*s3/58., 0, -1*s3, -1*s3, 0.5*s3],
+	 	'y': [2.5, 0.5, -47./58., -2, -1, 1, 2.5]
+	},
+	type_hexagon_corner4 : {
+		'x': [0, 1*s3, 1*s3, s3/3., -1*s3, -1*s3, 0],
+	 	'y': [2, 1, -40./29., -2, -2, 1, 2]
+	},
+	type_hexagon_corner5 : {
+		'x': [0, 1*s3, 1*s3, -s3/3., -1*s3, -1*s3, 0],
+	 	'y': [2, 1, -2, -2, -40./29., 1, 2]
+	},
+	type_hexagon_corner6 : {
+		'x': [-0.5*s3, 1*s3, 1*s3, 0, -69.*s3/58., -7.*s3/6., -0.5*s3],
+	 	'y': [2.5, 1, -1, -2, -47./58., 0.5, 2.5]
+	},
 	type_pentagon_corner1 : {
-		'x': [-1/s3, 1*s3, 1*s3, 0, -1.5*s3, -1/s3],
-	 	'y': [1, 1, -1, -2, -0.5, 1]
+		'x': [s3/2., 1*s3, 1*s3, 0, -69.*s3/58., s3/2.],
+	 	'y': [1, 1, -1, -2, -47./58., 1]
 	},
 	type_pentagon_corner2 : {
-		'x': [1/s3,1.5*s3, 0, -1*s3, -1*s3, 1/s3],
-	 	'y': [1, -0.5, -2, -1, 1, 1]
+		'x': [-s3/2., 69.*s3/58., 0, -1*s3, -1*s3, -s3/2.],
+	 	'y': [1., -47./58., -2, -1, 1, 1.]
 	},
 	type_pentagon_corner3 : {
-		'x': [0.5*s3, 2/s3, 0, -1*s3, -1*s3, 0],
-	 	'y': [2.5, 0, -2, -1, 1, 2]
+		'x': [11.*s3/58., s3/4., 0, -1*s3, -1*s3, 11.*s3/58.],
+	 	'y': [127./58., -1.25, -2, -1, 1, 127./58.]
 	},
 	type_pentagon_corner4 : {
-		'x': [0, 1*s3, 1/s3, -1*s3, -1*s3, 0],
-	 	'y': [2, 1, -1, -2, 1, 2]
+		'x': [0, 1*s3, 3.*s3/4., -s3, -1*s3, 0],
+	 	'y': [2, 1, 0.25, -40./29., 1, 2]
 	},
 	type_pentagon_corner5 : {
-		'x': [0, 1*s3, 1*s3, -1/s3, -1*s3, 0],
-	 	'y': [2, 1, -2, -1, 1, 2]
+		'x': [0, 1*s3, 1*s3, -3*s3/4, -1*s3, 0],
+	 	'y': [2, 1, -40./29., 0.25, 1, 2]
 	},
 	type_pentagon_corner6 : {
-		'x': [-0.5*s3, 1*s3, 1*s3, 0, -2/s3, -0.5*s3],
-	 	'y': [2.5, 1, -1, -2, 0, 2.5]
+		'x': [-11.*s3/58., 1*s3, 1*s3, 0, -s3/4., -11.*s3/58.],
+	 	'y': [127./58., 1, -1, -2, -1.25, 127./58.]
 	},
 	type_square : {
 		'x' : [s2, s2, -s2, -s2, s2],
@@ -130,7 +160,7 @@ base = {
 	},
 }
 
-LD_pentapon_cells = {
+LD_special_polygonal_cells = {
 	type_pentagon_side1 : [2, 3, 4, 5, 6, 7],
 	type_pentagon_side2 : [18, 28, 39, 51, 65, 80, 95],
 	type_pentagon_side3 : [126, 140, 155, 168, 179, 189],
@@ -143,9 +173,15 @@ LD_pentapon_cells = {
 	type_pentagon_corner4 : [198],
 	type_pentagon_corner5 : [190],
 	type_pentagon_corner6 : [96],
+	type_hexagon_corner1 : [9],
+	type_hexagon_corner2 : [18],
+	type_hexagon_corner3 : [95],
+	type_hexagon_corner4 : [197],
+	type_hexagon_corner5 : [191],
+	type_hexagon_corner6 : [81],
 }
 
-LD_pentapon_cells_all = []
+LD_special_polygonal_cells_all = []
 for i in range(type_pentagon_side1, type_pentagon_side6+1):
-	LD_pentapon_cells_all += LD_pentapon_cells[i] 
+	LD_special_polygonal_cells_all += LD_special_polygonal_cells[i] 
 

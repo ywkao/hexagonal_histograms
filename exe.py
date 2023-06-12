@@ -16,7 +16,7 @@ ROOT.gInterpreter.ProcessLine('#include "include/HGCalCell.h"')
 ROOT.gSystem.Load("./build/libHGCalCell.so")
 
 # input parameters
-waferSize = 65
+waferSize = 60
 nFine, nCoarse = 0, 10 #222
 typeFine, typeCoarse = 0, 1
 placementIndex = 0
@@ -28,8 +28,8 @@ s3 = tg.s3
 base = tg.base
 
 # LD wafer pentagons
-LD_pentapon_cells = tg.LD_pentapon_cells
-LD_pentapon_cells_all = tg.LD_pentapon_cells_all
+LD_special_polygonal_cells = tg.LD_special_polygonal_cells
+LD_special_polygonal_cells_all = tg.LD_special_polygonal_cells_all
 
 # translation & rotation
 global_correction_x, global_correction_y = 2*s3, -5 
@@ -104,18 +104,32 @@ for i, line in enumerate(contents):
 	# create a hexagon
 	type_polygon, nCorner = tg.type_hexagon, 6
 	
-	if sicell in LD_pentapon_cells[tg.type_pentagon_side1]:
+	if sicell in LD_special_polygonal_cells[tg.type_hexagon_corner1]:
+		type_polygon, nCorner = tg.type_hexagon_corner1, 6
+	elif sicell in LD_special_polygonal_cells[tg.type_hexagon_corner2]:
+		type_polygon, nCorner = tg.type_hexagon_corner2, 6
+	elif sicell in LD_special_polygonal_cells[tg.type_hexagon_corner3]:
+		type_polygon, nCorner = tg.type_hexagon_corner3, 6
+	elif sicell in LD_special_polygonal_cells[tg.type_hexagon_corner4]:
+		type_polygon, nCorner = tg.type_hexagon_corner4, 6
+	elif sicell in LD_special_polygonal_cells[tg.type_hexagon_corner5]:
+		type_polygon, nCorner = tg.type_hexagon_corner5, 6
+	elif sicell in LD_special_polygonal_cells[tg.type_hexagon_corner6]:
+		type_polygon, nCorner = tg.type_hexagon_corner6, 6
+
+	elif sicell in LD_special_polygonal_cells[tg.type_pentagon_side1]:
 		type_polygon, nCorner = tg.type_pentagon_side1, 5
-	elif sicell in LD_pentapon_cells[tg.type_pentagon_side2]:
+	elif sicell in LD_special_polygonal_cells[tg.type_pentagon_side2]:
 		type_polygon, nCorner = tg.type_pentagon_side2, 5
-	elif sicell in LD_pentapon_cells[tg.type_pentagon_side3]:
+	elif sicell in LD_special_polygonal_cells[tg.type_pentagon_side3]:
 		type_polygon, nCorner = tg.type_pentagon_side3, 5
-	elif sicell in LD_pentapon_cells[tg.type_pentagon_side4]:
+	elif sicell in LD_special_polygonal_cells[tg.type_pentagon_side4]:
 		type_polygon, nCorner = tg.type_pentagon_side4, 5
-	elif sicell in LD_pentapon_cells[tg.type_pentagon_side5]:
+	elif sicell in LD_special_polygonal_cells[tg.type_pentagon_side5]:
 		type_polygon, nCorner = tg.type_pentagon_side5, 5
-	elif sicell in LD_pentapon_cells[tg.type_pentagon_side6]:
+	elif sicell in LD_special_polygonal_cells[tg.type_pentagon_side6]:
 		type_polygon, nCorner = tg.type_pentagon_side6, 5
+
 	elif sicell in tg.hollow_cells:
 		type_polygon, nCorner = tg.type_hollow, 14 
 	elif("CALIB" in rocpin):
@@ -123,17 +137,17 @@ for i, line in enumerate(contents):
 		#type_polygon, nCorner = tg.type_circle, 12
 		#x, y = tg.Coordinates_calib_channels[sicell]
 		#x, y = x * tg.calib_distance_factor, y * tg.calib_distance_factor
-	elif sicell in LD_pentapon_cells[tg.type_pentagon_corner1]:
+	elif sicell in LD_special_polygonal_cells[tg.type_pentagon_corner1]:
 		type_polygon, nCorner = tg.type_pentagon_corner1, 5
-	elif sicell in LD_pentapon_cells[tg.type_pentagon_corner2]:
+	elif sicell in LD_special_polygonal_cells[tg.type_pentagon_corner2]:
 		type_polygon, nCorner = tg.type_pentagon_corner2, 5
-	elif sicell in LD_pentapon_cells[tg.type_pentagon_corner3]:
+	elif sicell in LD_special_polygonal_cells[tg.type_pentagon_corner3]:
 		type_polygon, nCorner = tg.type_pentagon_corner3, 5
-	elif sicell in LD_pentapon_cells[tg.type_pentagon_corner4]:
+	elif sicell in LD_special_polygonal_cells[tg.type_pentagon_corner4]:
 		type_polygon, nCorner = tg.type_pentagon_corner4, 5
-	elif sicell in LD_pentapon_cells[tg.type_pentagon_corner5]:
+	elif sicell in LD_special_polygonal_cells[tg.type_pentagon_corner5]:
 		type_polygon, nCorner = tg.type_pentagon_corner5, 5
-	elif sicell in LD_pentapon_cells[tg.type_pentagon_corner6]:
+	elif sicell in LD_special_polygonal_cells[tg.type_pentagon_corner6]:
 		type_polygon, nCorner = tg.type_pentagon_corner6, 5
 
 	graph = get_polygon(sicell, type_polygon, nCorner, x, y)	
@@ -181,6 +195,17 @@ fout.Close()
 with open("data/output_my_coordinate_data.json", 'w') as f:
 	json.dump(dict_my_coordinate_data, f, indent=4)
 
-# execute root macro for TH2Poly
+#--------------------------------------------------
+# external execute
+#--------------------------------------------------
 import subprocess
-subprocess.call("root -l -b -q th2poly.C'(\"./data/hexagons.root\", \"output.png\", 35, 1)'", shell=True)
+
+def exe(command):
+	print "\n>>> executing command, ", command
+	subprocess.call(command, shell=True)
+
+# execute python script for coordinate queries
+exe("./toolbox/coordinate_loader.py")
+
+# execute root macro for TH2Poly
+exe("root -l -b -q th2poly.C'(\"./data/hexagons.root\", \"output.png\", 32, 1)'")
