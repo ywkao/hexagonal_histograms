@@ -35,15 +35,19 @@ for i, element in enumerate(list_cells):
 	graph.GetXaxis().SetLimits(-200, 200)
 
 	graph.SetName("hex_%d" % globalChannelId)
-	collections[globalChannelId] = graph
-	counter+=1
+
+	print globalChannelId, polygon
+
+	if not globalChannelId in collections.keys():
+		collections[globalChannelId] = graph
+		counter+=1
 
 	#print counter, globalChannelId
 
 # store graphs in order of sicell
 fout = ROOT.TFile("./data/hexagons_from_testbeam_json.root", "RECREATE")
 for sicell, graph in collections.items():
-	#print "sicell = %d" % sicell
+	print "sicell = %d" % sicell
 	graph.Write()
 fout.Close()
 
