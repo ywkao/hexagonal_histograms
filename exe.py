@@ -165,9 +165,10 @@ for idxCM in range(12):
 		type_polygon, nCorner = tg.type_square, 4
 
 	# assign coordinates
+	correction_fine_tune_y_coordinate = 2.0
 	x = tg.Coordinates_CM_channels['x'][idxCM%4]
-	y = tg.Coordinates_CM_channels['y'][idxCM%4]
-	theta = 2*math.pi/3. * (idxCM//4)
+	y = tg.Coordinates_CM_channels['y'][idxCM%4] - correction_fine_tune_y_coordinate*(idxCM//8)
+	theta = 2*math.pi/3. * (idxCM//4) - math.pi/3.
 	cos_theta = math.cos(theta)
 	sin_theta = math.sin(theta)
 
@@ -208,4 +209,4 @@ def exe(command):
 exe("./toolbox/coordinate_loader.py")
 
 # execute root macro for TH2Poly
-exe("root -l -b -q th2poly.C'(\"./data/hexagons.root\", \"output.png\", 32, 1)'")
+exe("root -l -b -q th2poly.C'(\"./data/hexagons.root\", \"output.png\", 35, 1)'")

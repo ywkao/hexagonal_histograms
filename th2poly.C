@@ -49,6 +49,9 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
 	//p->SetLineWidth(2);
     //p->Draw("colz");
 
+	//-----------------------------------------------------------------
+	// cosmetics
+	//-----------------------------------------------------------------
 	if(drawLine) {
 		// load N_boundary_points, x1, x2, x3, y1, y2, y3 from auxiliary_boundary_lines.h
 
@@ -64,6 +67,43 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
 			line.DrawLine(aux::x4[i], aux::y4[i], aux::x4[i+1], aux::y4[i+1]);
 			line.DrawLine(aux::x5[i], aux::y5[i], aux::x5[i+1], aux::y5[i+1]);
 			line.DrawLine(aux::x6[i], aux::y6[i], aux::x6[i+1], aux::y6[i+1]);
+		}
+	}
+
+	bool drawText = true;
+	if(drawText) {
+		TText text;	
+		text.SetTextAlign(22);
+		text.SetTextFont(43);
+		text.SetTextSize(12);
+
+		double theta1 = -TMath::Pi()/3.;
+		double theta2 = TMath::Pi()/3.;
+		double theta3 = TMath::Pi();
+		std::vector<double> theta_angle_text = {60, 60, -60, -60, 0, 0};
+		std::vector<double> theta_coordinate_text = {theta1, theta1, theta2, theta2, theta3, theta3};
+		std::vector<double> x_coordinate_text = {-5.0, 7.5, -5.0, 7.5, -5.0, 7.5};
+		std::vector<double> y_coordinate_text = {26, 26, 26, 26, 24.5, 24.5};
+		std::vector<TString> v_texts = {"chip-0, half-1", "chip-0, half-0",
+										"chip-1, half-1", "chip-1, half-0",
+										"chip-2, half-1", "chip-2, half-0"};
+
+		// evaluate (r, phi) and apply rotation
+		for(int i=0; i<6; ++i) {
+			text.SetTextAngle(theta_angle_text[i]);
+			double theta = theta_coordinate_text[i];
+			double cos_theta = TMath::Cos(theta);
+			double sin_theta = TMath::Sin(theta);
+
+			double x = x_coordinate_text[i];
+			double y = y_coordinate_text[i];
+			double r = sqrt(pow(x,2)+pow(y,2));
+			double cos_phi = x/r;
+			double sin_phi = y/r;
+			x = r*(cos_phi*cos_theta + sin_phi*sin_theta);
+			y = r*(sin_phi*cos_theta - cos_phi*sin_theta);
+			printf("x=%.2f, y=%.2f\n", x, y);
+			text.DrawText(x, y, v_texts[i]);
 		}
 	}
 
