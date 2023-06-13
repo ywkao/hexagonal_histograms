@@ -16,7 +16,8 @@ ROOT.gInterpreter.ProcessLine('#include "include/HGCalCell.h"')
 ROOT.gSystem.Load("./build/libHGCalCell.so")
 
 # input parameters
-waferSize = 60
+arbUnit_to_cm = 17./24.
+waferSize = 60 * arbUnit_to_cm
 nFine, nCoarse = 0, 10 #222
 typeFine, typeCoarse = 0, 1
 placementIndex = 0
@@ -47,9 +48,9 @@ dict_my_coordinate_data = {}
 def get_polygon(sicell, type_polygon, nCorner, x, y, isCM=False):
 	polygon_base = base[type_polygon]
 	polygon = {}
-	factor = 1. if not isCM else 0.7
-	polygon['x'] = [ element*factor + x for element in polygon_base['x'] ]
-	polygon['y'] = [ element*factor + y for element in polygon_base['y'] ]
+	resize_factor_CM = 0.7 if isCM else 1.0 
+	polygon['x'] = [ element*arbUnit_to_cm*resize_factor_CM + x for element in polygon_base['x'] ]
+	polygon['y'] = [ element*arbUnit_to_cm*resize_factor_CM + y for element in polygon_base['y'] ]
 
 	#if not isCM:
 	#	polygon['x'] = [ element*factor + x for element in polygon_base['x'] ]
@@ -165,9 +166,9 @@ for idxCM in range(12):
 		type_polygon, nCorner = tg.type_square, 4
 
 	# assign coordinates
-	correction_fine_tune_y_coordinate = 2.0
-	x = tg.Coordinates_CM_channels['x'][idxCM%4]
-	y = tg.Coordinates_CM_channels['y'][idxCM%4] - correction_fine_tune_y_coordinate*(idxCM//8)
+	correction_fine_tune_y_coordinate = 2. if idxCM//4 == 0 else 0.
+	x = tg.Coordinates_CM_channels['x'][idxCM%4]*arbUnit_to_cm
+	y = tg.Coordinates_CM_channels['y'][idxCM%4]*arbUnit_to_cm - correction_fine_tune_y_coordinate*arbUnit_to_cm
 	theta = 2*math.pi/3. * (idxCM//4) - math.pi/3.
 	cos_theta = math.cos(theta)
 	sin_theta = math.sin(theta)
@@ -209,4 +210,4 @@ def exe(command):
 exe("./toolbox/coordinate_loader.py")
 
 # execute root macro for TH2Poly
-exe("root -l -b -q th2poly.C'(\"./data/hexagons.root\", \"output.png\", 35, 1)'")
+exe("root -l -b -q th2poly.C'(\"./data/hexagons.root\", \"output.png\", 24, 1)'")

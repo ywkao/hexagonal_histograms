@@ -54,8 +54,8 @@ Coordinates_calib_channels = {
 
 # Coordinates of CM channels
 Coordinates_CM_channels = {
-	'x' : [-7.5, -2.5, 5, 10],
-	'y' : [30, 30, 30, 30],
+	'x' : [-8.75, -3.75, 3.75, 8.75],
+	'y' : [29, 29, 29, 29],
 }
 
 #--------------------------------------------------

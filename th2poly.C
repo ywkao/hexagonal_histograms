@@ -8,8 +8,8 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
 
     TH2Poly *p = new TH2Poly("hexagonal histograms", "Low density wafer map with pad id", -1*range, range, -1*range, range);
     p->SetStats(0);
-    p->GetXaxis()->SetTitle("x (arb. unit)");
-    p->GetYaxis()->SetTitle("y (arb. unit)");
+    p->GetXaxis()->SetTitle("x (cm)");
+    p->GetYaxis()->SetTitle("y (cm)");
     //p->GetZaxis()->SetTitle("Ordinal numbers");
     p->GetYaxis()->SetTitleOffset(1.1);
 
@@ -82,11 +82,14 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
 		double theta3 = TMath::Pi();
 		std::vector<double> theta_angle_text = {60, 60, -60, -60, 0, 0};
 		std::vector<double> theta_coordinate_text = {theta1, theta1, theta2, theta2, theta3, theta3};
-		std::vector<double> x_coordinate_text = {-5.0, 7.5, -5.0, 7.5, -5.0, 7.5};
-		std::vector<double> y_coordinate_text = {26, 26, 26, 26, 24.5, 24.5};
+		//std::vector<double> x_coordinate_text = {-6.25, 6.25, -6.25, 6.25, -6.25, 6.25};
+		std::vector<double> x_coordinate_text = {-6.25, 6.25, -5, 7.5, -6.25, 6.25};
+		std::vector<double> y_coordinate_text = {23.5, 23.5, 26, 26, 26.4, 26.4};
 		std::vector<TString> v_texts = {"chip-0, half-1", "chip-0, half-0",
 										"chip-1, half-1", "chip-1, half-0",
 										"chip-2, half-1", "chip-2, half-0"};
+
+		double arbUnit_to_cm = 17./24.;
 
 		// evaluate (r, phi) and apply rotation
 		for(int i=0; i<6; ++i) {
@@ -100,9 +103,8 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
 			double r = sqrt(pow(x,2)+pow(y,2));
 			double cos_phi = x/r;
 			double sin_phi = y/r;
-			x = r*(cos_phi*cos_theta + sin_phi*sin_theta);
-			y = r*(sin_phi*cos_theta - cos_phi*sin_theta);
-			printf("x=%.2f, y=%.2f\n", x, y);
+			x = r*(cos_phi*cos_theta + sin_phi*sin_theta)*arbUnit_to_cm;
+			y = r*(sin_phi*cos_theta - cos_phi*sin_theta)*arbUnit_to_cm;
 			text.DrawText(x, y, v_texts[i]);
 		}
 	}
