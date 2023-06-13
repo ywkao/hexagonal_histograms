@@ -64,6 +64,9 @@ if __name__ == "__main__":
 	print_coordinate(("x1", "y1"), tc.query_line1)
 	print_coordinate(("x2", "y2"), tc.query_line2)
 	print_coordinate(("x3", "y3"), tc.query_line3)
+	print_coordinate(("x4", "y4"), tc.query_line4)
+	print_coordinate(("x5", "y5"), tc.query_line5)
+	print_coordinate(("x6", "y6"), tc.query_line6)
 	fout.write("}; // end of aux\n")
 
 	fout.write("\n")
