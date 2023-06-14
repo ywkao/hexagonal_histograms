@@ -6,7 +6,7 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
 
     TFile *f = TFile::Open(inputfile,"R");
 
-    TH2Poly *p = new TH2Poly("hexagonal histograms", "Low density wafer map with pad id", -1*range, range, -1*range, range);
+    TH2Poly *p = new TH2Poly("hexagonal histograms", "Low density wafer map with pad id", -1*range, range, -1*range-2, range-2);
     p->SetStats(0);
     p->GetXaxis()->SetTitle("x (cm)");
     p->GetYaxis()->SetTitle("y (cm)");
