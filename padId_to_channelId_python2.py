@@ -105,6 +105,10 @@ if __name__ == "__main__":
 		else:
 			p.SetBinContent(pad, globalchannelId)
 
+	CMIds = [37, 38, 76, 77, 115, 116, 154, 155, 193, 194, 232, 233]
+	for pad in range(199, 211):
+		p.SetBinContent(pad, CMIds[pad-199])
+
 	p.SetMarkerSize(0.7)
 	p.Draw("colztext")
 
