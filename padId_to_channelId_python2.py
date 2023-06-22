@@ -48,20 +48,23 @@ def test_and_validate_global_channel_id():
 	globalId shows that 8, 17, 18, 27, 37, 38 are not in the list.
 	They are very likely corresponding to CM and non-connected channels.
 	'''
+	global_channelId_dict = {} # key = global channel Id, value = padId
 	global_channelId_list = []
 	message = "padId globalChId chip half channel rocchannel channeltype"
 	print(message)
 	for pad in range(1,199):
 		output = pad2ElecID2(pad)
-		print("{0} {1}".format(pad,output))
+		#print("{0} {1}".format(pad,output))
 
-# 		globalchannelId, _, _, _, _, _ = pad2ElecID2(pad)
-# 		print("{0} {1}".format(pad, globalchannelId))
-# 		global_channelId_list.append(globalchannelId)
-# 
-# 	global_channelId_list.sort()
-# 	for ele in global_channelId_list:
-# 		print(ele)
+		globalchannelId, _, _, _, _, _ = pad2ElecID2(pad)
+		#print("{0} {1}".format(pad, globalchannelId))
+		global_channelId_list.append(globalchannelId)
+		global_channelId_dict[globalchannelId] = pad
+
+	print("# global_channel_Id, padId")
+	global_channelId_list.sort()
+	for idx in global_channelId_list:
+		print("{0},{1}".format(idx, global_channelId_dict[idx]))
 
 if __name__ == "__main__":
 	# load data in a dict table
@@ -74,9 +77,13 @@ if __name__ == "__main__":
 		pad = int(LoI[0])
 		table[pad] = LoI[1:]
 
-	#test_and_validate_global_channel_id()
+	test_and_validate_global_channel_id()
 
+	exit()
+
+	#--------------------------------------------------
 	# th2poly
+	#--------------------------------------------------
 	c1 = ROOT.TCanvas("c1", "", 900, 900)
 	c1.SetRightMargin(0.15)
 	ROOT.gStyle.SetPaintTextFormat(".0f")
