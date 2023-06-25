@@ -8,6 +8,7 @@ s2 = math.sqrt(2)
 s3 = math.sqrt(3)
 pi = math.pi
 
+type_triangle = 3
 type_square = 4
 type_regular_pentagon = 5
 type_hexagon = 6
@@ -56,6 +57,11 @@ Coordinates_calib_channels = {
 Coordinates_CM_channels = {
 	'x' : [8.75, 3.75, -3.75, -8.75],
 	'y' : [29, 29, 29, 29],
+}
+
+Coordinates_NC_channels = {
+	'x' : [10., 7.5, 5.0, 2.5, -2.5, -5.0, -7.5, -10.],
+	'y' : [32, 32, 32, 32, 32, 32, 32, 32],
 }
 
 #--------------------------------------------------
@@ -133,6 +139,10 @@ base = {
 	type_pentagon_corner6 : {
 		'x': [-11.*s3/58., 1*s3, 1*s3, 0, -s3/4., -11.*s3/58.],
 	 	'y': [127./58., 1, -1, -2, -1.25, 127./58.]
+	},
+	type_triangle : {
+		'x': [0, 1*s3, -1*s3, 0],
+	 	'y': [2, -1, -1, 2]
 	},
 	type_square : {
 		'x' : [s2, s2, -s2, -s2, s2],

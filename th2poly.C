@@ -4,9 +4,11 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
     TCanvas *c1 = new TCanvas("c1", "", 900, 900);
 	c1->SetRightMargin(0.15);
 
+	gStyle->SetPaintTextFormat(".0f");
+
     TFile *f = TFile::Open(inputfile,"R");
 
-    TH2Poly *p = new TH2Poly("hexagonal histograms", "Low density wafer map with pad id", -1*range, range, -1*range-2, range-2);
+    TH2Poly *p = new TH2Poly("hexagonal histograms", "Low density wafer map with global channel id", -1*range, range, -1*range-2, range-2);
     p->SetStats(0);
     p->GetXaxis()->SetTitle("x (cm)");
     p->GetYaxis()->SetTitle("y (cm)");
@@ -31,7 +33,10 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
     p->ChangePartition(100, 100);
 
     for(int i=0; i<counter; ++i) {
-        p->SetBinContent(i+1, i+1);
+		if(i==0)
+        	p->SetBinContent(i+1, 0.000001);
+		else
+        	p->SetBinContent(i+1, i);
     }
 
 	//-----------------------------------------------------------------

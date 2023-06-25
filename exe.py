@@ -42,15 +42,32 @@ fin = open("./data/WaferCellMapTrg.txt", 'r')
 contents = fin.readlines()[:223]
 fin.close()
 
-import json
-dict_my_coordinate_data = {}
+fin = open("./data/table_globalId_padId.txt", 'r')
+table_globalId_padId = fin.readlines()[1:]
+fin.close()
 
-def get_polygon(sicell, type_polygon, nCorner, x, y, isCM=False):
+dict_get_globalId_from_padId = {}
+for line in table_globalId_padId:
+	element = line.strip().split(',')
+	globalId = int(element[0])
+	padId = int(element[1])
+	dict_get_globalId_from_padId[padId] = globalId
+
+import json
+dict_my_coordinate_data = {} # key = sicell, value = dict_polygon_coordinates
+
+def get_polygon(sicell, type_polygon, nCorner, x, y, isCM=False, isNC=False):
 	polygon_base = base[type_polygon]
 	polygon = {}
-	resize_factor_CM = 0.7 if isCM else 1.0 
-	polygon['x'] = [ element*arbUnit_to_cm*resize_factor_CM + x for element in polygon_base['x'] ]
-	polygon['y'] = [ element*arbUnit_to_cm*resize_factor_CM + y for element in polygon_base['y'] ]
+
+	resize_factor = 1.0
+	if isCM:
+		resize_factor = 0.6
+	elif isNC:
+		resize_factor = 0.4
+
+	polygon['x'] = [ element*arbUnit_to_cm*resize_factor + x for element in polygon_base['x'] ]
+	polygon['y'] = [ element*arbUnit_to_cm*resize_factor + y for element in polygon_base['y'] ]
 
 	#if not isCM:
 	#	polygon['x'] = [ element*factor + x for element in polygon_base['x'] ]
@@ -91,6 +108,9 @@ for i, line in enumerate(contents):
 	if(iu=="-1" and iv=="-1"): continue # ignore (-1,-1)
 	if(density == "HD"): break # keep only first set of LD
 	sicell = int(str_sicell)
+
+	globalId = dict_get_globalId_from_padId[sicell]
+	print sicell, globalId
 
 	coor = cell_helper.cellUV2XY1(int(iu), int(iv), 0, typeCoarse)
 	x, y = coor[0], coor[1]
@@ -153,12 +173,14 @@ for i, line in enumerate(contents):
 
 	graph = get_polygon(sicell, type_polygon, nCorner, x, y)	
 	graph.SetName("hex_%d" % sicell)
-	collections[sicell] = graph
+	#collections[sicell] = graph
+	collections[globalId] = graph
 	counter+=1
 
 	#print "counter=%d, i=%d, (iu,iv) = (%d,%d), (x,y) = (%.2f, %.2f)" % (counter, i, int(iu), int(iv), x, y)
 
 # Add additional cells for CM channels
+CMIds = [37, 38, 76, 77, 115, 116, 154, 155, 193, 194, 232, 233]
 for idxCM in range(12):
 	if idxCM%2==0: # CM0
 		type_polygon, nCorner = tg.type_regular_pentagon, 5
@@ -180,17 +202,46 @@ for idxCM in range(12):
 	yprime = r*(sin_phi*cos_theta - cos_phi*sin_theta)
 	x, y = xprime, yprime
 
-	sicell = 198+1+idxCM
+	sicell = 198+1+idxCM # artificial sicell for CM channels
+	globalId = CMIds[idxCM]
+
 	graph = get_polygon(sicell, type_polygon, nCorner, x, y, True)	
 	graph.SetName("hex_cm_%d" % idxCM)
-	collections[sicell] = graph
+	#collections[sicell] = graph
+	collections[globalId] = graph
 	counter+=1
 
-# store graphs in order of sicell
+# Add additional cells for NC channels
+NonConnIds = [8, 17, 18, 27, 47, 56, 57, 66, 86, 95, 96, 105, 125, 134, 135, 144, 164, 173, 174, 183, 203, 212, 213, 222]
+for idxNC in range(24):
+	#type_polygon, nCorner = tg.type_triangle, 3
+	type_polygon, nCorner = tg.type_circle, 12 
+	x = tg.Coordinates_NC_channels['x'][idxNC%8]*arbUnit_to_cm
+	y = tg.Coordinates_NC_channels['y'][idxNC%8]*arbUnit_to_cm
+	theta = 2*math.pi/3. * (idxNC//8) - math.pi/3.
+	cos_theta = math.cos(theta)
+	sin_theta = math.sin(theta)
+
+	# evaluate (r, phi) and apply rotation
+	r = math.sqrt(pow(x,2)+pow(y,2))
+	cos_phi, sin_phi = x/r, y/r
+	xprime = r*(cos_phi*cos_theta + sin_phi*sin_theta)
+	yprime = r*(sin_phi*cos_theta - cos_phi*sin_theta)
+	x, y = xprime, yprime
+
+	sicell = 198+1+12+idxNC # artificial sicell for NC channels
+	globalId = NonConnIds[idxNC]
+
+	graph = get_polygon(sicell, type_polygon, nCorner, x, y, False, True)	
+	graph.SetName("hex_nc_%d" % idxNC)
+	collections[globalId] = graph
+	counter+=1
+
+# store graphs in order of key (sicell or globalId)
 fout = ROOT.TFile("./data/hexagons.root", "RECREATE")
-for sicell, graph in collections.items():
-	#print "sicell = %d" % sicell
+for key, graph in collections.items():
 	graph.Write()
+	#if key>=78: break
 fout.Close()
 
 # store coordinates
@@ -210,4 +261,4 @@ def exe(command):
 exe("./toolbox/coordinate_loader.py")
 
 # execute root macro for TH2Poly
-exe("root -l -b -q th2poly.C'(\"./data/hexagons.root\", \"output.png\", 24, 1)'")
+exe("root -l -b -q th2poly.C'(\"./data/hexagons.root\", \"output.png\", 26, 1)'")

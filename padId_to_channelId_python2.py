@@ -51,7 +51,7 @@ def test_and_validate_global_channel_id():
 	global_channelId_dict = {} # key = global channel Id, value = padId
 	global_channelId_list = []
 	message = "padId globalChId chip half channel rocchannel channeltype"
-	print(message)
+	#print(message)
 	for pad in range(1,199):
 		output = pad2ElecID2(pad)
 		#print("{0} {1}".format(pad,output))
