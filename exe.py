@@ -261,4 +261,4 @@ def exe(command):
 exe("./toolbox/coordinate_loader.py")
 
 # execute root macro for TH2Poly
-exe("root -l -b -q th2poly.C'(\"./data/hexagons.root\", \"output.png\", 26, 1)'")
+exe("root -l -b -q th2poly.C'(\"./data/hexagons.root\", \"DQM_LD_wafer_map.pdf\", 26, 1)'")
