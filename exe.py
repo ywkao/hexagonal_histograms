@@ -212,7 +212,7 @@ for idxCM in range(12):
 	counter+=1
 
 # Add additional cells for NC channels
-NonConnIds = [8, 17, 18, 27, 47, 56, 57, 66, 86, 95, 96, 105, 125, 134, 135, 144, 164, 173, 174, 183, 203, 212, 213, 222]
+NonConnIds = [8, 17, 19, 28, 47, 56, 58, 67, 86, 95, 97, 106, 125, 134, 136, 145, 164, 173, 175, 184, 203, 212, 214, 223]
 for idxNC in range(24):
 	#type_polygon, nCorner = tg.type_triangle, 3
 	type_polygon, nCorner = tg.type_circle, 12 
@@ -261,4 +261,5 @@ def exe(command):
 exe("./toolbox/coordinate_loader.py")
 
 # execute root macro for TH2Poly
+exe("root -l -b -q th2poly.C'(\"./data/hexagons.root\", \"output.png\", 26, 1)'")
 exe("root -l -b -q th2poly.C'(\"./data/hexagons.root\", \"DQM_LD_wafer_map.pdf\", 26, 1)'")

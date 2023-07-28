@@ -38,7 +38,7 @@ def pad2ElecID2(pad):
 			channel = rocchannel
 	elif channeltype==1:
 		half = rocchannel
-		channel = 36
+		channel = 18
 
 	globalchannelId = chip*78 + half*39+ channel
 	return globalchannelId,chip,half,channel,rocchannel,channeltype
@@ -67,7 +67,25 @@ def test_and_validate_global_channel_id():
 		print("{0},{1}".format(idx, global_channelId_dict[idx]))
 
 if __name__ == "__main__":
-	# load data in a dict table
+	#--------------------------------------------------
+	# load data/WaferCellMapTrg.txt
+	#--------------------------------------------------
+	with open('./data/WaferCellMapTrg.txt', 'r') as fin: contents = fin.readlines()
+
+	#print "# globalchannelId roc halfroc seq sicell t"
+	print "# globalchannelId, padId"
+	for line in contents[1:223]:
+		_, _, roc, halfroc, seq, _, sicell, _, _, _, _, t = tuple([str(ele) if "LD" in ele or "CALIB" in ele else int(ele) for ele in line.strip().split()])
+		if sicell==-1: continue
+		globalchannelId = 78*roc + 39*halfroc + seq
+		print "%d,%d" % (globalchannelId, sicell)
+		#print "%3d %d %d %2d %2d %2d" % (globalchannelId, roc, halfroc, seq, sicell, t)
+
+	exit()
+
+	#--------------------------------------------------
+	# load ld_pad_to_channel_mapping.csv
+	#--------------------------------------------------
 	table = {}
 	with open('./data/ld_pad_to_channel_mapping.csv', 'r') as fin: contents = fin.readlines()
 	for line in contents:
