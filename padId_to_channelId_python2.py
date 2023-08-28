@@ -73,12 +73,13 @@ if __name__ == "__main__":
 	with open('./data/WaferCellMapTrg.txt', 'r') as fin: contents = fin.readlines()
 
 	#print "# globalchannelId roc halfroc seq sicell t"
-	print "# globalchannelId, padId"
+	print "# globalchannelId hgcrocPin padId"
 	for line in contents[1:223]:
-		_, _, roc, halfroc, seq, _, sicell, _, _, _, _, t = tuple([str(ele) if "LD" in ele or "CALIB" in ele else int(ele) for ele in line.strip().split()])
-		if sicell==-1: continue
+		_, _, roc, halfroc, seq, pin, sicell, _, _, _, _, t = tuple([str(ele) if "LD" in ele or "CALIB" in ele else int(ele) for ele in line.strip().split()])
+		if sicell==-1: continue # non-connected channels
 		globalchannelId = 78*roc + 39*halfroc + seq
-		print "%d,%d" % (globalchannelId, sicell)
+		hgcrocPin = 78*roc + pin if isinstance(pin, int) else pin
+		print("{0} {1} {2}").format(globalchannelId, hgcrocPin, sicell)
 		#print "%3d %d %d %2d %2d %2d" % (globalchannelId, roc, halfroc, seq, sicell, t)
 
 	exit()

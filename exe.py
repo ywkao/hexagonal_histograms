@@ -42,17 +42,6 @@ fin = open("./data/WaferCellMapTrg.txt", 'r')
 contents = fin.readlines()[:223]
 fin.close()
 
-fin = open("./data/table_globalId_padId.txt", 'r')
-table_globalId_padId = fin.readlines()[1:]
-fin.close()
-
-dict_get_globalId_from_padId = {}
-for line in table_globalId_padId:
-	element = line.strip().split(',')
-	globalId = int(element[0])
-	padId = int(element[1])
-	dict_get_globalId_from_padId[padId] = globalId
-
 import json
 dict_my_coordinate_data = {} # key = sicell, value = dict_polygon_coordinates
 
@@ -104,14 +93,18 @@ for i, line in enumerate(contents):
 	if i==0: continue # omit heading
 	if counter==UNTIL_THIS_NUMBER : break # manually control
 
-	density, _, roc, half, seq, rocpin, str_sicell, _, _, iu, iv = tuple(line.split()[:11])
-	if(iu=="-1" and iv=="-1"): continue # ignore (-1,-1)
+	density, _, roc, halfroc, seq, rocpin, sicell, _, _, iu, iv, t = tuple([str(ele) if "LD" in ele or "CALIB" in ele else int(ele) for ele in line.strip().split()])
+	if(iu==-1 and iv==-1): continue # ignore (-1,-1)
 	if(density == "HD"): break # keep only first set of LD
-	sicell = int(str_sicell)
 
-	globalId = dict_get_globalId_from_padId[sicell]
-	print sicell, globalId
+	globalId = 78*roc + 39*halfroc + seq
 
+	# # print globalId vs HGCROC pin
+	# print("{{{0},{1}}},").format(globalId, rocpin)
+
+	# # print globalId vs padId
+	# print("{{{0},{1}}},").format(globalId, sicell)
+	
 	coor = cell_helper.cellUV2XY1(int(iu), int(iv), 0, typeCoarse)
 	x, y = coor[0], coor[1]
 
@@ -153,11 +146,8 @@ for i, line in enumerate(contents):
 
 	elif sicell in tg.hollow_cells:
 		type_polygon, nCorner = tg.type_hollow, 14 
-	elif("CALIB" in rocpin):
+	elif(isinstance(rocpin, str)): # "CALIB"
 		type_polygon, nCorner = tg.type_hexagon_small, 6 
-		#type_polygon, nCorner = tg.type_circle, 12
-		#x, y = tg.Coordinates_calib_channels[sicell]
-		#x, y = x * tg.calib_distance_factor, y * tg.calib_distance_factor
 	elif sicell in LD_special_polygonal_cells[tg.type_pentagon_corner1]:
 		type_polygon, nCorner = tg.type_pentagon_corner1, 5
 	elif sicell in LD_special_polygonal_cells[tg.type_pentagon_corner2]:
@@ -261,5 +251,4 @@ def exe(command):
 exe("./toolbox/coordinate_loader.py")
 
 # execute root macro for TH2Poly
-exe("root -l -b -q th2poly.C'(\"./data/hexagons.root\", \"output.png\", 26, 1)'")
 exe("root -l -b -q th2poly.C'(\"./data/hexagons.root\", \"DQM_LD_wafer_map.pdf\", 26, 1)'")
