@@ -37,11 +37,7 @@ global_correction_x, global_correction_y = 2*s3, -5
 global_theta = 5.*math.pi/6. # 150 degree
 cos_global_theta, sin_global_theta = math.cos(global_theta), math.sin(global_theta)
 
-# load geometry data
-fin = open("./data/WaferCellMapTrg.txt", 'r')
-contents = fin.readlines()[:223]
-fin.close()
-
+# for auxiliary boundary lines on the wafer map
 import json
 dict_my_coordinate_data = {} # key = sicell, value = dict_polygon_coordinates
 
@@ -85,10 +81,17 @@ def get_polygon(sicell, type_polygon, nCorner, x, y, isCM=False, isNC=False):
 	graph.GetXaxis().SetLimits(-200, 200)
 	return graph
 
-# loop over all the cells
+# utility
 counter = 0 # how many cells are drawn
 collections = {} # key, value = SiCell, graph
 cell_helper = ROOT.HGCalCell(waferSize, nFine, nCoarse)
+
+# load geometry data
+fin = open("./data/WaferCellMapTrg.txt", 'r')
+contents = fin.readlines()[:223]
+fin.close()
+
+# loop over all the cells
 for i, line in enumerate(contents):
 	if i==0: continue # omit heading
 	if counter==UNTIL_THIS_NUMBER : break # manually control
