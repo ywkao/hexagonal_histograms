@@ -31,21 +31,10 @@ class PolygonManager:
         self.cos_global_theta = math.cos(self.global_theta)
         self.sin_global_theta = math.sin(self.global_theta)
 
-        # default cell info (unused for normal channels except for cellName)
-        self.cellType = ""
-        self.cellIdx = -1
-        self.cellName = "hex"
-
         # containers
         self.counter = 0
         self.collections = {} # a collection of cells in TGraph format, key = global channel Id, value = TGraph
         self.dict_my_coordinate_data = {} # key = sicell, value = dict_polygon_coordinates
-
-    def set_special_cell_info(self, cellType, cellIdx, cellName):
-        "ad hoc for CM and non-connected channels"
-        self.cellType = cellType
-        self.cellIdx = cellIdx
-        self.cellName = cellName
 
     def get_polygon(self, sicell, type_polygon, nCorner, x, y):
         """ return an instance of TGraph """
@@ -61,7 +50,8 @@ class PolygonManager:
         polygon['x'] = [ element*self.arbUnit_to_cm*resize_factor + x for element in polygon_base['x'] ]
         polygon['y'] = [ element*self.arbUnit_to_cm*resize_factor + y for element in polygon_base['y'] ]
     
-        self.dict_my_coordinate_data[sicell] = polygon
+        if not (self.cellType=="CM" or self.cellType=="NC"):
+            self.dict_my_coordinate_data[sicell] = polygon
     
         graph = ROOT.TGraph(nCorner+1, np.array(polygon['x']), np.array(polygon['y']))
         graph.SetTitle("")
@@ -71,7 +61,7 @@ class PolygonManager:
         graph.SetMaximum(200)
         graph.SetMinimum(-200)
         graph.GetXaxis().SetLimits(-200, 200)
-        graph.SetName(self.cellName + "_%d" % sicell)
+        graph.SetName(self.cellName + "_%d" % self.globalId)
 
         self.counter += 1
 
@@ -213,3 +203,31 @@ class PolygonManager:
         for key, graph in self.collections.items():
             graph.Write()
         fout.Close()
+
+    def __str__(self):
+        return "globalId = {0}, sicell = {1}, rocpin = {2}, graph = {3}".format(self.globalId, self.sicell, self.rocpin, self.graph)
+
+    def run(self, channelIds, coor_uv, cellType="", cellIdx=-1, cellName="hex"):
+        """ main method for controling flow """
+
+        # cell Id and (u, v) coordinates
+        iu, iv = coor_uv
+        self.globalId, self.sicell, self.rocpin = channelIds
+
+        # cell info (ad hoc for CM and non-connected channels)
+        self.cellType = cellType
+        self.cellIdx = cellIdx
+        self.cellName = cellName
+
+        # evaluation + creation
+        x, y  = self.get_cell_center_coordinates(iu, iv)
+        t, n  = self.get_polygon_information(self.sicell, self.rocpin)
+        self.graph = self.get_polygon(self.sicell, t, n, x, y) # padId, polygon type, nCorners, coordinates of cell center
+        self.collections[self.globalId] = self.graph
+
+        # # print globalId vs HGCROC pin
+        # print("{{{0},{1}}},").format(globalId, rocpin)
+    
+        # # print globalId vs padId
+        # print("{{{0},{1}}},").format(globalId, sicell)
+

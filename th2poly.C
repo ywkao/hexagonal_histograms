@@ -131,18 +131,18 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
 
     p->SetMarkerSize(0.7);
     p->Draw("colz;text");
-    beautify_plot(false);
+    beautify_plot(drawLine);
     c1->SaveAs(outputfile);
     c1->SaveAs("info_LD_wafer_globalChannelId_readoutSequence.png");
 
     p_pin->SetMarkerSize(0.7);
     p_pin->Draw("colz;text");
-    beautify_plot(false);
+    beautify_plot(drawLine);
     c1->SaveAs("info_LD_wafer_HGCROC_pin_chan.png");
 
     p_sicell->SetMarkerSize(0.7);
     p_sicell->Draw("colz;text");
-    beautify_plot(false);
+    beautify_plot(drawLine);
     c1->SaveAs("info_LD_wafer_SiCell_padId.png");
 
     //-----------------------------------------------------------------
