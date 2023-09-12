@@ -22,9 +22,8 @@ nFine, nCoarse = 0, 10 #222
 typeFine, typeCoarse = 0, 1
 placementIndex = 0
 
+# parameter and coordinate of a hexagonal cell
 import toolbox.geometry as tg
-# define type id
-# coordinate of a hexagonal cell
 s3 = tg.s3
 base = tg.base
 
@@ -32,7 +31,7 @@ base = tg.base
 LD_special_polygonal_cells = tg.LD_special_polygonal_cells
 LD_special_polygonal_cells_all = tg.LD_special_polygonal_cells_all
 
-# translation & rotation
+# global translation & rotation
 global_correction_x, global_correction_y = 2*s3, -5 
 global_theta = 5.*math.pi/6. # 150 degree
 cos_global_theta, sin_global_theta = math.cos(global_theta), math.sin(global_theta)
@@ -53,21 +52,6 @@ def get_polygon(sicell, type_polygon, nCorner, x, y, isCM=False, isNC=False):
 
 	polygon['x'] = [ element*arbUnit_to_cm*resize_factor + x for element in polygon_base['x'] ]
 	polygon['y'] = [ element*arbUnit_to_cm*resize_factor + y for element in polygon_base['y'] ]
-
-	#if not isCM:
-	#	polygon['x'] = [ element*factor + x for element in polygon_base['x'] ]
-	#	polygon['y'] = [ element*factor + y for element in polygon_base['y'] ]
-
-	#else: # apply rotation to CM cell coordinates
-	#	idxCM = sicell - 198 - 1
-	#	theta = 2*math.pi/3. * (idxCM//4)
-	#	cos_theta = math.cos(theta)
-	#	sin_theta = math.sin(theta)
-
-	#	r = 2.
-	#	polygon['x'] = [ element*cos_theta + math.sqrt(pow(r,2)-pow(element,2))*sin_theta + x for element in polygon_base['x'] ]
-	#	polygon['y'] = [ element*cos_theta - math.sqrt(pow(r,2)-pow(element,2))*sin_theta + y for element in polygon_base['y'] ]
-	#	print idxCM, idxCM//4, nCorner, len(polygon['x'])
 
 	dict_my_coordinate_data[sicell] = polygon
 
@@ -91,12 +75,24 @@ fin = open("./data/WaferCellMapTrg.txt", 'r')
 contents = fin.readlines()[:223]
 fin.close()
 
+def retrieve_info(line):
+    contents = line.strip().split()
+    result = []
+    for ele in contents:
+        if "LD" in ele or "CALIB" in ele:
+            result.append(str(ele))
+        elif "." in ele:
+            result.append(float(ele))
+        else:
+            result.append(int(ele))
+    return tuple(result)
+
 # loop over all the cells
 for i, line in enumerate(contents):
 	if i==0: continue # omit heading
 	if counter==UNTIL_THIS_NUMBER : break # manually control
 
-	density, _, roc, halfroc, seq, rocpin, sicell, _, _, iu, iv, t = tuple([str(ele) if "LD" in ele or "CALIB" in ele else int(ele) for ele in line.strip().split()])
+	density, _, roc, halfroc, seq, rocpin, sicell, _, _, iu, iv, t = retrieve_info(line)
 	if(iu==-1 and iv==-1): continue # ignore (-1,-1)
 	if(density == "HD"): break # keep only first set of LD
 
