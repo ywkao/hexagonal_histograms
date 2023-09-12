@@ -5,14 +5,18 @@ import toolbox.polygon_manager as tp
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-n', help="number of cells", type=int, default=9999)
-parser.add_argument('--partial', help="enable produce of partial wafer", action='store_true')
+parser.add_argument('-p', '--partial', help="enable produce of partial wafer", action='store_true')
 parser.add_argument('-d', '--drawLine', help="draw boundary lines", action='store_true')
+parser.add_argument('-v', '--verbose', help="set verbosity level", action='store_true')
 args = parser.parse_args()
 
+"""
+Reminder: range of indices (line numbers) is decided from the text file, ./data/WaferCellMapTrg.txt
+"""
 if args.partial:
     waferType, beginIdx, endIdx = "partial", 667, 778
 else:
-    waferType, beginIdx, endIdx = "full", 0, 223
+    waferType, beginIdx, endIdx = "full", 1, 223
 
 def exe(command):
     print "\n>>> executing command, ", command
@@ -31,42 +35,33 @@ def retrieve_info(line):
     return tuple(result)
 
 def main():
-    """ load geometry data & loop over all cells """
     polygon_manager = tp.PolygonManager(waferType)
     
-    fin = open("./data/WaferCellMapTrg.txt", 'r')
-    contents = fin.readlines()[beginIdx:endIdx]
-    fin.close()
-
+    # Load geometry text file
+    with open("./data/WaferCellMapTrg.txt", 'r') as fin: contents = fin.readlines()[beginIdx:endIdx]
     print("[DEBUG] len(contents) = %d" % len(contents))
     
+    # Inerate normal channels & non-connected channels
     for i, line in enumerate(contents):
-        if 'Seq' in line: continue # omit heading
-        if polygon_manager.counter==args.n : break # manually control how many cells to display
-    
         density, _, roc, halfroc, seq, rocpin, sicell, _, _, iu, iv, t = retrieve_info(line)
-        if(iu==-1 and iv==-1): continue # ignore non-connected channels
-        if(density == "HD"): break # keep only first set of LD
-    
+        if(iu==-1 and iv==-1): # treatment for non-connected channels
+            cellType, cellIdx, cellName = "NC", polygon_manager.idxNC, "hex_nc"
+            polygon_manager.idxNC += 1
+        else: # default values for normal channels
+            cellType, cellIdx, cellName = "", -1, "hex"
         globalId = 78*roc + 39*halfroc + seq
         channelIds = (globalId, sicell, rocpin)
-        polygon_manager.run(channelIds, (iu,iv))
-        print("idx = {0}, {1}".format(i, polygon_manager))
+        polygon_manager.run(channelIds, (iu,iv), cellType, cellIdx, cellName)
+        if args.verbose: print("idx = {0}, {1}".format(i, polygon_manager))
+        if polygon_manager.counter==args.n : break # manually control how many cells to display
 
     # Add additional cells for CM channels
     for idx, CM in enumerate(tp.tg.gcId[waferType]["CMIds"]):
-        channelIds = (CM, 198+1+idx, -1) # globalId, artificial sicell, rocpin
+        channelIds = (CM, -1, -1) # globalId, artificial sicell, rocpin
         polygon_manager.run(channelIds, (-1,-1), "CM", idx, "hex_cm")
-        print("idx = {0}, {1}".format(idx, polygon_manager))
+        if args.verbose: print("idx = {0}, {1}".format(idx, polygon_manager))
 
-    # Add additional cells for NC channels
-    for idx, NC in enumerate(tp.tg.gcId[waferType]["NonConnIds"]):
-        channelIds = (NC, 198+1+12+idx, -1) # globalId, artificial sicell, rocpin
-        polygon_manager.run(channelIds, (-1,-1), "NC", idx, "hex_nc")
-        print("idx = {0}, {1}".format(idx, polygon_manager))
-
-        """ CAVEAT: need to fix RocPin for NC """
-    
+    # Export geometry root file
     polygon_manager.export_root_file() # geometry root file for DQM
     polygon_manager.export_coordinate_data() # store coordinates for auxiliary lines
 
@@ -77,5 +72,12 @@ if __name__ == "__main__":
     if args.drawLine:
         exe("./toolbox/coordinate_loader.py") # execute python script for coordinate queries
 
-    exe("root -l -b -q th2poly.C'(\"./data/hexagons.root\", \"DQM_LD_wafer_map.pdf\", 26, %d)'" % (args.drawLine)) # execute root macro for TH2Poly
+    if args.partial:
+        tag = "LD_partial_wafer"
+        outputName = "DQM_LD_partial_wafer_map.pdf"
+    else:
+        tag = "LD_wafer"
+        outputName = "DQM_LD_wafer_map.pdf"
+
+    exe("root -l -b -q th2poly.C'(\"./data/hexagons.root\", \"%s\", 26, %d, \"%s\")'" % (outputName, args.drawLine, tag)) # execute root macro for TH2Poly
 

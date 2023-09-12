@@ -4,7 +4,7 @@
 
 void beautify_plot(bool drawLine = true, bool drawText = true);
 
-void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=false){
+void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=false, TString NameTag="LD_wafer"){
     TCanvas *c1 = new TCanvas("c1", "", 900, 900);
     c1->SetRightMargin(0.15);
 
@@ -78,21 +78,24 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
     c1->SaveAs("test.root");
     TFile *f = TFile::Open(inputfile,"R");
 
-    title = "LD wafer with global channel id (readout sequence)";
+    TString newNameTag = NameTag;
+    newNameTag.ReplaceAll("_", " ");
+
+    title = newNameTag + " with global channel id (readout sequence)";
     TH2Poly *p = new TH2Poly("hexagonal histograms", title, -1*range, range, -1*range-2, range-2);
     p->SetStats(0);
     p->GetXaxis()->SetTitle("x (cm)");
     p->GetYaxis()->SetTitle("y (cm)");
     p->GetYaxis()->SetTitleOffset(1.1);
 
-    title = "LD wafer with HGCROC pin/chan";
+    title = newNameTag + " with HGCROC pin/chan";
     TH2Poly *p_pin = new TH2Poly("p_pin", title, -1*range, range, -1*range-2, range-2);
     p_pin->SetStats(0);
     p_pin->GetXaxis()->SetTitle("x (cm)");
     p_pin->GetYaxis()->SetTitle("y (cm)");
     p_pin->GetYaxis()->SetTitleOffset(1.1);
 
-    title = "LD wafer with Si cell pad Id";
+    title = newNameTag + " with Si cell pad Id";
     TH2Poly *p_sicell = new TH2Poly("p_sicell", title, -1*range, range, -1*range-2, range-2);
     p_sicell->SetStats(0);
     p_sicell->GetXaxis()->SetTitle("x (cm)");
@@ -133,17 +136,17 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
     p->Draw("colz;text");
     beautify_plot(drawLine);
     c1->SaveAs(outputfile);
-    c1->SaveAs("info_LD_wafer_globalChannelId_readoutSequence.png");
+    c1->SaveAs("info_"+NameTag+"_globalChannelId_readoutSequence.png");
 
     p_pin->SetMarkerSize(0.7);
     p_pin->Draw("colz;text");
     beautify_plot(drawLine);
-    c1->SaveAs("info_LD_wafer_HGCROC_pin_chan.png");
+    c1->SaveAs("info_"+NameTag+"_HGCROC_pin_chan.png");
 
     p_sicell->SetMarkerSize(0.7);
     p_sicell->Draw("colz;text");
     beautify_plot(drawLine);
-    c1->SaveAs("info_LD_wafer_SiCell_padId.png");
+    c1->SaveAs("info_"+NameTag+"_SiCell_padId.png");
 
     //-----------------------------------------------------------------
     // Reminder: counter = nCells - 9

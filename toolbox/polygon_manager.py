@@ -33,25 +33,26 @@ class PolygonManager:
 
         # containers
         self.counter = 0
+        self.idxNC = 0 # counting for non-connected channels
         self.collections = {} # a collection of cells in TGraph format, key = global channel Id, value = TGraph
+        self.dict_my_chId_mapping = {} # key = globalId, value = [sicell, rocpin]
         self.dict_my_coordinate_data = {} # key = sicell, value = dict_polygon_coordinates
 
-    def get_polygon(self, sicell, type_polygon, nCorner, x, y):
-        """ return an instance of TGraph """
+    def get_polygon(self, type_polygon, nCorner, x, y):
+        """ derive coordinates for a polygon & create an instance of TGraph """
         polygon_base = tg.base[type_polygon]
         polygon = {}
     
         resize_factor = 1.0
-        if self.cellType == "CM":
-            resize_factor = 0.6
-        elif self.cellType == "NC":
-            resize_factor = 0.4
+        if self.cellType == "CM": resize_factor = 0.6
+        elif self.cellType == "NC": resize_factor = 0.4
     
         polygon['x'] = [ element*self.arbUnit_to_cm*resize_factor + x for element in polygon_base['x'] ]
         polygon['y'] = [ element*self.arbUnit_to_cm*resize_factor + y for element in polygon_base['y'] ]
     
+        self.dict_my_chId_mapping[self.globalId] = [self.sicell, self.rocpin]
         if not (self.cellType=="CM" or self.cellType=="NC"):
-            self.dict_my_coordinate_data[sicell] = polygon
+            self.dict_my_coordinate_data[self.sicell] = polygon
     
         graph = ROOT.TGraph(nCorner+1, np.array(polygon['x']), np.array(polygon['y']))
         graph.SetTitle("")
@@ -115,24 +116,24 @@ class PolygonManager:
 
             return xprime, yprime
 
-    def get_polygon_information(self, sicell, rocpin):
+    def get_polygon_information(self):
         """ return type of polygon & nCorner of it """
         if self.type == "full":
-            return self.get_polygon_info_LD_full(sicell, rocpin)
+            return self.get_polygon_info_LD_full()
         elif self.type == "partial":
-            return self.get_polygon_info_LD_partial(sicell, rocpin)
+            return self.get_polygon_info_LD_partial()
         else:
             try:
                 raise NameError("WaferType")
             except NameError:
                 print("The specified wafer type is unexpected.")
         
-    def get_polygon_info_LD_partial(self, sicell, rocpin):
+    def get_polygon_info_LD_partial(self):
         """ conditional statements for LD partial wafer """
         type_polygon, nCorner = tg.type_hexagon, 6
         return type_polygon, nCorner
 
-    def get_polygon_info_LD_full(self, sicell, rocpin):
+    def get_polygon_info_LD_full(self):
         """ conditional statements for LD full wafer """
         type_polygon, nCorner = tg.type_hexagon, 6
 
@@ -147,50 +148,55 @@ class PolygonManager:
             return tg.type_circle, 12 
 
         else:
-            if sicell in self.LD_cells[tg.type_hexagon_corner1]:
+            if self.sicell in self.LD_cells[tg.type_hexagon_corner1]:
                 type_polygon, nCorner = tg.type_hexagon_corner1, 6
-            elif sicell in self.LD_cells[tg.type_hexagon_corner2]:
+            elif self.sicell in self.LD_cells[tg.type_hexagon_corner2]:
                 type_polygon, nCorner = tg.type_hexagon_corner2, 6
-            elif sicell in self.LD_cells[tg.type_hexagon_corner3]:
+            elif self.sicell in self.LD_cells[tg.type_hexagon_corner3]:
                 type_polygon, nCorner = tg.type_hexagon_corner3, 6
-            elif sicell in self.LD_cells[tg.type_hexagon_corner4]:
+            elif self.sicell in self.LD_cells[tg.type_hexagon_corner4]:
                 type_polygon, nCorner = tg.type_hexagon_corner4, 6
-            elif sicell in self.LD_cells[tg.type_hexagon_corner5]:
+            elif self.sicell in self.LD_cells[tg.type_hexagon_corner5]:
                 type_polygon, nCorner = tg.type_hexagon_corner5, 6
-            elif sicell in self.LD_cells[tg.type_hexagon_corner6]:
+            elif self.sicell in self.LD_cells[tg.type_hexagon_corner6]:
                 type_polygon, nCorner = tg.type_hexagon_corner6, 6
     
-            elif sicell in self.LD_cells[tg.type_pentagon_side1]:
+            elif self.sicell in self.LD_cells[tg.type_pentagon_side1]:
                 type_polygon, nCorner = tg.type_pentagon_side1, 5
-            elif sicell in self.LD_cells[tg.type_pentagon_side2]:
+            elif self.sicell in self.LD_cells[tg.type_pentagon_side2]:
                 type_polygon, nCorner = tg.type_pentagon_side2, 5
-            elif sicell in self.LD_cells[tg.type_pentagon_side3]:
+            elif self.sicell in self.LD_cells[tg.type_pentagon_side3]:
                 type_polygon, nCorner = tg.type_pentagon_side3, 5
-            elif sicell in self.LD_cells[tg.type_pentagon_side4]:
+            elif self.sicell in self.LD_cells[tg.type_pentagon_side4]:
                 type_polygon, nCorner = tg.type_pentagon_side4, 5
-            elif sicell in self.LD_cells[tg.type_pentagon_side5]:
+            elif self.sicell in self.LD_cells[tg.type_pentagon_side5]:
                 type_polygon, nCorner = tg.type_pentagon_side5, 5
-            elif sicell in self.LD_cells[tg.type_pentagon_side6]:
+            elif self.sicell in self.LD_cells[tg.type_pentagon_side6]:
                 type_polygon, nCorner = tg.type_pentagon_side6, 5
     
-            elif sicell in tg.hollow_cells:
+            elif self.sicell in tg.hollow_cells:
                 type_polygon, nCorner = tg.type_hollow, 14 
-            elif(isinstance(rocpin, str)): # "CALIB"
+            elif(isinstance(self.rocpin, str)): # "CALIB"
                 type_polygon, nCorner = tg.type_hexagon_small, 6 
-            elif sicell in self.LD_cells[tg.type_pentagon_corner1]:
+            elif self.sicell in self.LD_cells[tg.type_pentagon_corner1]:
                 type_polygon, nCorner = tg.type_pentagon_corner1, 5
-            elif sicell in self.LD_cells[tg.type_pentagon_corner2]:
+            elif self.sicell in self.LD_cells[tg.type_pentagon_corner2]:
                 type_polygon, nCorner = tg.type_pentagon_corner2, 5
-            elif sicell in self.LD_cells[tg.type_pentagon_corner3]:
+            elif self.sicell in self.LD_cells[tg.type_pentagon_corner3]:
                 type_polygon, nCorner = tg.type_pentagon_corner3, 5
-            elif sicell in self.LD_cells[tg.type_pentagon_corner4]:
+            elif self.sicell in self.LD_cells[tg.type_pentagon_corner4]:
                 type_polygon, nCorner = tg.type_pentagon_corner4, 5
-            elif sicell in self.LD_cells[tg.type_pentagon_corner5]:
+            elif self.sicell in self.LD_cells[tg.type_pentagon_corner5]:
                 type_polygon, nCorner = tg.type_pentagon_corner5, 5
-            elif sicell in self.LD_cells[tg.type_pentagon_corner6]:
+            elif self.sicell in self.LD_cells[tg.type_pentagon_corner6]:
                 type_polygon, nCorner = tg.type_pentagon_corner6, 5
 
             return type_polygon, nCorner
+
+    def export_cpp_id_mapping(self):
+        """ export chId mapping for information wafer map """
+        with open("data/output_my_chId_mapping.json", 'w') as f:
+            json.dump(self.dict_my_chId_mapping, f, indent=4)
 
     def export_coordinate_data(self):
         """ export values for auxiliary boundary lines on the wafer map """
@@ -221,13 +227,7 @@ class PolygonManager:
 
         # evaluation + creation
         x, y  = self.get_cell_center_coordinates(iu, iv)
-        t, n  = self.get_polygon_information(self.sicell, self.rocpin)
-        self.graph = self.get_polygon(self.sicell, t, n, x, y) # padId, polygon type, nCorners, coordinates of cell center
+        t, n  = self.get_polygon_information()
+        self.graph = self.get_polygon(t, n, x, y) # polygon type, nCorners, coordinates of cell center
         self.collections[self.globalId] = self.graph
-
-        # # print globalId vs HGCROC pin
-        # print("{{{0},{1}}},").format(globalId, rocpin)
-    
-        # # print globalId vs padId
-        # print("{{{0},{1}}},").format(globalId, sicell)
 
