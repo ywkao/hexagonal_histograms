@@ -72,13 +72,14 @@ cell_helper = ROOT.HGCalCell(waferSize, nFine, nCoarse)
 
 # load geometry data
 fin = open("./data/WaferCellMapTrg.txt", 'r')
-contents = fin.readlines()[:223]
+#contents = fin.readlines()[:223] # full LD
+contents = fin.readlines()[667:778] # partial LD3
 fin.close()
 
 def retrieve_info(line):
-    contents = line.strip().split()
+    info = line.strip().split()
     result = []
-    for ele in contents:
+    for ele in info:
         if "LD" in ele or "CALIB" in ele:
             result.append(str(ele))
         elif "." in ele:
@@ -89,7 +90,7 @@ def retrieve_info(line):
 
 # loop over all the cells
 for i, line in enumerate(contents):
-	if i==0: continue # omit heading
+	if 'Seq' in line: continue # omit heading
 	if counter==UNTIL_THIS_NUMBER : break # manually control
 
 	density, _, roc, halfroc, seq, rocpin, sicell, _, _, iu, iv, t = retrieve_info(line)
@@ -101,8 +102,8 @@ for i, line in enumerate(contents):
 	# # print globalId vs HGCROC pin
 	# print("{{{0},{1}}},").format(globalId, rocpin)
 
-	# # print globalId vs padId
-	# print("{{{0},{1}}},").format(globalId, sicell)
+	# print globalId vs padId
+	print("{{{0},{1}}},").format(globalId, sicell)
 	
 	coor = cell_helper.cellUV2XY1(int(iu), int(iv), 0, typeCoarse)
 	x, y = coor[0], coor[1]
@@ -246,8 +247,9 @@ def exe(command):
 	print "\n>>> executing command, ", command
 	subprocess.call(command, shell=True)
 
-# execute python script for coordinate queries
-exe("./toolbox/coordinate_loader.py")
+# # execute python script for coordinate queries
+# exe("./toolbox/coordinate_loader.py")
 
 # execute root macro for TH2Poly
-exe("root -l -b -q th2poly.C'(\"./data/hexagons.root\", \"DQM_LD_wafer_map.pdf\", 26, 1)'")
+#exe("root -l -b -q th2poly.C'(\"./data/hexagons.root\", \"DQM_LD_wafer_map.pdf\", 26, 1)'")
+exe("root -l -b -q th2poly.C'(\"./data/hexagons.root\", \"DQM_partial_LD3_wafer_map.pdf\", 26, 1)'")
