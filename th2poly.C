@@ -2,7 +2,7 @@
 #include "include/map_channel_numbers.h"
 #include <map>
 
-void beautify_plot(bool drawLine = true, bool drawText = true);
+void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag = "LD_wafer");
 
 void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=false, TString NameTag="LD_wafer"){
     TCanvas *c1 = new TCanvas("c1", "", 900, 900);
@@ -134,18 +134,18 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
 
     p->SetMarkerSize(0.7);
     p->Draw("colz;text");
-    beautify_plot(drawLine);
+    beautify_plot(drawLine, true, NameTag);
     c1->SaveAs(outputfile);
     c1->SaveAs("info_"+NameTag+"_globalChannelId_readoutSequence.png");
 
     p_pin->SetMarkerSize(0.7);
     p_pin->Draw("colz;text");
-    beautify_plot(drawLine);
+    beautify_plot(drawLine, true, NameTag);
     c1->SaveAs("info_"+NameTag+"_HGCROC_pin_chan.png");
 
     p_sicell->SetMarkerSize(0.7);
     p_sicell->Draw("colz;text");
-    beautify_plot(drawLine);
+    beautify_plot(drawLine, true, NameTag);
     c1->SaveAs("info_"+NameTag+"_SiCell_padId.png");
 
     //-----------------------------------------------------------------
@@ -156,7 +156,7 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
 
 }
 
-void beautify_plot(bool drawLine = true, bool drawText = true) {
+void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag = "LD_wafer") {
     //-----------------------------------------------------------------
     // cosmetics
     //-----------------------------------------------------------------
@@ -200,6 +200,7 @@ void beautify_plot(bool drawLine = true, bool drawText = true) {
 
         // evaluate (r, phi) and apply rotation
         for(int i=0; i<6; ++i) {
+            if(NameTag.Contains("partial") && (i==2||i==3||i==4)) continue;
             text.SetTextAngle(theta_angle_text[i]);
             double theta = theta_coordinate_text[i];
             double cos_theta = TMath::Cos(theta);
@@ -212,7 +213,11 @@ void beautify_plot(bool drawLine = true, bool drawText = true) {
             double sin_phi = y/r;
             x = r*(cos_phi*cos_theta + sin_phi*sin_theta)*arbUnit_to_cm;
             y = r*(sin_phi*cos_theta - cos_phi*sin_theta)*arbUnit_to_cm;
-            text.DrawText(x, y, v_texts[i]);
+
+            if(NameTag.Contains("partial") && (i==5))
+                text.DrawText(x, y, "chip-1, half-0");
+            else
+                text.DrawText(x, y, v_texts[i]);
         }
     }
 }

@@ -18,7 +18,7 @@ class PolygonManager:
         cell_helper = ROOT.HGCalCell(waferSize, nFine, nCoarse)
 
         # wafer information
-        self.type = wafer_type
+        self.waferType = wafer_type
         self.LD_cells = tg.LD_cells
         self.cell_helper = cell_helper
         self.cell_fine_or_coarse = typeCoarse
@@ -68,13 +68,16 @@ class PolygonManager:
 
         return graph
     
-    def get_cell_center_coordinates(self, iu, iv):
+    def get_cell_center_coordinates(self):
         """ convert (u, v) to (x, y) coordinates with global coorections """
 
         if self.cellType == "NC":
-            x = tg.Coordinates_NC_channels['x'][self.cellIdx%8]*self.arbUnit_to_cm
-            y = tg.Coordinates_NC_channels['y'][self.cellIdx%8]*self.arbUnit_to_cm
-            theta = 2*math.pi/3. * (self.cellIdx//8) - math.pi/3.
+            x = tg.Coordinates_NC_channels[self.waferType]['x'][self.cellIdx%8]*self.arbUnit_to_cm
+            y = tg.Coordinates_NC_channels[self.waferType]['y'][self.cellIdx%8]*self.arbUnit_to_cm
+            if self.waferType == "full":
+                theta = 2*math.pi/3. * (self.cellIdx//8) - math.pi/3.
+            elif self.waferType == "partial":
+                theta = tg.Coordinates_NC_channels[self.waferType]['theta'][self.cellIdx]
             cos_theta = math.cos(theta)
             sin_theta = math.sin(theta)
 
@@ -90,9 +93,14 @@ class PolygonManager:
         elif self.cellType == "CM":
             # assign coordinates
             correction_fine_tune_y_coordinate = 2. if self.cellIdx//4 == 0 else 0.
-            x = tg.Coordinates_CM_channels['x'][self.cellIdx%4]*self.arbUnit_to_cm
-            y = tg.Coordinates_CM_channels['y'][self.cellIdx%4]*self.arbUnit_to_cm - correction_fine_tune_y_coordinate*self.arbUnit_to_cm
-            theta = 2*math.pi/3. * (self.cellIdx//4) - math.pi/3.
+            if self.waferType == "full":
+                x = tg.Coordinates_CM_channels[self.waferType]['x'][self.cellIdx%4]*self.arbUnit_to_cm
+                y = tg.Coordinates_CM_channels[self.waferType]['y'][self.cellIdx%4]*self.arbUnit_to_cm - correction_fine_tune_y_coordinate*self.arbUnit_to_cm
+                theta = 2*math.pi/3. * (self.cellIdx//4) - math.pi/3.
+            elif self.waferType == "partial":
+                x = tg.Coordinates_CM_channels[self.waferType]['x'][self.cellIdx]*self.arbUnit_to_cm
+                y = tg.Coordinates_CM_channels[self.waferType]['y'][self.cellIdx]*self.arbUnit_to_cm - correction_fine_tune_y_coordinate*self.arbUnit_to_cm
+                theta = tg.Coordinates_CM_channels[self.waferType]['theta'][self.cellIdx]
             cos_theta = math.cos(theta)
             sin_theta = math.sin(theta)
     
@@ -105,7 +113,7 @@ class PolygonManager:
             return xprime, yprime
 
         else:
-            coor = self.cell_helper.cellUV2XY1(int(iu), int(iv), 0, self.cell_fine_or_coarse)
+            coor = self.cell_helper.cellUV2XY1(int(self.iu), int(self.iv), 0, self.cell_fine_or_coarse)
             x, y = coor[0], coor[1]
     
             # evaluate (r, phi) and apply rotation
@@ -118,9 +126,9 @@ class PolygonManager:
 
     def get_polygon_information(self):
         """ return type of polygon & nCorner of it """
-        if self.type == "full":
+        if self.waferType == "full":
             return self.get_polygon_info_LD_full()
-        elif self.type == "partial":
+        elif self.waferType == "partial":
             return self.get_polygon_info_LD_partial()
         else:
             try:
@@ -211,13 +219,13 @@ class PolygonManager:
         fout.Close()
 
     def __str__(self):
-        return "globalId = {0}, sicell = {1}, rocpin = {2}, graph = {3}".format(self.globalId, self.sicell, self.rocpin, self.graph)
+        return "globalId = {0}, rocpin = {1}, sicell = {2}, {3}, graph = {4}".format(self.globalId, self.rocpin, self.sicell, (self.iu,self.iv), self.graph)
 
     def run(self, channelIds, coor_uv, cellType="", cellIdx=-1, cellName="hex"):
         """ main method for controling flow """
 
         # cell Id and (u, v) coordinates
-        iu, iv = coor_uv
+        self.iu, self.iv = coor_uv
         self.globalId, self.sicell, self.rocpin = channelIds
 
         # cell info (ad hoc for CM and non-connected channels)
@@ -226,7 +234,7 @@ class PolygonManager:
         self.cellName = cellName
 
         # evaluation + creation
-        x, y  = self.get_cell_center_coordinates(iu, iv)
+        x, y  = self.get_cell_center_coordinates()
         t, n  = self.get_polygon_information()
         self.graph = self.get_polygon(t, n, x, y) # polygon type, nCorners, coordinates of cell center
         self.collections[self.globalId] = self.graph
