@@ -35,6 +35,19 @@ type_hexagon_corner4 = 64
 type_hexagon_corner5 = 65
 type_hexagon_corner6 = 66
 
+global_channel_Id_special_channels = {
+    "partial" : {
+        "CMIds" : [37, 38, 76, 77, 115, 116, 154, 155, 193, 194, 232, 233],
+        "NonConnIds" : [8, 17, 19, 28, 47, 56, 58, 67, 86, 95, 97, 106, 125, 134, 136, 145, 164, 173, 175, 184, 203, 212, 214, 223]
+    },
+    "full" : {
+        "CMIds" : [37, 38, 76, 77, 115, 116, 154, 155, 193, 194, 232, 233],
+        "NonConnIds" : [8, 17, 19, 28, 47, 56, 58, 67, 86, 95, 97, 106, 125, 134, 136, 145, 164, 173, 175, 184, 203, 212, 214, 223]
+    },
+}
+
+gcId = global_channel_Id_special_channels
+
 #--------------------------------------------------
 # Coordinates of calib and CM channels
 #--------------------------------------------------
@@ -170,7 +183,7 @@ base = {
 	},
 }
 
-LD_special_polygonal_cells = {
+LD_cells = { # dictionary for special cells
 	type_pentagon_side1 : [2, 3, 4, 5, 6, 7],
 	type_pentagon_side2 : [18, 28, 39, 51, 65, 80, 95],
 	type_pentagon_side3 : [126, 140, 155, 168, 179, 189],
@@ -190,8 +203,4 @@ LD_special_polygonal_cells = {
 	type_hexagon_corner5 : [191],
 	type_hexagon_corner6 : [81],
 }
-
-LD_special_polygonal_cells_all = []
-for i in range(type_pentagon_side1, type_pentagon_side6+1):
-	LD_special_polygonal_cells_all += LD_special_polygonal_cells[i] 
 
