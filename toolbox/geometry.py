@@ -52,9 +52,6 @@ gcId = global_channel_Id_special_channels
 #--------------------------------------------------
 # Coordinates of calib and CM channels
 #--------------------------------------------------
-# calibration channels and hollow channels
-calibration_cells = [14, 62, 70, 143, 154, 163]
-hollow_cells = [13, 61, 69, 142, 153, 162]
 
 # Coordinates of calibration channels
 calib_distance_factor = 14.
@@ -199,23 +196,47 @@ base = {
 }
 
 LD_cells = { # dictionary for special cells
-	type_pentagon_side1 : [2, 3, 4, 5, 6, 7],
-	type_pentagon_side2 : [18, 28, 39, 51, 65, 80, 95],
-	type_pentagon_side3 : [126, 140, 155, 168, 179, 189],
-	type_pentagon_side4 : [191, 192, 193, 194, 195, 196, 197],
-	type_pentagon_side5 : [112, 127, 141, 156, 169, 180],
- 	type_pentagon_side6 : [9, 19, 29, 40, 52, 66, 81],
-	type_pentagon_corner1 : [1],
-	type_pentagon_corner2 : [8],
-	type_pentagon_corner3 : [111],
-	type_pentagon_corner4 : [198],
-	type_pentagon_corner5 : [190],
-	type_pentagon_corner6 : [96],
-	type_hexagon_corner1 : [9],
-	type_hexagon_corner2 : [18],
-	type_hexagon_corner3 : [95],
-	type_hexagon_corner4 : [197],
-	type_hexagon_corner5 : [191],
-	type_hexagon_corner6 : [81],
+    "full": {
+	    type_pentagon_side1 : [2, 3, 4, 5, 6, 7],
+	    type_pentagon_side2 : [18, 28, 39, 51, 65, 80, 95],
+	    type_pentagon_side3 : [126, 140, 155, 168, 179, 189],
+	    type_pentagon_side4 : [191, 192, 193, 194, 195, 196, 197],
+	    type_pentagon_side5 : [112, 127, 141, 156, 169, 180],
+	    type_pentagon_side6 : [9, 19, 29, 40, 52, 66, 81],
+	    type_pentagon_corner1 : [1],
+	    type_pentagon_corner2 : [8],
+	    type_pentagon_corner3 : [111],
+	    type_pentagon_corner4 : [198],
+	    type_pentagon_corner5 : [190],
+	    type_pentagon_corner6 : [96],
+	    type_hexagon_corner1 : [9],
+	    type_hexagon_corner2 : [18],
+	    type_hexagon_corner3 : [95],
+	    type_hexagon_corner4 : [197],
+	    type_hexagon_corner5 : [191],
+	    type_hexagon_corner6 : [81],
+        type_hollow : [13, 61, 69, 142, 153, 162], # cells around a calib channel
+        type_hexagon_small : [14, 62, 70, 143, 154, 163], # calibration_cells
+    },
+    "partial" : {
+        #--------------------------------------------------
+        # Next to-do tuning:
+        # 89 has to be a hollow pentagon
+        # 85 is a pentagon
+        # 14, 35, 61, 93, 126, 157, 185, 207 have to be cut half
+        #--------------------------------------------------
+        type_hollow : [12, 168], # cells around a calib channel
+        type_hexagon_small : [13, 90, 169], # calibration_cells
+	    type_pentagon_side1 : [2, 3, 4, 104, 105, 106, 107, 108, 109, 110],
+	    type_pentagon_side4 : [86, 87, 88, 89, 91, 92, 93, 205, 206, 207],
+	    type_pentagon_side5 : [119, 136, 151, 167, 180, 193],
+	    type_pentagon_side6 : [20, 30, 43, 55, 71],
+	    type_pentagon_corner1 : [1],
+	    type_pentagon_corner5 : [203],
+	    type_pentagon_corner6 : [103],
+	    type_hexagon_corner1 : [9],
+	    type_hexagon_corner5 : [204],
+	    type_hexagon_corner6 : [85],
+    },
 }
 
