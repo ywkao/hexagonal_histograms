@@ -1,4 +1,5 @@
 #include "include/auxiliary_boundary_lines.h"
+#include "include/auxiliary_boundary_lines_partial_wafer.h"
 #include "include/map_channel_numbers.h"
 #include <map>
 
@@ -171,7 +172,19 @@ void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag =
     //-----------------------------------------------------------------
     // cosmetics
     //-----------------------------------------------------------------
-    if(drawLine) {
+    if(drawLine && NameTag.Contains("partial")) {
+        TLine line;
+        line.SetLineStyle(1);
+        line.SetLineColor(2);
+        line.SetLineWidth(2);
+
+        for(int i=0; i<14; ++i)
+            line.DrawLine(aux::x1_partial_wafer[i], aux::y1_partial_wafer[i], aux::x1_partial_wafer[i+1], aux::y1_partial_wafer[i+1]);
+
+        for(int i=0; i<16; ++i)
+            line.DrawLine(aux::x2_partial_wafer[i], aux::y2_partial_wafer[i], aux::x2_partial_wafer[i+1], aux::y2_partial_wafer[i+1]);
+
+    } else if(drawLine) {
         // load N_boundary_points, x1, x2, x3, y1, y2, y3 from auxiliary_boundary_lines.h
 
         TLine line;

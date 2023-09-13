@@ -70,7 +70,9 @@ def main():
 if __name__ == "__main__":
     main()
 
-    if args.drawLine:
+    if args.drawLine and args.partial:
+        exe("./toolbox/coordinate_loader.py --partial") # execute python script for coordinate queries
+    elif args.drawLine:
         exe("./toolbox/coordinate_loader.py") # execute python script for coordinate queries
 
     if args.partial:

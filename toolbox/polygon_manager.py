@@ -52,7 +52,10 @@ class PolygonManager:
 
         self.dict_my_chId_mapping[self.globalId] = [self.sicell, self.rocpin]
         if not (self.cellType=="CM" or self.cellType=="NC"):
-            self.dict_my_coordinate_data[self.sicell] = polygon
+            if self.waferType == "partial":
+                self.dict_my_coordinate_data[self.globalId] = polygon
+            elif self.waferType == "full":
+                self.dict_my_coordinate_data[self.sicell] = polygon
 
         graph = ROOT.TGraph(nCorner+1, np.array(polygon['x']), np.array(polygon['y']))
         graph.SetTitle("")
