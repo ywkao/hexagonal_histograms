@@ -11,7 +11,7 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
 
     gStyle->SetPaintTextFormat(".0f");
 
-    int scheme = 0;
+    int scheme = 1;
     TString title;
     //--------------------------------------------------
     // Test profile
@@ -29,6 +29,11 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
         case 1: // scheme: expected injected channels
             title = "Manual specification";
             for(int i=0; i<234; ++i) {
+                if(i==18 || i==57 || i==96 || i==135 || i==174 || i==213) {
+                    profile->Fill(i, 100);
+                }
+                continue;
+
                 double value = (float)i;
                 if(i==0) profile->Fill(i, value+1e-6);
                 else if(i==20) profile->Fill(i, value);
@@ -144,21 +149,29 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
         p_sicell->SetBinContent(i+1, map_SiCell_pad[i]);
     }
 
-    p->SetMarkerSize(0.7);
-    p->Draw("colz;text");
-    beautify_plot(drawLine, true, NameTag);
-    c1->SaveAs(outputfile);
-    c1->SaveAs("info_"+NameTag+"_globalChannelId_readoutSequence.png");
+    if(scheme==0) {
+        p->SetMarkerSize(0.7);
+        p->Draw("colz;text");
+        beautify_plot(drawLine, true, NameTag);
+        c1->SaveAs(outputfile);
+        c1->SaveAs("info_"+NameTag+"_globalChannelId_readoutSequence.png");
 
-    p_pin->SetMarkerSize(0.7);
-    p_pin->Draw("colz;text");
-    beautify_plot(drawLine, true, NameTag);
-    c1->SaveAs("info_"+NameTag+"_HGCROC_pin_chan.png");
+        p_pin->SetMarkerSize(0.7);
+        p_pin->Draw("colz;text");
+        beautify_plot(drawLine, true, NameTag);
+        c1->SaveAs("info_"+NameTag+"_HGCROC_pin_chan.png");
 
-    p_sicell->SetMarkerSize(0.7);
-    p_sicell->Draw("colz;text");
-    beautify_plot(drawLine, true, NameTag);
-    c1->SaveAs("info_"+NameTag+"_SiCell_padId.png");
+        p_sicell->SetMarkerSize(0.7);
+        p_sicell->Draw("colz;text");
+        beautify_plot(drawLine, true, NameTag);
+        c1->SaveAs("info_"+NameTag+"_SiCell_padId.png");
+    } else {
+        p->SetMarkerSize(0.7);
+        p->Draw("colz;text");
+        beautify_plot(drawLine, true, NameTag);
+        c1->SaveAs(outputfile);
+        c1->SaveAs("test_injection_"+NameTag+".png");
+    }
 
     //-----------------------------------------------------------------
     // Reminder: counter = nCells - 9
