@@ -245,12 +245,20 @@ class PolygonManager:
 
     def export_cpp_id_mapping(self):
         """ export chId mapping for information wafer map """
-        with open("data/output_my_chId_mapping.json", 'w') as f:
+        if self.waferType == "full":
+            output_json = "data/output_my_chId_mapping.json"
+        elif self.waferType == "partial":
+            output_json = "data/output_my_chId_mapping_partial_wafer.json"
+        with open(output_json, 'w') as f:
             json.dump(self.dict_my_chId_mapping, f, indent=4)
 
     def export_coordinate_data(self):
         """ export values for auxiliary boundary lines on the wafer map """
-        with open("data/output_my_coordinate_data.json", 'w') as f:
+        if self.waferType == "full":
+            output_json = "data/output_my_coordinate_data.json"
+        elif self.waferType == "partial":
+            output_json = "data/output_my_coordinate_partial_wafer.json"
+        with open(output_json, 'w') as f:
             json.dump(self.dict_my_coordinate_data, f, indent=4)
 
     def export_root_file(self):

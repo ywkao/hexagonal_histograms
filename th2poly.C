@@ -120,6 +120,17 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
     TRandom r;
     p->ChangePartition(100, 100);
 
+    std::map<int, int> map_HGCROC_pin;
+    std::map<int, int> map_SiCell_pad;
+
+    if(NameTag.Contains("partial")) {
+        map_HGCROC_pin = map_HGCROC_pin_partial_wafer;
+        map_SiCell_pad = map_SiCell_pad_partial_wafer;
+    } else {
+        map_HGCROC_pin = map_HGCROC_pin_full_wafer;
+        map_SiCell_pad = map_SiCell_pad_full_wafer;
+    }
+
     for(int i=0; i<counter; ++i) {
         double value = profile->GetBinContent(i+1);
         p->SetBinContent(i+1, value);
@@ -129,7 +140,7 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
         else
             p_pin->SetBinContent(i+1, map_HGCROC_pin[i]);
 
-        p_sicell->SetBinContent(i+1, map_SiCell_padId[i]);
+        p_sicell->SetBinContent(i+1, map_SiCell_pad[i]);
     }
 
     p->SetMarkerSize(0.7);

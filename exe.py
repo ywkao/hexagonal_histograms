@@ -64,6 +64,7 @@ def main():
     # Export geometry root file
     polygon_manager.export_root_file() # geometry root file for DQM
     polygon_manager.export_coordinate_data() # store coordinates for auxiliary lines
+    polygon_manager.export_cpp_id_mapping() # store chIds for information wafer map
 
 
 if __name__ == "__main__":
