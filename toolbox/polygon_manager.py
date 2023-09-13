@@ -155,6 +155,12 @@ class PolygonManager:
                 type_polygon, nCorner = tg.type_hexagon_small, 6
             elif self.sicell in self.LD_cells[self.waferType][tg.type_hollow]:
                 type_polygon, nCorner = tg.type_hollow, 14
+            elif self.sicell in self.LD_cells[self.waferType][tg.type_pentagon_hollow]:
+                type_polygon, nCorner = tg.type_pentagon_hollow, 13
+            elif self.sicell in self.LD_cells[self.waferType][tg.type_trapezoid_left]:
+                type_polygon, nCorner = tg.type_trapezoid_left, 4
+            elif self.sicell in self.LD_cells[self.waferType][tg.type_trapezoid_extended_left]:
+                type_polygon, nCorner = tg.type_trapezoid_extended_left, 4
             elif self.sicell in self.LD_cells[self.waferType][tg.type_pentagon_side1]:
                 type_polygon, nCorner = tg.type_pentagon_side1, 5
             elif self.sicell in self.LD_cells[self.waferType][tg.type_pentagon_side4]:
@@ -167,14 +173,14 @@ class PolygonManager:
                 type_polygon, nCorner = tg.type_pentagon_corner1, 5
             elif self.sicell in self.LD_cells[self.waferType][tg.type_pentagon_corner5]:
                 type_polygon, nCorner = tg.type_pentagon_corner5, 5
-            elif self.sicell in self.LD_cells[self.waferType][tg.type_pentagon_corner6]:
-                type_polygon, nCorner = tg.type_pentagon_corner6, 5
+            elif self.sicell in self.LD_cells[self.waferType][tg.type_partial_wafer_pentagon_corner6]:
+                type_polygon, nCorner = tg.type_partial_wafer_pentagon_corner6, 5
             elif self.sicell in self.LD_cells[self.waferType][tg.type_hexagon_corner1]:
                 type_polygon, nCorner = tg.type_hexagon_corner1, 6
             elif self.sicell in self.LD_cells[self.waferType][tg.type_hexagon_corner5]:
                 type_polygon, nCorner = tg.type_hexagon_corner5, 6
-            elif self.sicell in self.LD_cells[self.waferType][tg.type_hexagon_corner6]:
-                type_polygon, nCorner = tg.type_hexagon_corner6, 6
+            elif self.sicell in self.LD_cells[self.waferType][tg.type_partial_wafer_hexagon_corner6]:
+                type_polygon, nCorner = tg.type_partial_wafer_hexagon_corner6, 6
             return type_polygon, nCorner
 
     def get_polygon_info_LD_full(self):

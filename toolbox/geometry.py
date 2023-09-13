@@ -14,28 +14,35 @@ type_square = 4
 type_regular_pentagon = 5
 type_hexagon = 6
 type_hexagon_small = 7
-type_hollow = 8
 type_circle = 12 
+type_pentagon_hollow = 13
+type_hollow = 14
 
-type_pentagon_corner1 = 41
-type_pentagon_corner2 = 42
-type_pentagon_corner3 = 43
-type_pentagon_corner4 = 44
-type_pentagon_corner5 = 45
-type_pentagon_corner6 = 46
-type_pentagon_side1 = 51
-type_pentagon_side2 = 52
-type_pentagon_side3 = 53
-type_pentagon_side4 = 54
-type_pentagon_side5 = 55
-type_pentagon_side6 = 56
+type_trapezoid_left = 41
+type_trapezoid_extended_left = 42
+
+type_pentagon_side1 = 501
+type_pentagon_side2 = 502
+type_pentagon_side3 = 503
+type_pentagon_side4 = 504
+type_pentagon_side5 = 505
+type_pentagon_side6 = 506
+type_pentagon_corner1 = 507
+type_pentagon_corner2 = 508
+type_pentagon_corner3 = 509
+type_pentagon_corner4 = 510
+type_pentagon_corner5 = 511
+type_pentagon_corner6 = 512
+type_partial_wafer_pentagon_corner6 = 513
 type_hexagon_corner1 = 61
 type_hexagon_corner2 = 62
 type_hexagon_corner3 = 63
 type_hexagon_corner4 = 64
 type_hexagon_corner5 = 65
 type_hexagon_corner6 = 66
+type_partial_wafer_hexagon_corner6 = 67
 
+# information of CM and NC in global Id (readout sequence)
 global_channel_Id_special_channels = {
     "partial" : {
         "CMIds" : [37, 38, 76, 77, 115, 116],
@@ -79,7 +86,7 @@ Coordinates_CM_channels = {
 
 Coordinates_NC_channels = {
     "partial": {
-	    'x' : [-10, -7.5, 2.5, 5.0, 7.5, 10., 10., 7.5],
+	    'x' : [-7.5, -5.0, 2.5, 5.0, 7.5, 10., 7.5, 5.0],
 	    'y' : [32, 32, 32, 32, 32, 32, 32, 32],
         'theta' : [-p3, -p3, -p3, -p3, -p3, -p3, p3*3, p3*3]
     },
@@ -93,6 +100,18 @@ Coordinates_NC_channels = {
 # Define base polygons
 #--------------------------------------------------
 base = {
+	type_hexagon : {
+		'x': [0, 1*s3, 1*s3, 0, -1*s3, -1*s3, 0],
+		'y': [2, 1, -1, -2, -1, 1, 2]
+	},
+	type_trapezoid_left : {
+		'x': [0, 0, -1*s3, -1*s3, 0],
+	    'y': [2, -2, -1, 1, 2]
+	},
+	type_trapezoid_extended_left : {
+		'x': [0, 0, -1*s3, -1*s3, 0],
+	    'y': [2, -2, -2, 1, 2]
+	},
 	type_pentagon_side1 : {
 		'x': [1*s3, 1*s3, 0, -1*s3, -1*s3, 1*s3],
 	 	'y': [1, -1, -2, -1, 1, 1]
@@ -141,6 +160,10 @@ base = {
 		'x': [-0.5*s3, 1*s3, 1*s3, 0, -69.*s3/58., -7.*s3/6., -0.5*s3],
 	 	'y': [2.5, 1, -1, -2, -47./58., 0.5, 2.5]
 	},
+	type_partial_wafer_hexagon_corner6 : {
+		'x': [-0.5*s3, 1*s3, 1*s3, -23.*493.*s3/(58.*163.), -69.*s3/58., -7.*s3/6., -0.5*s3],
+	    'y': [2.5, 1, -2, -2, -47./58., 0.5, 2.5]
+	},
 	type_pentagon_corner1 : {
 		'x': [s3/2., 1*s3, 1*s3, 0, -69.*s3/58., s3/2.],
 	 	'y': [1, 1, -1, -2, -47./58., 1]
@@ -165,6 +188,10 @@ base = {
 		'x': [-11.*s3/58., 1*s3, 1*s3, 0, -s3/4., -11.*s3/58.],
 	 	'y': [127./58., 1, -1, -2, -1.25, 127./58.]
 	},
+	type_partial_wafer_pentagon_corner6: {
+		'x': [-1885*s3/(58.*163.), 1*s3, 1*s3, 0, -s3/4., -1885*s3/(58.*163.)],
+	    'y': [1, 1, -1, -2, -1.25, 1]
+	},
 	type_triangle : {
 		'x': [0, 1*s3, -1*s3, 0],
 	 	'y': [2, -1, -1, 2]
@@ -177,10 +204,6 @@ base = {
 		'x' : [0, 2*math.cos(pi/10.), 2*math.cos(17.*pi/10.), 2*math.cos(13.*pi/10.), 2*math.cos(9.*pi/10.), 0],
 		'y' : [2, 2*math.sin(pi/10.), 2*math.sin(17.*pi/10.), 2*math.sin(13.*pi/10.), 2*math.sin(9.*pi/10.), 2],
 	},
-	type_hexagon : {
-		'x': [0, 1*s3, 1*s3, 0, -1*s3, -1*s3, 0],
-	 	'y': [2, 1, -1, -2, -1, 1, 2]
-	},
 	type_hexagon_small : {
 		'x': [0, 0.45*s3, 0.45*s3, 0, -0.45*s3, -0.45*s3, 0],
 	 	'y': [0.9, 0.45, -0.45, -0.9, -0.45, 0.45, 0.9]
@@ -188,6 +211,10 @@ base = {
 	type_hollow : {
 		'x': [0, 1*s3, 1*s3, 0, -1*s3, -1*s3, 0, 0, -0.6*s3, -0.6*s3, 0, 0.6*s3, 0.6*s3, 0, 0],
 	 	'y': [2, 1, -1, -2, -1, 1, 2, 1.2, 0.6, -0.6, -1.2, -0.6, 0.6, 1.2, 2]
+	},
+	type_pentagon_hollow : {
+		'x': [0, 1*s3, 1*s3, -1*s3, -1*s3, 0, 0, -0.6*s3, -0.6*s3, 0, 0.6*s3, 0.6*s3, 0, 0],
+	 	'y': [2, 1, -2, -2, 1, 2, 1.2, 0.6, -0.6, -1.2, -0.6, 0.6, 1.2, 2]
 	},
 	type_circle : {
 		'x': [0, 1, 1*s3, 2, 1*s3, 1, 0, -1, -1*s3, -2, -1*s3, -1, 0],
@@ -226,17 +253,20 @@ LD_cells = { # dictionary for special cells
         # 14, 35, 61, 93, 126, 157, 185, 207 have to be cut half
         #--------------------------------------------------
         type_hollow : [12, 168], # cells around a calib channel
+        type_pentagon_hollow : [89], # cells around a calib channel
         type_hexagon_small : [13, 90, 169], # calibration_cells
+        type_trapezoid_left : [14, 35, 61, 126, 157, 185],
+        type_trapezoid_extended_left : [93, 207],
 	    type_pentagon_side1 : [2, 3, 4, 104, 105, 106, 107, 108, 109, 110],
-	    type_pentagon_side4 : [86, 87, 88, 89, 91, 92, 93, 205, 206, 207],
+	    type_pentagon_side4 : [86, 87, 88, 91, 92, 93, 205, 206, 207],
 	    type_pentagon_side5 : [119, 136, 151, 167, 180, 193],
 	    type_pentagon_side6 : [20, 30, 43, 55, 71],
 	    type_pentagon_corner1 : [1],
 	    type_pentagon_corner5 : [203],
-	    type_pentagon_corner6 : [103],
+	    type_partial_wafer_pentagon_corner6 : [103],
 	    type_hexagon_corner1 : [9],
 	    type_hexagon_corner5 : [204],
-	    type_hexagon_corner6 : [85],
+	    type_partial_wafer_hexagon_corner6 : [85],
     },
 }
 

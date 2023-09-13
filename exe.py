@@ -74,10 +74,10 @@ if __name__ == "__main__":
 
     if args.partial:
         tag = "LD_partial_wafer"
-        outputName = "DQM_LD_partial_wafer_map.pdf"
+        outputName = "DQM_LD_partial_wafer_map.png"
     else:
         tag = "LD_wafer"
-        outputName = "DQM_LD_wafer_map.pdf"
+        outputName = "DQM_LD_wafer_map.png"
 
     exe("root -l -b -q th2poly.C'(\"./data/hexagons.root\", \"%s\", 26, %d, \"%s\")'" % (outputName, args.drawLine, tag)) # execute root macro for TH2Poly
 
