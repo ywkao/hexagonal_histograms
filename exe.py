@@ -52,14 +52,14 @@ def main():
         globalId = 78*roc + 39*halfroc + seq
         channelIds = (globalId, sicell, rocpin)
         polygon_manager.run(channelIds, (iu,iv), cellType, cellIdx, cellName)
-        if args.verbose: print("idx = {0}, {1}".format(i, polygon_manager))
+        if args.verbose: print(polygon_manager)
         if polygon_manager.counter==args.n : break # manually control how many cells to display
 
     # Add additional cells for CM channels
     for idx, CM in enumerate(tp.tg.gcId[waferType]["CMIds"]):
         channelIds = (CM, -1, -1) # globalId, artificial sicell, rocpin
         polygon_manager.run(channelIds, (-1,-1), "CM", idx, "hex_cm")
-        if args.verbose: print("idx = {0}, {1}".format(idx, polygon_manager))
+        if args.verbose: print(polygon_manager)
 
     # Export geometry root file
     polygon_manager.export_root_file() # geometry root file for DQM
@@ -83,5 +83,5 @@ if __name__ == "__main__":
         tag = "LD_wafer"
         outputName = "waferMaps/DQM_LD_wafer_map.png"
 
-    exe("root -l -b -q th2poly.C'(\"./data/hexagons.root\", \"%s\", 26, %d, \"%s\")'" % (outputName, args.drawLine, tag)) # execute root macro for TH2Poly
+    exe("root -l -b -q th2poly.C'(\"./data/hexagons.root\", \"%s\", 14, %d, \"%s\")'" % (outputName, args.drawLine, tag)) # execute root macro for TH2Poly
 

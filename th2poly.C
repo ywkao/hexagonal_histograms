@@ -84,21 +84,21 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
     newNameTag.ReplaceAll("_", " ");
 
     title = newNameTag + " with global channel id (readout sequence)";
-    TH2Poly *p = new TH2Poly("hexagonal histograms", title, -1*range, range, -1*range-2, range-2);
+    TH2Poly *p = new TH2Poly("hexagonal histograms", title, -1*range, range, -1*range, range);
     p->SetStats(0);
     p->GetXaxis()->SetTitle("x (cm)");
     p->GetYaxis()->SetTitle("y (cm)");
     p->GetYaxis()->SetTitleOffset(1.1);
 
     title = newNameTag + " with HGCROC pin/chan";
-    TH2Poly *p_pin = new TH2Poly("p_pin", title, -1*range, range, -1*range-2, range-2);
+    TH2Poly *p_pin = new TH2Poly("p_pin", title, -1*range, range, -1*range, range);
     p_pin->SetStats(0);
     p_pin->GetXaxis()->SetTitle("x (cm)");
     p_pin->GetYaxis()->SetTitle("y (cm)");
     p_pin->GetYaxis()->SetTitleOffset(1.1);
 
     title = newNameTag + " with Si cell pad Id";
-    TH2Poly *p_sicell = new TH2Poly("p_sicell", title, -1*range, range, -1*range-2, range-2);
+    TH2Poly *p_sicell = new TH2Poly("p_sicell", title, -1*range, range, -1*range, range);
     p_sicell->SetStats(0);
     p_sicell->GetXaxis()->SetTitle("x (cm)");
     p_sicell->GetYaxis()->SetTitle("y (cm)");
@@ -222,14 +222,14 @@ void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag =
         double theta3 = TMath::Pi();
         std::vector<double> theta_angle_text = {60, 60, -60, -60, 0, 0};
         std::vector<double> theta_coordinate_text = {theta1, theta1, theta2, theta2, theta3, theta3};
-        //std::vector<double> x_coordinate_text = {-6.25, 6.25, -6.25, 6.25, -6.25, 6.25};
-        std::vector<double> x_coordinate_text = {-6.25, 6.25, -5, 7.5, -6.25, 6.25};
-        std::vector<double> y_coordinate_text = {23.5, 23.5, 26, 26, 26.4, 26.4};
+        //std::vector<double> x_coordinate_text = {-6.25, 6.25, -5, 7.5, -6.25, 6.25};
+        std::vector<double> x_coordinate_text = {-6.25, 6.25, -6.25, 6.25, -6.25, 6.25};
+        std::vector<double> y_coordinate_text = {26, 26, 26, 26, 26, 26};
         std::vector<TString> v_texts = {"chip-0, half-1", "chip-0, half-0",
                                         "chip-1, half-1", "chip-1, half-0",
                                         "chip-2, half-1", "chip-2, half-0"};
 
-        double arbUnit_to_cm = 17./24.;
+        double arbUnit_to_cm = 6.9767/20.;
 
         // evaluate (r, phi) and apply rotation
         for(int i=0; i<6; ++i) {

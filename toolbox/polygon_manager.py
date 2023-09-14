@@ -8,7 +8,8 @@ ROOT.gROOT.SetBatch(True)
 class PolygonManager:
     def __init__(self, wafer_type):
         # configuration parameters & shared library
-        arbUnit_to_cm = 17./24.
+        mm2cm = 0.10
+        arbUnit_to_cm = (6.9767/2.)*mm2cm # 17./24.
         waferSize = 60 * arbUnit_to_cm
         nFine, nCoarse = 0, 10 #222
         typeFine, typeCoarse = 0, 1
@@ -23,10 +24,11 @@ class PolygonManager:
         self.cell_helper = cell_helper
         self.cell_fine_or_coarse = typeCoarse
         self.arbUnit_to_cm = arbUnit_to_cm
+        self.cm2mm = 10.0
 
         # global corrections on coordinates
-        self.global_correction_x = 2*tg.s3
-        self.global_correction_y = -5
+        self.global_correction_x = -1.2083998869165784
+        self.global_correction_y = 2.09301
         self.global_theta = 5.*math.pi/6. # 150 degree
         self.cos_global_theta = math.cos(self.global_theta)
         self.sin_global_theta = math.sin(self.global_theta)
@@ -50,6 +52,7 @@ class PolygonManager:
         polygon['x'] = [ element*self.arbUnit_to_cm*resize_factor + x for element in polygon_base['x'] ]
         polygon['y'] = [ element*self.arbUnit_to_cm*resize_factor + y for element in polygon_base['y'] ]
 
+        # save info in dictionary for mapping
         self.dict_my_chId_mapping[self.globalId] = [self.sicell, self.rocpin]
         if not (self.cellType=="CM" or self.cellType=="NC"):
             if self.waferType == "partial":
@@ -57,6 +60,7 @@ class PolygonManager:
             elif self.waferType == "full":
                 self.dict_my_coordinate_data[self.sicell] = polygon
 
+        # create a graph
         graph = ROOT.TGraph(nCorner+1, np.array(polygon['x']), np.array(polygon['y']))
         graph.SetTitle("")
         graph.GetXaxis().SetTitle("x (arb. unit)")
@@ -66,6 +70,15 @@ class PolygonManager:
         graph.SetMinimum(-200)
         graph.GetXaxis().SetLimits(-200, 200)
         graph.SetName(self.cellName + "_%d" % self.globalId)
+
+        # evaluation of area
+        self.area = graph.Integral()
+        if isinstance(self.rocpin, str):
+            self.area = 0.29239 # area of LD calibration cell in cm^{2}
+        elif type_polygon == tg.type_hollow:
+            self.area = 1.2646 - 0.29239 # area of LD outer calib cell in cm^{2}
+        elif self.cellType=="CM" or self.cellType=="NC":
+            self.area = 0.
 
         self.counter += 1
 
@@ -95,14 +108,13 @@ class PolygonManager:
 
         elif self.cellType == "CM":
             # assign coordinates
-            correction_fine_tune_y_coordinate = 2. if self.cellIdx//4 == 0 else 0.
             if self.waferType == "full":
                 x = tg.Coordinates_CM_channels[self.waferType]['x'][self.cellIdx%4]*self.arbUnit_to_cm
-                y = tg.Coordinates_CM_channels[self.waferType]['y'][self.cellIdx%4]*self.arbUnit_to_cm - correction_fine_tune_y_coordinate*self.arbUnit_to_cm
+                y = tg.Coordinates_CM_channels[self.waferType]['y'][self.cellIdx%4]*self.arbUnit_to_cm
                 theta = 2*math.pi/3. * (self.cellIdx//4) - math.pi/3.
             elif self.waferType == "partial":
                 x = tg.Coordinates_CM_channels[self.waferType]['x'][self.cellIdx]*self.arbUnit_to_cm
-                y = tg.Coordinates_CM_channels[self.waferType]['y'][self.cellIdx]*self.arbUnit_to_cm - correction_fine_tune_y_coordinate*self.arbUnit_to_cm
+                y = tg.Coordinates_CM_channels[self.waferType]['y'][self.cellIdx]*self.arbUnit_to_cm
                 theta = tg.Coordinates_CM_channels[self.waferType]['theta'][self.cellIdx]
             cos_theta = math.cos(theta)
             sin_theta = math.sin(theta)
@@ -122,8 +134,8 @@ class PolygonManager:
             # evaluate (r, phi) and apply rotation
             r = math.sqrt(pow(x,2)+pow(y,2))
             cos_phi, sin_phi = x/r, y/r
-            xprime = r*(cos_phi*self.cos_global_theta + sin_phi*self.sin_global_theta) + self.global_correction_x
-            yprime = r*(sin_phi*self.cos_global_theta - cos_phi*self.sin_global_theta) + self.global_correction_y
+            xprime = r*(cos_phi*self.cos_global_theta + sin_phi*self.sin_global_theta) - self.global_correction_x
+            yprime = r*(sin_phi*self.cos_global_theta - cos_phi*self.sin_global_theta) - self.global_correction_y
 
             return xprime, yprime
 
@@ -272,7 +284,11 @@ class PolygonManager:
         fout.Close()
 
     def __str__(self):
-        return "globalId = {0}, rocpin = {1}, sicell = {2}, {3}, graph = {4}".format(self.globalId, self.rocpin, self.sicell, (self.iu,self.iv), self.graph)
+        # globalId and area
+        return "{0} {1}".format(self.globalId, "%.2f"%(self.area*pow(self.cm2mm,2)))
+
+        # more info
+        return "globalId = {0}, rocpin = {1}, sicell = {2}, {3}, area = {4} mm^{{2}}".format(self.globalId, self.rocpin, self.sicell, (self.iu,self.iv), "%.2f"%(self.area*pow(self.cm2mm,2)))
 
     def run(self, channelIds, coor_uv, cellType="", cellIdx=-1, cellName="hex"):
         """ main method for controling flow """
