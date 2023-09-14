@@ -5,7 +5,7 @@ import toolbox.polygon_manager as tp
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-n', help="number of cells", type=int, default=9999)
-parser.add_argument('-p', '--partial', help="enable produce of partial wafer", action='store_true')
+parser.add_argument('-w', '--waferType', help="set wafer type (partial, full, HD)", type=str, default="full")
 parser.add_argument('-d', '--drawLine', help="draw boundary lines", action='store_true')
 parser.add_argument('-v', '--verbose', help="set verbosity level", action='store_true')
 args = parser.parse_args()
@@ -13,10 +13,12 @@ args = parser.parse_args()
 """
 Reminder: range of indices (line numbers) is decided from the text file, ./data/WaferCellMapTrg.txt
 """
-if args.partial:
-    waferType, beginIdx, endIdx = "partial", 667, 778
-else:
+if args.waferType == "HD":
+    waferType, beginIdx, endIdx = "HD", 223, 667
+elif args.waferType == "full": # LD full
     waferType, beginIdx, endIdx = "full", 1, 223
+elif args.waferType == "partial": # LD3
+    waferType, beginIdx, endIdx = "partial", 667, 778
 
 def exe(command):
     print "\n>>> executing command, ", command
@@ -26,13 +28,30 @@ def retrieve_info(line):
     info = line.strip().split()
     result = []
     for ele in info:
-        if "LD" in ele or "CALIB" in ele:
+        if "LD" in ele or "HD" in ele or "CALIB" in ele:
             result.append(str(ele))
         elif "." in ele:
             result.append(float(ele))
         else:
             result.append(int(ele))
     return tuple(result)
+
+def get_macro_arguments():
+    # Reminder: outputName is not used for the moment
+    if args.waferType == "partial":
+        scope = 14
+        tag = "LD3_partial_wafer"
+        outputName = "waferMaps/DQM_LD_partial_wafer_map.png"
+    elif args.waferType == "full":
+        scope = 14
+        tag = "LD_wafer"
+        outputName = "waferMaps/DQM_LD_wafer_map.png"
+    elif args.waferType == "HD":
+        scope = 12
+        tag = "HD_wafer"
+        outputName = "waferMaps/DQM_HD_wafer_map.png"
+
+    return scope, tag, outputName
 
 def main():
     polygon_manager = tp.PolygonManager(waferType)
@@ -70,18 +89,11 @@ def main():
 if __name__ == "__main__":
     main()
 
-    if args.drawLine and args.partial:
+    if args.drawLine and args.waferType=="partial":
         exe("./toolbox/coordinate_loader.py --partial") # execute python script for coordinate queries
     elif args.drawLine:
         exe("./toolbox/coordinate_loader.py") # execute python script for coordinate queries
 
-    # Reminder: outputName is not used for the moment
-    if args.partial:
-        tag = "LD3_partial_wafer"
-        outputName = "waferMaps/DQM_LD_partial_wafer_map.png"
-    else:
-        tag = "LD_wafer"
-        outputName = "waferMaps/DQM_LD_wafer_map.png"
-
-    exe("root -l -b -q th2poly.C'(\"./data/hexagons.root\", \"%s\", 14, %d, \"%s\")'" % (outputName, args.drawLine, tag)) # execute root macro for TH2Poly
+    scope, tag, outputName = get_macro_arguments()
+    exe("root -l -b -q th2poly.C'(\"./data/hexagons.root\", \"%s\", %d, %d, \"%s\")'" % (outputName, scope, args.drawLine, tag)) # execute root macro for TH2Poly
 

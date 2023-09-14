@@ -8,78 +8,14 @@ void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag =
 void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=false, TString NameTag="LD_wafer"){
     TCanvas *c1 = new TCanvas("c1", "", 900, 900);
     c1->SetRightMargin(0.15);
-
     gStyle->SetPaintTextFormat(".0f");
-
-    int scheme = 0;
-    TString title;
-    //--------------------------------------------------
-    // Test profile
-    //--------------------------------------------------
-    TProfile *profile = new TProfile("profile", "profile", 234, 0, 234, 0, 1024);
-    switch(scheme) {
-        default:
-            for(int i=0; i<234; ++i) {
-                double value = (float)i;
-                if(i==0) profile->Fill(i, value+1e-6);
-                else profile->Fill(i, value);
-            }
-            break;
-
-        case 1: // scheme: expected injected channels
-            title = "Manual specification";
-            for(int i=0; i<234; ++i) {
-                // test on calibration channels
-                if(i==18 || i==57 || i==96 || i==135 || i==174 || i==213) {
-                    profile->Fill(i, 100);
-                }
-                continue;
-
-                double value = (float)i;
-                if(i==0) profile->Fill(i, value+1e-6);
-                else if(i==20) profile->Fill(i, value);
-                else if(i==40) profile->Fill(i, value);
-                else if(i==60) profile->Fill(i, value);
-                else if(i==78) profile->Fill(i, value);
-                else if(i==98) profile->Fill(i, value);
-                else if(i==118) profile->Fill(i, value);
-                else if(i==138) profile->Fill(i, value);
-                else if(i==156) profile->Fill(i, value);
-                else if(i==176) profile->Fill(i, value);
-                else if(i==196) profile->Fill(i, value);
-                else if(i==216) profile->Fill(i, value);
-                else profile->Fill(i, -300.);
-            }
-            break;
-
-        case 2: // scheme: results displayed on DQM GUI
-            title = "DQM GUI (with readout sequence)";
-            for(int i=0; i<234; ++i) {
-                double value = (float)i;
-                if(i==21) profile->Fill(i, value);
-                else if(i==42) profile->Fill(i, value);
-                else if(i==64) profile->Fill(i, value);
-                else if(i==77) profile->Fill(i, value);
-                else if(i==99) profile->Fill(i, value);
-                else if(i==120) profile->Fill(i, value);
-                else if(i==142) profile->Fill(i, value);
-                else if(i==155) profile->Fill(i, value);
-                else if(i==177) profile->Fill(i, value);
-                else if(i==198) profile->Fill(i, value);
-                else if(i==220) profile->Fill(i, value);
-                else profile->Fill(i, -300.);
-            }
-            break;
-
-    }
 
     //--------------------------------------------------
     // Hexagonal plots
     //--------------------------------------------------
-    profile->Draw();
-    c1->SaveAs("test.root");
     TFile *f = TFile::Open(inputfile,"R");
 
+    TString title;
     TString newNameTag = NameTag;
     newNameTag.ReplaceAll("_", " ");
 
@@ -120,7 +56,73 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
         }
     }
 
+    //--------------------------------------------------
+    // Test profile
+    //--------------------------------------------------
+    int scheme = 0;
+    TProfile *profile = new TProfile("profile", "profile", counter, 0, counter, 0, 1024);
+    switch(scheme) {
+        default:
+            for(int i=0; i<counter; ++i) {
+                double value = (float)i;
+                if(i==0) profile->Fill(i, value+1e-6);
+                else profile->Fill(i, value);
+            }
+            break;
+
+        case 1: // scheme: expected injected channels
+            title = "Manual specification";
+            for(int i=0; i<counter; ++i) {
+                // test on calibration channels
+                if(i==18 || i==57 || i==96 || i==135 || i==174 || i==213) {
+                    profile->Fill(i, 100);
+                }
+                continue;
+
+                double value = (float)i;
+                if(i==0) profile->Fill(i, value+1e-6);
+                else if(i==20) profile->Fill(i, value);
+                else if(i==40) profile->Fill(i, value);
+                else if(i==60) profile->Fill(i, value);
+                else if(i==78) profile->Fill(i, value);
+                else if(i==98) profile->Fill(i, value);
+                else if(i==118) profile->Fill(i, value);
+                else if(i==138) profile->Fill(i, value);
+                else if(i==156) profile->Fill(i, value);
+                else if(i==176) profile->Fill(i, value);
+                else if(i==196) profile->Fill(i, value);
+                else if(i==216) profile->Fill(i, value);
+                else profile->Fill(i, -300.);
+            }
+            break;
+
+        case 2: // scheme: results displayed on DQM GUI
+            title = "DQM GUI (with readout sequence)";
+            for(int i=0; i<counter; ++i) {
+                double value = (float)i;
+                if(i==21) profile->Fill(i, value);
+                else if(i==42) profile->Fill(i, value);
+                else if(i==64) profile->Fill(i, value);
+                else if(i==77) profile->Fill(i, value);
+                else if(i==99) profile->Fill(i, value);
+                else if(i==120) profile->Fill(i, value);
+                else if(i==142) profile->Fill(i, value);
+                else if(i==155) profile->Fill(i, value);
+                else if(i==177) profile->Fill(i, value);
+                else if(i==198) profile->Fill(i, value);
+                else if(i==220) profile->Fill(i, value);
+                else profile->Fill(i, -300.);
+            }
+            break;
+
+    }
+
+    profile->Draw();
+    c1->SaveAs("test.root");
+
+    //--------------------------------------------------
     // fill information of channel IDs
+    //--------------------------------------------------
     p->ChangePartition(100, 100);
 
     std::map<int, int> map_HGCROC_pin;
@@ -138,7 +140,7 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
         double value = profile->GetBinContent(i+1);
         p->SetBinContent(i+1, value);
 
-        if(i==0 || i==78 || i==156)
+        if(i%78==0)
             p_pin->SetBinContent(i+1, 0.000001);
         else
             p_pin->SetBinContent(i+1, map_HGCROC_pin[i]);
