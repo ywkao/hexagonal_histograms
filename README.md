@@ -4,7 +4,9 @@
 ```
 $ git clone git@github.com:ywkao/hexagonal_histograms.git
 $ cd hexagonal_histograms
-$ make && ./exe.py
+$ make
+$ ./exe.py -d -v # draw LD full wafer
+$ ./exe.py -d -p -v # draw LD3 partial wafer
 ```
 
 ## Workflow in the code

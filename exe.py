@@ -75,12 +75,13 @@ if __name__ == "__main__":
     elif args.drawLine:
         exe("./toolbox/coordinate_loader.py") # execute python script for coordinate queries
 
+    # Reminder: outputName is not used for the moment
     if args.partial:
-        tag = "LD_partial_wafer"
-        outputName = "DQM_LD_partial_wafer_map.png"
+        tag = "LD3_partial_wafer"
+        outputName = "waferMaps/DQM_LD_partial_wafer_map.png"
     else:
         tag = "LD_wafer"
-        outputName = "DQM_LD_wafer_map.png"
+        outputName = "waferMaps/DQM_LD_wafer_map.png"
 
     exe("root -l -b -q th2poly.C'(\"./data/hexagons.root\", \"%s\", 26, %d, \"%s\")'" % (outputName, args.drawLine, tag)) # execute root macro for TH2Poly
 

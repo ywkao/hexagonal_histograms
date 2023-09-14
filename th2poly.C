@@ -151,23 +151,21 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
         p->SetMarkerSize(0.7);
         p->Draw("colz;text");
         beautify_plot(drawLine, true, NameTag);
-        c1->SaveAs(outputfile);
-        c1->SaveAs("info_"+NameTag+"_globalChannelId_readoutSequence.png");
+        c1->SaveAs("waferMaps/info_"+NameTag+"_globalChannelId_readoutSequence.png");
 
         p_pin->SetMarkerSize(0.7);
         p_pin->Draw("colz;text");
         beautify_plot(drawLine, true, NameTag);
-        c1->SaveAs("info_"+NameTag+"_HGCROC_pin_chan.png");
+        c1->SaveAs("waferMaps/info_"+NameTag+"_HGCROC_pin_chan.png");
 
         p_sicell->SetMarkerSize(0.7);
         p_sicell->Draw("colz;text");
         beautify_plot(drawLine, true, NameTag);
-        c1->SaveAs("info_"+NameTag+"_SiCell_padId.png");
+        c1->SaveAs("waferMaps/info_"+NameTag+"_SiCell_padId.png");
     } else {
         p->SetMarkerSize(0.7);
         p->Draw("colz;text");
         beautify_plot(drawLine, true, NameTag);
-        c1->SaveAs(outputfile);
         c1->SaveAs("test_injection_"+NameTag+".png");
     }
 
