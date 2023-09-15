@@ -88,13 +88,15 @@ def main():
     polygon_manager.export_coordinate_data() # store coordinates for auxiliary lines
     polygon_manager.export_cpp_id_mapping() # store chIds for information wafer map
 
+    return polygon_manager.output_geometry_root_file
+
 
 if __name__ == "__main__":
-    main()
+    geometry_rootfile = main()
 
     if args.drawLine:
         exe("./toolbox/coordinate_loader.py -w %s" % args.waferType)
 
     scope, tag, outputName, markerSize = get_macro_arguments()
-    exe("root -l -b -q th2poly.C'(\"./data/hexagons.root\", \"%s\", %d, %d, \"%s\", %f)'" % (outputName, scope, args.drawLine, tag, markerSize)) # execute root macro for TH2Poly
+    exe("root -l -b -q th2poly.C'(\"%s\", \"%s\", %d, %d, \"%s\", %f)'" % (geometry_rootfile, outputName, scope, args.drawLine, tag, markerSize)) # execute root macro for TH2Poly
 

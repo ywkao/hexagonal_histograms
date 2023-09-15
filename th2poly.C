@@ -57,6 +57,8 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
         }
     }
 
+    printf("[DEBUG] th2poly::counter = %d\n", counter);
+
     //--------------------------------------------------
     // Test profile
     //--------------------------------------------------

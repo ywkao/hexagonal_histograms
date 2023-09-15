@@ -26,6 +26,16 @@ class PolygonManager:
         self.arbUnit_to_cm = arbUnit_to_cm
         self.cm2mm = 10.0
 
+        # output geometry root file
+        if self.waferType == "HD":
+            self.output_geometry_root_file = "./data/geometry_HD_full_wafer.root"
+        elif self.waferType == "partial":
+            self.output_geometry_root_file = "./data/geometry_LD3_partial_wafer.root"
+        elif self.waferType == "full":
+            self.output_geometry_root_file = "./data/geometry_LD_full_wafer.root"
+        else:
+            self.output_geometry_root_file = "./data/hexagons.root"
+
         # global corrections on coordinates
         if self.waferType == "HD":
             self.global_correction_x = 0.805403625519528
@@ -374,7 +384,7 @@ class PolygonManager:
 
     def export_root_file(self):
         """ generate geometry root file for DQM in raw data handling chain"""
-        fout = ROOT.TFile("./data/hexagons.root", "RECREATE")
+        fout = ROOT.TFile(self.output_geometry_root_file, "RECREATE")
         for key, graph in self.collections.items():
             graph.Write()
         fout.Close()
