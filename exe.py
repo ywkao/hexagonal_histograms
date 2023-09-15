@@ -92,10 +92,8 @@ def main():
 if __name__ == "__main__":
     main()
 
-    if args.drawLine and args.waferType=="partial":
-        exe("./toolbox/coordinate_loader.py --partial") # execute python script for coordinate queries
-    elif args.drawLine:
-        exe("./toolbox/coordinate_loader.py") # execute python script for coordinate queries
+    if args.drawLine:
+        exe("./toolbox/coordinate_loader.py -w %s" % args.waferType)
 
     scope, tag, outputName, markerSize = get_macro_arguments()
     exe("root -l -b -q th2poly.C'(\"./data/hexagons.root\", \"%s\", %d, %d, \"%s\", %f)'" % (outputName, scope, args.drawLine, tag, markerSize)) # execute root macro for TH2Poly

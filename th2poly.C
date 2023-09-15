@@ -1,5 +1,6 @@
 #include "include/auxiliary_boundary_lines.h"
 #include "include/auxiliary_boundary_lines_partial_wafer.h"
+#include "include/auxiliary_boundary_lines_HD_full_wafer.h"
 #include "include/map_channel_numbers.h"
 #include <map>
 
@@ -157,16 +158,19 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
         p->Draw("colz;text");
         beautify_plot(drawLine, true, NameTag);
         c1->SaveAs("waferMaps/info_"+NameTag+"_globalChannelId_readoutSequence.png");
+        c1->SaveAs("waferMaps/info_"+NameTag+"_globalChannelId_readoutSequence.pdf");
 
         p_pin->SetMarkerSize(MarkerSize);
         p_pin->Draw("colz;text");
         beautify_plot(drawLine, true, NameTag);
         c1->SaveAs("waferMaps/info_"+NameTag+"_HGCROC_pin_chan.png");
+        c1->SaveAs("waferMaps/info_"+NameTag+"_HGCROC_pin_chan.pdf");
 
         p_sicell->SetMarkerSize(MarkerSize);
         p_sicell->Draw("colz;text");
         beautify_plot(drawLine, true, NameTag);
         c1->SaveAs("waferMaps/info_"+NameTag+"_SiCell_padId.png");
+        c1->SaveAs("waferMaps/info_"+NameTag+"_SiCell_padId.pdf");
     } else {
         p->SetMarkerSize(MarkerSize);
         p->Draw("colz;text");
@@ -197,6 +201,16 @@ void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag =
 
         for(int i=0; i<16; ++i)
             line.DrawLine(aux::x2_partial_wafer[i], aux::y2_partial_wafer[i], aux::x2_partial_wafer[i+1], aux::y2_partial_wafer[i+1]);
+
+    } else if(drawLine && NameTag.Contains("HD")) {
+        TLine line;
+        line.SetLineStyle(1);
+        line.SetLineColor(2);
+        line.SetLineWidth(1);
+
+        for(int i=0; i<aux::N_HD_boundary_points-1; ++i) {
+            line.DrawLine(aux::x1_HD_full_wafer[i], aux::y1_HD_full_wafer[i], aux::x1_HD_full_wafer[i+1], aux::y1_HD_full_wafer[i+1]);
+        }
 
     } else if(drawLine) {
         // load N_boundary_points, x1, x2, x3, y1, y2, y3 from auxiliary_boundary_lines.h

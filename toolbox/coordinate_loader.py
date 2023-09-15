@@ -2,10 +2,15 @@
 import json
 import argparse
 parser = argparse.ArgumentParser()
-parser.add_argument('-p', '--partial', help="enable produce of partial wafer", action='store_true')
+parser.add_argument('-w', '--waferType', help="set wafer type (partial, full, HD)", type=str, default="full")
 args = parser.parse_args()
 
-json_file = "data/output_my_coordinate_data.json" if not args.partial else "data/output_my_coordinate_partial_wafer.json"
+if args.waferType == "HD":
+    json_file = "data/output_my_coordinate_HD_wafer.json"
+elif args.waferType == "full": # LD full
+    json_file = "data/output_my_coordinate_data.json"
+elif args.waferType == "partial": # LD3
+    json_file = "data/output_my_coordinate_partial_wafer.json"
 
 with open(json_file, 'r') as f:
     data = f.read()
@@ -60,7 +65,7 @@ def print_coordinate(varName, query, num="N_boundary_points"):
 if __name__ == "__main__":
     import queries_for_coordinates as tc
 
-    if not args.partial:
+    if args.waferType == "full": # LD full
         fout = open("include/auxiliary_boundary_lines.h", 'w')
         fout.write("#ifndef __auxiliary_boundary_lines__\n")
         fout.write("#define __auxiliary_boundary_lines__\n")
@@ -81,7 +86,7 @@ if __name__ == "__main__":
         fout.write("#endif // __auxiliary_boundary_lines__\n")
         fout.close()
 
-    else:
+    elif args.waferType == "partial": # LD3
         fout = open("include/auxiliary_boundary_lines_partial_wafer.h", 'w')
         fout.write("#ifndef __auxiliary_boundary_lines_partial_wafer__\n")
         fout.write("#define __auxiliary_boundary_lines_partial_wafer__\n")
@@ -93,5 +98,21 @@ if __name__ == "__main__":
         fout.write("}; // end of aux\n")
 
         fout.write("\n")
-        fout.write("#endif // __auxiliary_boundary_lines__\n")
+        fout.write("#endif // __auxiliary_boundary_lines_partial_wafer__\n")
+        fout.close()
+
+    elif args.waferType == "HD":
+        fout = open("include/auxiliary_boundary_lines_HD_full_wafer.h", 'w')
+        fout.write("#ifndef __auxiliary_boundary_lines_HD_full_wafer__\n")
+        fout.write("#define __auxiliary_boundary_lines_HD_full_wafer__\n")
+        fout.write("\n")
+
+        fout.write("namespace aux {\n")
+        fout.write("const int N_HD_boundary_points = 25;\n")
+        fout.write("\n")
+        print_coordinate(("x1_HD_full_wafer", "y1_HD_full_wafer"), tc.query_HD_full_wafer_line1, "N_HD_boundary_points")
+        fout.write("}; // end of aux\n")
+
+        fout.write("\n")
+        fout.write("#endif // __auxiliary_boundary_lines_HD_full_wafer__\n")
         fout.close()
