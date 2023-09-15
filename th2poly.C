@@ -238,40 +238,73 @@ void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag =
         text.SetTextFont(43);
         text.SetTextSize(12);
 
-        double theta1 = -TMath::Pi()/3.;
-        double theta2 = TMath::Pi()/3.;
-        double theta3 = TMath::Pi();
-        std::vector<double> theta_angle_text = {60, 60, -60, -60, 0, 0};
-        std::vector<double> theta_coordinate_text = {theta1, theta1, theta2, theta2, theta3, theta3};
-        //std::vector<double> x_coordinate_text = {-6.25, 6.25, -5, 7.5, -6.25, 6.25};
-        std::vector<double> x_coordinate_text = {-6.25, 6.25, -6.25, 6.25, -6.25, 6.25};
-        std::vector<double> y_coordinate_text = {26, 26, 26, 26, 26, 26};
-        std::vector<TString> v_texts = {"chip-0, half-1", "chip-0, half-0",
-                                        "chip-1, half-1", "chip-1, half-0",
-                                        "chip-2, half-1", "chip-2, half-0"};
+        if(NameTag.Contains("HD")) {
+            double theta1 = 0.;
+            double theta2 = 4*TMath::Pi()/3.;
+            double theta3 = 2*TMath::Pi()/3.;
 
-        double arbUnit_to_cm = 6.9767/20.;
+            std::vector<double> theta_angle_text = {0, 0, 120, 120, -120, -120};
+            std::vector<double> theta_coordinate_text = {theta1, theta1, theta2, theta2, theta3, theta3};
 
-        // evaluate (r, phi) and apply rotation
-        for(int i=0; i<6; ++i) {
-            if(NameTag.Contains("partial") && (i==2||i==3||i==4)) continue;
-            text.SetTextAngle(theta_angle_text[i]);
-            double theta = theta_coordinate_text[i];
-            double cos_theta = TMath::Cos(theta);
-            double sin_theta = TMath::Sin(theta);
+            std::vector<double> x_coordinate_text = {-6.25, 6.25, -6.25, 6.25, -6.25, 6.25};
+            std::vector<double> y_coordinate_text = {26, 26, 26, 26, 26, 26};
+            std::vector<TString> v_texts = {"chip-0", "chip-1", "chip-2", "chip-3", "chip-4", "chip-5"};
 
-            double x = x_coordinate_text[i];
-            double y = y_coordinate_text[i];
-            double r = sqrt(pow(x,2)+pow(y,2));
-            double cos_phi = x/r;
-            double sin_phi = y/r;
-            x = r*(cos_phi*cos_theta + sin_phi*sin_theta)*arbUnit_to_cm;
-            y = r*(sin_phi*cos_theta - cos_phi*sin_theta)*arbUnit_to_cm;
+            double arbUnit_to_cm = 6.9767/20.;
 
-            if(NameTag.Contains("partial") && (i==5))
-                text.DrawText(x, y, "chip-1, half-0");
-            else
+            // evaluate (r, phi) and apply rotation
+            for(int i=0; i<6; ++i) {
+                text.SetTextAngle(theta_angle_text[i]);
+                double theta = theta_coordinate_text[i];
+                double cos_theta = TMath::Cos(theta);
+                double sin_theta = TMath::Sin(theta);
+
+                double x = x_coordinate_text[i];
+                double y = y_coordinate_text[i];
+                double r = sqrt(pow(x,2)+pow(y,2));
+                double cos_phi = x/r;
+                double sin_phi = y/r;
+                x = r*(cos_phi*cos_theta + sin_phi*sin_theta)*arbUnit_to_cm;
+                y = r*(sin_phi*cos_theta - cos_phi*sin_theta)*arbUnit_to_cm;
+
                 text.DrawText(x, y, v_texts[i]);
+            }
+
+        } else { // LD
+            double theta1 = -TMath::Pi()/3.;
+            double theta2 = TMath::Pi()/3.;
+            double theta3 = TMath::Pi();
+            std::vector<double> theta_angle_text = {60, 60, -60, -60, 0, 0};
+            std::vector<double> theta_coordinate_text = {theta1, theta1, theta2, theta2, theta3, theta3};
+            std::vector<double> x_coordinate_text = {-6.25, 6.25, -6.25, 6.25, -6.25, 6.25};
+            std::vector<double> y_coordinate_text = {26, 26, 26, 26, 26, 26};
+            std::vector<TString> v_texts = {"chip-0, half-1", "chip-0, half-0",
+                                            "chip-1, half-1", "chip-1, half-0",
+                                            "chip-2, half-1", "chip-2, half-0"};
+
+            double arbUnit_to_cm = 6.9767/20.;
+
+            // evaluate (r, phi) and apply rotation
+            for(int i=0; i<6; ++i) {
+                if(NameTag.Contains("partial") && (i==2||i==3||i==4)) continue;
+                text.SetTextAngle(theta_angle_text[i]);
+                double theta = theta_coordinate_text[i];
+                double cos_theta = TMath::Cos(theta);
+                double sin_theta = TMath::Sin(theta);
+
+                double x = x_coordinate_text[i];
+                double y = y_coordinate_text[i];
+                double r = sqrt(pow(x,2)+pow(y,2));
+                double cos_phi = x/r;
+                double sin_phi = y/r;
+                x = r*(cos_phi*cos_theta + sin_phi*sin_theta)*arbUnit_to_cm;
+                y = r*(sin_phi*cos_theta - cos_phi*sin_theta)*arbUnit_to_cm;
+
+                if(NameTag.Contains("partial") && (i==5))
+                    text.DrawText(x, y, "chip-1, half-0");
+                else
+                    text.DrawText(x, y, v_texts[i]);
+            }
         }
     }
 }

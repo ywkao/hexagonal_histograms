@@ -140,7 +140,7 @@ class PolygonManager:
             if self.waferType == "HD":
                 x = tg.Coordinates_CM_channels[self.waferType]['x'][self.cellIdx%8]
                 y = tg.Coordinates_CM_channels[self.waferType]['y'][self.cellIdx%8]
-                theta = 2*math.pi/3. * (self.cellIdx//8) - math.pi/3.
+                theta = 2*math.pi/3. * (self.cellIdx//8)
             elif self.waferType == "full":
                 x = tg.Coordinates_CM_channels[self.waferType]['x'][self.cellIdx%4]
                 y = tg.Coordinates_CM_channels[self.waferType]['y'][self.cellIdx%4]
