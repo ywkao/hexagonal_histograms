@@ -2,6 +2,10 @@
 import json
 
 json_file = "./data/output_my_chId_mapping_partial_wafer.json"
+json_file = "./data/output_my_chId_mapping_HD_wafer.json"
+
+wafer_type = "partial_wafer"
+wafer_type = "HD_full_wafer"
 
 with open(json_file, 'r') as f:
 	data = f.read()
@@ -13,7 +17,7 @@ def get_coordinate(ch):
 	return x, y
 
 if __name__ == "__main__":
-    collection_sicell, collection_rocpin = "std::map<int, int> map_SiCell_padId_partial_wafer = { ", "std::map<int, int> map_HGCROC_pin_partial_wafer = { "
+    collection_sicell, collection_rocpin = "std::map<int, int> map_SiCell_pad_%s = { " % wafer_type, "std::map<int, int> map_HGCROC_pin_%s = { " % wafer_type
     for globalId, value in json_data.items():
         sicell, rocpin = value[0], value[1]
         

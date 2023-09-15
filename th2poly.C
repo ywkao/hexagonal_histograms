@@ -131,7 +131,10 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
     if(NameTag.Contains("partial")) {
         map_HGCROC_pin = map_HGCROC_pin_partial_wafer;
         map_SiCell_pad = map_SiCell_pad_partial_wafer;
-    } else {
+    } else if (NameTag.Contains("HD")){
+        map_HGCROC_pin = map_HGCROC_pin_HD_full_wafer;
+        map_SiCell_pad = map_SiCell_pad_HD_full_wafer;
+    } else { // LD full
         map_HGCROC_pin = map_HGCROC_pin_full_wafer;
         map_SiCell_pad = map_SiCell_pad_full_wafer;
     }
