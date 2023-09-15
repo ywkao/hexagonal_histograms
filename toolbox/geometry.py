@@ -34,13 +34,17 @@ type_pentagon_corner4 = 510
 type_pentagon_corner5 = 511
 type_pentagon_corner6 = 512
 type_partial_wafer_pentagon_corner6 = 513
-type_hexagon_corner1 = 61
-type_hexagon_corner2 = 62
-type_hexagon_corner3 = 63
-type_hexagon_corner4 = 64
-type_hexagon_corner5 = 65
-type_hexagon_corner6 = 66
-type_partial_wafer_hexagon_corner6 = 67
+type_hexagon_corner1 = 601
+type_hexagon_corner2 = 602
+type_hexagon_corner3 = 603
+type_hexagon_corner4 = 604
+type_hexagon_corner5 = 605
+type_hexagon_corner6 = 606
+type_partial_wafer_hexagon_corner6 = 607
+
+type_HD_hexagon_side1_corner1 = 608
+type_HD_hexagon_side6_corner1 = 609
+type_HD_trpezoid_corner1 = 401
 
 # information of CM and NC in global Id (readout sequence)
 global_channel_Id_special_channels = {
@@ -123,6 +127,18 @@ base = {
 	type_trapezoid_extended_left : {
 		'x': [0, 0, -1*s3, -1*s3, 0],
 	    'y': [2, -2, -2, 1, 2]
+	},
+	type_HD_hexagon_side1_corner1 : {
+		'x': [1*s3, 1*s3, 0, -1*s3, -1*s3, -0.5*s3, 1*s3],
+        'y': [1, -1, -2, -1, 0.5, 1, 1]
+	},
+	type_HD_trpezoid_corner1 : {
+		'x': [1*s3, 1*s3, 0, -0.75*s3, s3],
+        'y': [0.5, -1, -2, -1.25, 0.5]
+	},
+	type_HD_hexagon_side6_corner1 : {
+		'x': [0.25*s3, 1*s3, 1*s3, 0, -1.5*s3, -1.25*s3, 0.25*s3],
+        'y': [1.75, 1, -1, -2, -0.5, 0.25, 1.75]
 	},
 	type_pentagon_side1 : {
 		'x': [1*s3, 1*s3, 0, -1*s3, -1*s3, 1*s3],
@@ -234,7 +250,7 @@ base = {
 	},
 }
 
-LD_cells = { # dictionary for special cells
+special_cells = { # dictionary for special cells using sicell padID
     "full": {
 	    type_pentagon_side1 : [2, 3, 4, 5, 6, 7],
 	    type_pentagon_side2 : [18, 28, 39, 51, 65, 80, 95],
@@ -288,12 +304,13 @@ LD_cells = { # dictionary for special cells
 	    type_pentagon_side4 : [434, 435, 436, 437, 438, 439, 440, 441, 442],
 	    type_pentagon_side5 : [265, 288, 310, 330, 349, 367, 385, 402],
 	    type_pentagon_side6 : [26, 42, 57, 73, 91, 109, 128, 148, 171],
-	    type_hexagon_corner1 : [13],
 	    type_hexagon_corner2 : [25],
 	    type_hexagon_corner3 : [216],
 	    type_hexagon_corner4 : [443],
 	    type_hexagon_corner5 : [433],
 	    type_hexagon_corner6 : [193],
+        type_HD_hexagon_side1_corner1 : [2],
+        type_HD_hexagon_side6_corner1 : [13],
+        type_HD_trpezoid_corner1 : [1],
     },
 }
-

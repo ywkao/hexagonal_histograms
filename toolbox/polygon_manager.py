@@ -20,7 +20,7 @@ class PolygonManager:
 
         # wafer information
         self.waferType = wafer_type
-        self.LD_cells = tg.LD_cells
+        self.special_cells = tg.special_cells
         self.cell_helper = cell_helper
         self.cell_fine_or_coarse = typeCoarse
         self.arbUnit_to_cm = arbUnit_to_cm
@@ -176,14 +176,12 @@ class PolygonManager:
 
     def get_polygon_info_HD_full(self):
         """ conditional statements for HD full wafer """
-        cellDict = self.LD_cells[self.waferType]
+        cellDict = self.special_cells[self.waferType]
         type_polygon, nCorner = tg.type_hexagon, 6
         if(isinstance(self.rocpin, str)): # "CALIB"
             type_polygon, nCorner = tg.type_hexagon_small, 6
         elif self.sicell in cellDict[tg.type_hollow]:
             type_polygon, nCorner = tg.type_hollow, 14
-        elif self.sicell in cellDict[tg.type_hexagon_corner1]:
-            type_polygon, nCorner = tg.type_hexagon_corner1, 6
         elif self.sicell in cellDict[tg.type_hexagon_corner2]:
             type_polygon, nCorner = tg.type_hexagon_corner2, 6
         elif self.sicell in cellDict[tg.type_hexagon_corner3]:
@@ -206,11 +204,17 @@ class PolygonManager:
             type_polygon, nCorner = tg.type_pentagon_side5, 5
         elif self.sicell in cellDict[tg.type_pentagon_side6]:
             type_polygon, nCorner = tg.type_pentagon_side6, 5
+        elif self.sicell in cellDict[tg.type_HD_hexagon_side1_corner1]:
+            type_polygon, nCorner = tg.type_HD_hexagon_side1_corner1, 6
+        elif self.sicell in cellDict[tg.type_HD_hexagon_side6_corner1]:
+            type_polygon, nCorner = tg.type_HD_hexagon_side6_corner1, 6
+        elif self.sicell in cellDict[tg.type_HD_trpezoid_corner1]:
+            type_polygon, nCorner = tg.type_HD_trpezoid_corner1, 4
         return type_polygon, nCorner
 
     def get_polygon_info_LD_full(self):
         """ conditional statements for LD full wafer """
-        cellDict = self.LD_cells[self.waferType]
+        cellDict = self.special_cells[self.waferType]
         type_polygon, nCorner = tg.type_hexagon, 6
 
         if self.sicell in cellDict[tg.type_hexagon_corner1]:
@@ -260,7 +264,7 @@ class PolygonManager:
 
     def get_polygon_info_LD_partial(self):
         """ conditional statements for LD partial wafer """
-        cellDict = self.LD_cells[self.waferType]
+        cellDict = self.special_cells[self.waferType]
         type_polygon, nCorner = tg.type_hexagon, 6
         if(isinstance(self.rocpin, str)): # "CALIB"
             type_polygon, nCorner = tg.type_hexagon_small, 6
@@ -324,11 +328,14 @@ class PolygonManager:
         fout.Close()
 
     def __str__(self):
-        # globalId and area
-        return "{0} {1}".format(self.globalId, "%.2f"%(self.area*pow(self.cm2mm,2)))
-
         # more info
         return "globalId = {0}, rocpin = {1}, sicell = {2}, {3}, area = {4} mm^{{2}}".format(self.globalId, self.rocpin, self.sicell, (self.iu,self.iv), "%.2f"%(self.area*pow(self.cm2mm,2)))
+
+        # channel ID info
+        return "{0} {1} {2} {3}".format(self.globalId, self.rocpin, self.sicell, (self.iu,self.iv))
+
+        # globalId and area
+        return "{0} {1}".format(self.globalId, "%.2f"%(self.area*pow(self.cm2mm,2)))
 
     def run(self, channelIds, coor_uv, cellType="", cellIdx=-1, cellName="hex"):
         """ main method for controling flow """
