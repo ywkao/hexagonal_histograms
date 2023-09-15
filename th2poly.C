@@ -5,7 +5,7 @@
 
 void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag = "LD_wafer");
 
-void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=false, TString NameTag="LD_wafer"){
+void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=false, TString NameTag="LD_wafer", double MarkerSize = 0.7){
     TCanvas *c1 = new TCanvas("c1", "", 900, 900);
     c1->SetRightMargin(0.15);
     gStyle->SetPaintTextFormat(".0f");
@@ -153,22 +153,22 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
 
     // plotting
     if(scheme==0) {
-        p->SetMarkerSize(0.7);
+        p->SetMarkerSize(MarkerSize);
         p->Draw("colz;text");
         beautify_plot(drawLine, true, NameTag);
         c1->SaveAs("waferMaps/info_"+NameTag+"_globalChannelId_readoutSequence.png");
 
-        p_pin->SetMarkerSize(0.7);
+        p_pin->SetMarkerSize(MarkerSize);
         p_pin->Draw("colz;text");
         beautify_plot(drawLine, true, NameTag);
         c1->SaveAs("waferMaps/info_"+NameTag+"_HGCROC_pin_chan.png");
 
-        p_sicell->SetMarkerSize(0.7);
+        p_sicell->SetMarkerSize(MarkerSize);
         p_sicell->Draw("colz;text");
         beautify_plot(drawLine, true, NameTag);
         c1->SaveAs("waferMaps/info_"+NameTag+"_SiCell_padId.png");
     } else {
-        p->SetMarkerSize(0.7);
+        p->SetMarkerSize(MarkerSize);
         p->Draw("colz;text");
         beautify_plot(drawLine, true, NameTag);
         c1->SaveAs("test_injection_"+NameTag+".png");

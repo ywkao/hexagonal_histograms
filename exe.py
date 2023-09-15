@@ -40,18 +40,21 @@ def get_macro_arguments():
     # Reminder: outputName is not used for the moment
     if args.waferType == "partial":
         scope = 14
+        markerSize = 0.7
         tag = "LD3_partial_wafer"
         outputName = "waferMaps/DQM_LD_partial_wafer_map.png"
     elif args.waferType == "full":
         scope = 14
+        markerSize = 0.7
         tag = "LD_wafer"
         outputName = "waferMaps/DQM_LD_wafer_map.png"
     elif args.waferType == "HD":
         scope = 12
+        markerSize = 0.5
         tag = "HD_wafer"
         outputName = "waferMaps/DQM_HD_wafer_map.png"
 
-    return scope, tag, outputName
+    return scope, tag, outputName, markerSize
 
 def main():
     polygon_manager = tp.PolygonManager(waferType)
@@ -94,6 +97,6 @@ if __name__ == "__main__":
     elif args.drawLine:
         exe("./toolbox/coordinate_loader.py") # execute python script for coordinate queries
 
-    scope, tag, outputName = get_macro_arguments()
-    exe("root -l -b -q th2poly.C'(\"./data/hexagons.root\", \"%s\", %d, %d, \"%s\")'" % (outputName, scope, args.drawLine, tag)) # execute root macro for TH2Poly
+    scope, tag, outputName, markerSize = get_macro_arguments()
+    exe("root -l -b -q th2poly.C'(\"./data/hexagons.root\", \"%s\", %d, %d, \"%s\", %f)'" % (outputName, scope, args.drawLine, tag, markerSize)) # execute root macro for TH2Poly
 
