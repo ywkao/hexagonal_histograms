@@ -43,8 +43,23 @@ type_hexagon_corner6 = 606
 type_partial_wafer_hexagon_corner6 = 607
 
 type_HD_hexagon_side1_corner1 = 608
-type_HD_hexagon_side6_corner1 = 609
+type_HD_hexagon_side1_corner2 = 609
+type_HD_hexagon_side3_corner3 = 610 # by rotation
+type_HD_hexagon_side3_corner4 = 611 # by rotation
+type_HD_hexagon_side5_corner5 = 612 # by rotation
+type_HD_hexagon_side5_corner6 = 613 # by rotation
 type_HD_trpezoid_corner1 = 401
+type_HD_trpezoid_corner2 = 402
+type_HD_trpezoid_corner3 = 403 # by rotation
+type_HD_trpezoid_corner4 = 404 # by rotation
+type_HD_trpezoid_corner5 = 405 # by rotation
+type_HD_trpezoid_corner6 = 406 # by rotation
+type_HD_hexagon_side6_corner1 = 650
+type_HD_hexagon_side2_corner2 = 651
+type_HD_hexagon_side2_corner3 = 652 # by rotation
+type_HD_hexagon_side4_corner4 = 653 # by rotation
+type_HD_hexagon_side4_corner5 = 654 # by rotation
+type_HD_hexagon_side6_corner6 = 655 # by rotation
 
 # information of CM and NC in global Id (readout sequence)
 global_channel_Id_special_channels = {
@@ -132,13 +147,25 @@ base = {
 		'x': [1*s3, 1*s3, 0, -1*s3, -1*s3, -0.5*s3, 1*s3],
         'y': [1, -1, -2, -1, 0.5, 1, 1]
 	},
+	type_HD_hexagon_side1_corner2 : {
+		'x': [-1*s3, 0.5*s3, s3, s3, 0, -1*s3, -1*s3],
+        'y': [1, 1, 0.5, -1, -2, -1, 1]
+	},
 	type_HD_trpezoid_corner1 : {
 		'x': [1*s3, 1*s3, 0, -0.75*s3, s3],
         'y': [0.5, -1, -2, -1.25, 0.5]
 	},
+	type_HD_trpezoid_corner2 : {
+		'x': [-1*s3, 0.75*s3, 0, -1*s3, -1*s3],
+        'y': [0.5, -1.25, -2, -1, 0.5]
+	},
 	type_HD_hexagon_side6_corner1 : {
 		'x': [0.25*s3, 1*s3, 1*s3, 0, -1.5*s3, -1.25*s3, 0.25*s3],
         'y': [1.75, 1, -1, -2, -0.5, 0.25, 1.75]
+	},
+	type_HD_hexagon_side2_corner2 : {
+		'x': [-0.25*s3, 1.25*s3, 1.5*s3, 0, -1*s3, -1*s3, -0.25*s3],
+        'y': [1.75, 0.25, -0.5, -2, -1, 1, 1.75]
 	},
 	type_pentagon_side1 : {
 		'x': [1*s3, 1*s3, 0, -1*s3, -1*s3, 1*s3],
@@ -304,13 +331,27 @@ special_cells = { # dictionary for special cells using sicell padID
 	    type_pentagon_side4 : [434, 435, 436, 437, 438, 439, 440, 441, 442],
 	    type_pentagon_side5 : [265, 288, 310, 330, 349, 367, 385, 402],
 	    type_pentagon_side6 : [26, 42, 57, 73, 91, 109, 128, 148, 171],
-	    type_hexagon_corner2 : [25],
-	    type_hexagon_corner3 : [216],
-	    type_hexagon_corner4 : [443],
-	    type_hexagon_corner5 : [433],
-	    type_hexagon_corner6 : [193],
         type_HD_hexagon_side1_corner1 : [2],
-        type_HD_hexagon_side6_corner1 : [13],
+        type_HD_hexagon_side1_corner2 : [11],
         type_HD_trpezoid_corner1 : [1],
+        type_HD_trpezoid_corner2 : [12],
+        type_HD_hexagon_side6_corner1 : [13],
+        type_HD_hexagon_side2_corner2 : [25],
+
+        type_HD_hexagon_side3_corner3 : [264], # by rotation
+        type_HD_trpezoid_corner3 : [240], # by rotation
+        type_HD_hexagon_side2_corner3 : [216], # by rotation
+
+        type_HD_hexagon_side3_corner4 : [431], # by rotation
+        type_HD_trpezoid_corner4 : [444], # by rotation
+        type_HD_hexagon_side4_corner4 : [443], # by rotation
+
+        type_HD_hexagon_side5_corner5 : [418], # by rotation
+        type_HD_trpezoid_corner5 : [432], # by rotation
+        type_HD_hexagon_side4_corner5 : [433], # by rotation
+
+        type_HD_hexagon_side5_corner6 : [241], # by rotation
+        type_HD_trpezoid_corner6 : [217], # by rotation
+        type_HD_hexagon_side6_corner6 : [193], # by rotation
     },
 }
