@@ -208,10 +208,12 @@ void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag =
         TLine line;
         line.SetLineStyle(1);
         line.SetLineColor(2);
-        line.SetLineWidth(1);
+        line.SetLineWidth(2);
 
         for(int i=0; i<aux::N_HD_boundary_points-1; ++i) {
             line.DrawLine(aux::x1_HD_full_wafer[i], aux::y1_HD_full_wafer[i], aux::x1_HD_full_wafer[i+1], aux::y1_HD_full_wafer[i+1]);
+            line.DrawLine(aux::x2_HD_full_wafer[i], aux::y2_HD_full_wafer[i], aux::x2_HD_full_wafer[i+1], aux::y2_HD_full_wafer[i+1]);
+            line.DrawLine(aux::x3_HD_full_wafer[i], aux::y3_HD_full_wafer[i], aux::x3_HD_full_wafer[i+1], aux::y3_HD_full_wafer[i+1]);
         }
 
     } else if(drawLine) {
