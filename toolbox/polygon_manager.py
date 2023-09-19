@@ -109,7 +109,7 @@ class PolygonManager:
         graph.GetXaxis().SetLimits(-200, 200)
         graph.SetName(self.cellName + "_%d" % self.globalId)
 
-        # evaluation of area
+        # evaluation of area (valid for LD only)
         self.area = graph.Integral()
         if isinstance(self.rocpin, str):
             self.area = 0.29239 # area of LD calibration cell in cm^{2}
