@@ -5,7 +5,7 @@ import toolbox.polygon_manager as tp
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-n', help="number of cells", type=int, default=9999)
-parser.add_argument('-w', '--waferType', help="set wafer type (partial, full, HD)", type=str, default="full")
+parser.add_argument('-w', '--waferType', help="set wafer type (full, LD3, LD4, HD)", type=str, default="full")
 parser.add_argument('-d', '--drawLine', help="draw boundary lines", action='store_true')
 parser.add_argument('-v', '--verbose', help="set verbosity level", action='store_true')
 args = parser.parse_args()
@@ -17,8 +17,10 @@ if args.waferType == "HD":
     waferType, beginIdx, endIdx = "HD", 223, 667
 elif args.waferType == "full": # LD full
     waferType, beginIdx, endIdx = "full", 1, 223
-elif args.waferType == "partial": # LD3
-    waferType, beginIdx, endIdx = "partial", 667, 778
+elif args.waferType == "LD3":
+    waferType, beginIdx, endIdx = "LD3", 667, 778
+elif args.waferType == "LD4":
+    waferType, beginIdx, endIdx = "LD4", 778, 889
 
 def exe(command):
     print "\n>>> executing command, ", command
@@ -38,11 +40,16 @@ def retrieve_info(line):
 
 def get_macro_arguments():
     # Reminder: outputName is not used for the moment
-    if args.waferType == "partial":
+    if args.waferType == "LD3":
         scope = 14
         markerSize = 0.7
         tag = "LD3_partial_wafer"
-        outputName = "waferMaps/DQM_LD_partial_wafer_map.png"
+        outputName = "waferMaps/DQM_LD3_partial_wafer_map.png"
+    elif args.waferType == "LD4":
+        scope = 14
+        markerSize = 0.7
+        tag = "LD4_partial_wafer"
+        outputName = "waferMaps/DQM_LD4_partial_wafer_map.png"
     elif args.waferType == "full":
         scope = 14
         markerSize = 0.7

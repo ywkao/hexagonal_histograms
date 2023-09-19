@@ -2,15 +2,15 @@
 import json
 import argparse
 parser = argparse.ArgumentParser()
-parser.add_argument('-w', '--waferType', help="set wafer type (partial, full, HD)", type=str, default="full")
+parser.add_argument('-w', '--waferType', help="set wafer type (LD3, full, HD)", type=str, default="full")
 args = parser.parse_args()
 
 if args.waferType == "HD":
     json_file = "data/output_my_coordinate_HD_wafer.json"
 elif args.waferType == "full": # LD full
     json_file = "data/output_my_coordinate_data.json"
-elif args.waferType == "partial": # LD3
-    json_file = "data/output_my_coordinate_partial_wafer.json"
+elif args.waferType == "LD3": # LD3
+    json_file = "data/output_my_coordinate_LD3_wafer.json"
 
 with open(json_file, 'r') as f:
     data = f.read()

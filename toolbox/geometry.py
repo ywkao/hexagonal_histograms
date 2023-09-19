@@ -63,13 +63,17 @@ type_HD_hexagon_side6_corner6 = 655 # by rotation
 
 # information of CM and NC in global Id (readout sequence)
 global_channel_Id_special_channels = {
-    "partial" : {
-        "CMIds" : [37, 38, 76, 77, 115, 116],
-        "NonConnIds" : [8, 17, 47, 56, 58, 67, 86, 95]
-    },
     "full" : {
         "CMIds" : [37, 38, 76, 77, 115, 116, 154, 155, 193, 194, 232, 233],
         "NonConnIds" : [8, 17, 19, 28, 47, 56, 58, 67, 86, 95, 97, 106, 125, 134, 136, 145, 164, 173, 175, 184, 203, 212, 214, 223]
+    },
+    "LD3" : {
+        "CMIds" : [37, 38, 76, 77, 115, 116],
+        "NonConnIds" : [8, 17, 47, 56, 58, 67, 86, 95]
+    },
+    "LD4" : {
+        "CMIds" : [37, 38, 76, 77, 115, 116],
+        "NonConnIds" : [8, 17, 47, 56, 58, 67, 86, 95]
     },
     "HD" : {
         "CMIds" : [37, 38, 76, 77, 115, 116, 154, 155, 193, 194, 232, 233, 271, 272, 310, 311, 349, 350, 388, 389, 427, 428, 466, 467],
@@ -96,7 +100,7 @@ Coordinates_calib_channels = {
 
 # Coordinates of CM and NC channels
 Coordinates_CM_channels = {
-    "partial": {
+    "LD3": {
 	    'x' : [-8.75, -3.75, 3.75, 8.75, 8.75, 3.75],
 	    'y' : [29, 29, 29, 29, 29, 29],
         'theta' : [-p3, -p3, -p3, -p3, p3*3, p3*3]
@@ -112,7 +116,7 @@ Coordinates_CM_channels = {
 }
 
 Coordinates_NC_channels = {
-    "partial": {
+    "LD3": {
 	    'x' : [-7.5, -5.0, 2.5, 5.0, 7.5, 10., 7.5, 5.0],
 	    'y' : [32, 32, 32, 32, 32, 32, 32, 32],
         'theta' : [-p3, -p3, -p3, -p3, -p3, -p3, p3*3, p3*3]
@@ -300,7 +304,7 @@ special_cells = { # dictionary for special cells using sicell padID
         type_hollow : [13, 61, 69, 142, 153, 162], # cells around a calib channel
         type_hexagon_small : [14, 62, 70, 143, 154, 163], # calibration_cells
     },
-    "partial" : {
+    "LD3" : {
         #--------------------------------------------------
         # Next to-do tuning:
         # 89 has to be a hollow pentagon
