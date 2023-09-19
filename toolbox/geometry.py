@@ -14,9 +14,9 @@ type_square = 4
 type_regular_pentagon = 5
 type_hexagon = 6
 type_hexagon_small = 7
-type_circle = 12 
-type_pentagon_hollow = 13
-type_hollow = 14
+type_circle = 12
+type_pentagon_hollow = 19
+type_hollow = 20
 
 type_trapezoid_left = 41
 type_trapezoid_extended_left = 42
@@ -50,12 +50,12 @@ type_partial_wafer_hexagon_corner6 = 607
 type_partial_wafer_hexagon_corner3 = 608
 type_partial_wafer_hexagon_corner2 = 609
 
-type_HD_hexagon_side1_corner1 = 608
-type_HD_hexagon_side1_corner2 = 609
-type_HD_hexagon_side3_corner3 = 610 # by rotation
-type_HD_hexagon_side3_corner4 = 611 # by rotation
-type_HD_hexagon_side5_corner5 = 612 # by rotation
-type_HD_hexagon_side5_corner6 = 613 # by rotation
+type_HD_hexagon_side1_corner1 = 621
+type_HD_hexagon_side1_corner2 = 622
+type_HD_hexagon_side3_corner3 = 623 # by rotation
+type_HD_hexagon_side3_corner4 = 624 # by rotation
+type_HD_hexagon_side5_corner5 = 625 # by rotation
+type_HD_hexagon_side5_corner6 = 626 # by rotation
 type_HD_trpezoid_corner1 = 401
 type_HD_trpezoid_corner2 = 402
 type_HD_trpezoid_corner3 = 403 # by rotation
@@ -318,16 +318,16 @@ base = {
 	 	'y': [0.9, 0.45, -0.45, -0.9, -0.45, 0.45, 0.9]
 	},
 	type_hollow : {
-		'x': [0, 1*s3, 1*s3, 0, -1*s3, -1*s3, 0, 0, -0.6*s3, -0.6*s3, 0, 0.6*s3, 0.6*s3, 0, 0],
-	 	'y': [2, 1, -1, -2, -1, 1, 2, 1.2, 0.6, -0.6, -1.2, -0.6, 0.6, 1.2, 2]
+		'x': [ 0, 1*s3, 1*s3, 0, -1*s3, -1*s3, 0, 0, 0.6*-1, 0.6*-1*s3, 0.6*-2, 0.6*-1*s3, 0.6*-1, 0.6*0, 0.6*1, 0.6*1*s3, 0.6*2, 0.6*1*s3, 0.6*1, 0, 0 ],
+        'y': [ 2, 1, -1, -2, -1, 1, 2, 0.6*2, 0.6*s3, 0.6*1, 0.6*0, 0.6*-1, 0.6*-1*s3, 0.6*-2, 0.6*-1*s3, 0.6*-1, 0.6*0, 0.6*1, 0.6*s3, 0.6*2, 2 ]
 	},
 	type_pentagon_hollow : {
-		'x': [0, 1*s3, 1*s3, -1*s3, -1*s3, 0, 0, -0.6*s3, -0.6*s3, 0, 0.6*s3, 0.6*s3, 0, 0],
-	 	'y': [2, 1, -2, -2, 1, 2, 1.2, 0.6, -0.6, -1.2, -0.6, 0.6, 1.2, 2]
-	},
+		'x': [0, 1*s3, 1*s3, -1*s3, -1*s3, 0, 0, 0.6*-1, 0.6*-1*s3, 0.6*-2, 0.6*-1*s3, 0.6*-1, 0.6*0, 0.6*1, 0.6*1*s3, 0.6*2, 0.6*1*s3, 0.6*1, 0, 0],
+        'y': [2, 1, -2, -2, 1, 2, 1.2, 0.6*s3, 0.6*1, 0.6*0, 0.6*-1, 0.6*-1*s3, 0.6*-2, 0.6*-1*s3, 0.6*-1, 0.6*0, 0.6*1, 0.6*s3, 1.2, 2]
+    },
 	type_circle : {
 		'x': [0, 1, 1*s3, 2, 1*s3, 1, 0, -1, -1*s3, -2, -1*s3, -1, 0],
-	 	'y': [2, s3, 1, 0, -1, -1*s3, -2, -1*s3, -1, 0, 1, s3, 2]
+        'y': [2, s3, 1, 0, -1, -1*s3, -2, -1*s3, -1, 0, 1, s3, 2]
 	},
 }
 
@@ -352,7 +352,7 @@ special_cells = { # dictionary for special cells using sicell padID
 	    type_hexagon_corner5 : [191],
 	    type_hexagon_corner6 : [81],
         type_hollow : [13, 61, 69, 142, 153, 162], # cells around a calib channel
-        type_hexagon_small : [14, 62, 70, 143, 154, 163], # calibration_cells
+        # type_hexagon_small : [14, 62, 70, 143, 154, 163], # calibration_cells
     },
     "LD3" : {
         #--------------------------------------------------
@@ -363,7 +363,7 @@ special_cells = { # dictionary for special cells using sicell padID
         #--------------------------------------------------
         type_hollow : [12, 168], # cells around a calib channel
         type_pentagon_hollow : [89], # cells around a calib channel
-        type_hexagon_small : [13, 90, 169], # calibration_cells
+        # type_hexagon_small : [13, 90, 169], # calibration_cells
         type_trapezoid_left : [14, 35, 61, 126, 157, 185],
         type_trapezoid_extended_left : [93, 207],
 	    type_pentagon_side1 : [2, 3, 4, 104, 105, 106, 107, 108, 109, 110],
@@ -379,7 +379,7 @@ special_cells = { # dictionary for special cells using sicell padID
     },
     "LD4" : {
         type_hollow : [64, 148, 159],
-        type_hexagon_small : [65, 149, 160],
+        # type_hexagon_small : [65, 149, 160],
         type_trapezoid_right : [15, 36, 62, 127, 158, 186], # 41, 68, 132, 164, 191],
         type_trapezoid_extended_right : [94, 208, 99],
         type_trapezoid_left : [19], # 40, 67, 131, 163, 190],

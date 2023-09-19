@@ -80,6 +80,7 @@ class PolygonManager:
         resize_factor = 1.0
         if self.cellType == "CM": resize_factor = 0.6
         elif self.cellType == "NC": resize_factor = 0.4
+        if(isinstance(self.rocpin, str)): resize_factor = 0.4 # "CALIB"
 
         # apply rotation and translation on a base polygon
         for idx in range(self.nCorner+1):
@@ -193,9 +194,9 @@ class PolygonManager:
         """ conditional statements for HD full wafer """
         cellDict = self.special_cells[self.waferType]
         if(isinstance(self.rocpin, str)): # "CALIB"
-            return tg.type_hexagon_small, 6
+            return tg.type_circle, 12
         elif self.sicell in cellDict[tg.type_hollow]:
-            return tg.type_hollow, 14
+            return tg.type_hollow, 20
         elif self.sicell in cellDict[tg.type_pentagon_side1]:
             return tg.type_pentagon_side1, 5
         elif self.sicell in cellDict[tg.type_pentagon_side2]:
@@ -275,9 +276,9 @@ class PolygonManager:
         elif self.sicell in cellDict[tg.type_pentagon_side6]:
             return tg.type_pentagon_side6, 5
         elif self.sicell in cellDict[tg.type_hollow]:
-            return tg.type_hollow, 14
+            return tg.type_hollow, 20
         elif(isinstance(self.rocpin, str)): # "CALIB"
-            return tg.type_hexagon_small, 6
+            return tg.type_circle, 12
         elif self.sicell in cellDict[tg.type_pentagon_corner1]:
             return tg.type_pentagon_corner1, 5
         elif self.sicell in cellDict[tg.type_pentagon_corner2]:
@@ -297,9 +298,9 @@ class PolygonManager:
         """ conditional statements for LD4 partial wafer """
         cellDict = self.special_cells[self.waferType]
         if self.sicell in cellDict[tg.type_hollow]:
-            return tg.type_hollow, 14
+            return tg.type_hollow, 20
         elif(isinstance(self.rocpin, str)): # "CALIB"
-            return tg.type_hexagon_small, 6
+            return tg.type_circle, 12
         elif self.sicell in cellDict[tg.type_pentagon_side1]:
             return tg.type_pentagon_side1, 5
         elif self.sicell in cellDict[tg.type_pentagon_side2]:
@@ -335,11 +336,11 @@ class PolygonManager:
         """ conditional statements for LD3 partial wafer """
         cellDict = self.special_cells[self.waferType]
         if(isinstance(self.rocpin, str)): # "CALIB"
-            return tg.type_hexagon_small, 6
+            return tg.type_circle, 12
         elif self.sicell in cellDict[tg.type_hollow]:
-            return tg.type_hollow, 14
+            return tg.type_hollow, 20
         elif self.sicell in cellDict[tg.type_pentagon_hollow]:
-            return tg.type_pentagon_hollow, 13
+            return tg.type_pentagon_hollow, 19
         elif self.sicell in cellDict[tg.type_trapezoid_left]:
             return tg.type_trapezoid_left, 4
         elif self.sicell in cellDict[tg.type_trapezoid_extended_left]:
