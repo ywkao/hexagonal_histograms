@@ -3,9 +3,11 @@ import json
 
 json_file = "./data/output_my_chId_mapping_partial_wafer.json"
 json_file = "./data/output_my_chId_mapping_HD_wafer.json"
+json_file = "./data/output_my_chId_mapping_LD4_wafer.json"
 
 wafer_type = "partial_wafer"
 wafer_type = "HD_full_wafer"
+wafer_type = "LD4_partial_wafer"
 
 with open(json_file, 'r') as f:
 	data = f.read()

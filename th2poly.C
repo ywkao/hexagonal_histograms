@@ -131,9 +131,12 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
     std::map<int, int> map_HGCROC_pin;
     std::map<int, int> map_SiCell_pad;
 
-    if(NameTag.Contains("partial")) {
-        map_HGCROC_pin = map_HGCROC_pin_partial_wafer;
-        map_SiCell_pad = map_SiCell_pad_partial_wafer;
+    if(NameTag.Contains("LD4")) {
+        map_HGCROC_pin = map_HGCROC_pin_LD4_partial_wafer;
+        map_SiCell_pad = map_SiCell_pad_LD4_partial_wafer;
+    } else if(NameTag.Contains("LD3")) {
+        map_HGCROC_pin = map_HGCROC_pin_LD3_partial_wafer;
+        map_SiCell_pad = map_SiCell_pad_LD3_partial_wafer;
     } else if (NameTag.Contains("HD")){
         map_HGCROC_pin = map_HGCROC_pin_HD_full_wafer;
         map_SiCell_pad = map_SiCell_pad_HD_full_wafer;
@@ -192,7 +195,7 @@ void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag =
     //-----------------------------------------------------------------
     // cosmetics
     //-----------------------------------------------------------------
-    if(drawLine && NameTag.Contains("partial")) {
+    if(drawLine && NameTag.Contains("LD3")) {
         TLine line;
         line.SetLineStyle(1);
         line.SetLineColor(2);
@@ -288,7 +291,8 @@ void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag =
 
             // evaluate (r, phi) and apply rotation
             for(int i=0; i<6; ++i) {
-                if(NameTag.Contains("partial") && (i==2||i==3||i==4)) continue;
+                if(NameTag.Contains("LD3") && (i==2||i==3||i==4)) continue;
+                if(NameTag.Contains("LD4") && (i==0||i==1||i==5)) continue;
                 text.SetTextAngle(theta_angle_text[i]);
                 double theta = theta_coordinate_text[i];
                 double cos_theta = TMath::Cos(theta);
@@ -302,8 +306,14 @@ void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag =
                 x = r*(cos_phi*cos_theta + sin_phi*sin_theta)*arbUnit_to_cm;
                 y = r*(sin_phi*cos_theta - cos_phi*sin_theta)*arbUnit_to_cm;
 
-                if(NameTag.Contains("partial") && (i==5))
+                if(NameTag.Contains("LD3") && (i==5))
                     text.DrawText(x, y, "chip-1, half-0");
+                else if(NameTag.Contains("LD4") && (i==2))
+                    text.DrawText(x, y, "chip-1, half-0");
+                else if(NameTag.Contains("LD4") && (i==3))
+                    text.DrawText(x, y, "chip-0, half-1");
+                else if(NameTag.Contains("LD4") && (i==4))
+                    text.DrawText(x, y, "chip-0, half-0");
                 else
                     text.DrawText(x, y, v_texts[i]);
             }

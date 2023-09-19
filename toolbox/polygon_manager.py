@@ -31,6 +31,8 @@ class PolygonManager:
             self.output_geometry_root_file = "./data/geometry_HD_full_wafer.root"
         elif self.waferType == "LD3":
             self.output_geometry_root_file = "./data/geometry_LD3_partial_wafer.root"
+        elif self.waferType == "LD4":
+            self.output_geometry_root_file = "./data/geometry_LD4_partial_wafer.root"
         elif self.waferType == "full":
             self.output_geometry_root_file = "./data/geometry_LD_full_wafer.root"
         else:
@@ -128,7 +130,7 @@ class PolygonManager:
             y = tg.Coordinates_NC_channels[self.waferType]['y'][self.cellIdx%8]
             if self.waferType == "full":
                 theta = 2*math.pi/3. * (self.cellIdx//8) - math.pi/3.
-            elif self.waferType == "LD3":
+            elif self.waferType == "LD3" or self.waferType == "LD4":
                 theta = tg.Coordinates_NC_channels[self.waferType]['theta'][self.cellIdx]
 
             x, y = self.rotate_coordinate(x, y, theta)
@@ -145,7 +147,7 @@ class PolygonManager:
                 x = tg.Coordinates_CM_channels[self.waferType]['x'][self.cellIdx%4]
                 y = tg.Coordinates_CM_channels[self.waferType]['y'][self.cellIdx%4]
                 theta = 2*math.pi/3. * (self.cellIdx//4) - math.pi/3.
-            elif self.waferType == "LD3":
+            elif self.waferType == "LD3" or self.waferType == "LD4":
                 x = tg.Coordinates_CM_channels[self.waferType]['x'][self.cellIdx]
                 y = tg.Coordinates_CM_channels[self.waferType]['y'][self.cellIdx]
                 theta = tg.Coordinates_CM_channels[self.waferType]['theta'][self.cellIdx]
@@ -177,6 +179,8 @@ class PolygonManager:
             return self.get_polygon_info_LD_full()
         elif self.waferType == "LD3":
             return self.get_polygon_info_LD3_partial()
+        elif self.waferType == "LD4":
+            return self.get_polygon_info_LD4_partial()
         elif self.waferType == "HD":
             return self.get_polygon_info_HD_full()
         else:
@@ -289,6 +293,11 @@ class PolygonManager:
         else:
             return tg.type_hexagon, 6
 
+    def get_polygon_info_LD4_partial(self):
+        """ conditional statements for LD4 partial wafer """
+        cellDict = self.special_cells[self.waferType]
+        return tg.type_hexagon, 6
+
     def get_polygon_info_LD3_partial(self):
         """ conditional statements for LD3 partial wafer """
         cellDict = self.special_cells[self.waferType]
@@ -366,6 +375,8 @@ class PolygonManager:
             output_json = "data/output_my_chId_mapping.json"
         elif self.waferType == "LD3":
             output_json = "data/output_my_chId_mapping_LD3_wafer.json"
+        elif self.waferType == "LD4":
+            output_json = "data/output_my_chId_mapping_LD4_wafer.json"
         elif self.waferType == "HD":
             output_json = "data/output_my_chId_mapping_HD_wafer.json"
         with open(output_json, 'w') as f:
@@ -377,6 +388,8 @@ class PolygonManager:
             output_json = "data/output_my_coordinate_data.json"
         elif self.waferType == "LD3":
             output_json = "data/output_my_coordinate_LD3_wafer.json"
+        elif self.waferType == "LD4":
+            output_json = "data/output_my_coordinate_LD4_wafer.json"
         elif self.waferType == "HD":
             output_json = "data/output_my_coordinate_HD_wafer.json"
         with open(output_json, 'w') as f:
