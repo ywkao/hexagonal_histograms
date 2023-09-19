@@ -20,6 +20,9 @@ type_hollow = 14
 
 type_trapezoid_left = 41
 type_trapezoid_extended_left = 42
+type_trapezoid_right = 43
+type_trapezoid_extended_right = 44
+type_parallelogram = 45
 
 type_pentagon_side1 = 501
 type_pentagon_side2 = 502
@@ -34,6 +37,9 @@ type_pentagon_corner4 = 510
 type_pentagon_corner5 = 511
 type_pentagon_corner6 = 512
 type_partial_wafer_pentagon_corner6 = 513
+type_partial_wafer_pentagon_corner3 = 514
+type_partial_wafer_pentagon_merged_cell_corner2 = 515
+type_partial_wafer_pentagon_merged_cell_corner4 = 516
 type_hexagon_corner1 = 601
 type_hexagon_corner2 = 602
 type_hexagon_corner3 = 603
@@ -41,6 +47,8 @@ type_hexagon_corner4 = 604
 type_hexagon_corner5 = 605
 type_hexagon_corner6 = 606
 type_partial_wafer_hexagon_corner6 = 607
+type_partial_wafer_hexagon_corner3 = 608
+type_partial_wafer_hexagon_corner2 = 609
 
 type_HD_hexagon_side1_corner1 = 608
 type_HD_hexagon_side1_corner2 = 609
@@ -149,6 +157,10 @@ base = {
 		'x': [0, 1*s3, 1*s3, 0, -1*s3, -1*s3, 0],
 		'y': [2, 1, -1, -2, -1, 1, 2]
 	},
+	type_parallelogram : {
+		'x': [0, 0, -1*s3, -1*s3, 0],
+	    'y': [2, -13./29., -40./29., 1, 2]
+	},
 	type_trapezoid_left : {
 		'x': [0, 0, -1*s3, -1*s3, 0],
 	    'y': [2, -2, -1, 1, 2]
@@ -156,6 +168,14 @@ base = {
 	type_trapezoid_extended_left : {
 		'x': [0, 0, -1*s3, -1*s3, 0],
 	    'y': [2, -2, -2, 1, 2]
+	},
+	type_trapezoid_right : {
+		'x': [0, 1*s3, 1*s3, 0, 0],
+		'y': [2, 1, -1, -2, 2]
+	},
+	type_trapezoid_extended_right : {
+		'x': [0, 1*s3, 1*s3, 0, 0],
+		'y': [2, 1, -2, -2, 2]
 	},
 	type_HD_hexagon_side1_corner1 : {
 		'x': [1*s3, 1*s3, 0, -1*s3, -1*s3, -0.5*s3, 1*s3],
@@ -233,6 +253,14 @@ base = {
 		'x': [-0.5*s3, 1*s3, 1*s3, -23.*493.*s3/(58.*163.), -69.*s3/58., -7.*s3/6., -0.5*s3],
 	    'y': [2.5, 1, -2, -2, -47./58., 0.5, 2.5]
 	},
+	type_partial_wafer_hexagon_corner3 : {
+		'x': [ 0.5*s3, 7.*s3/6., 69.*s3/58., 23.*493.*s3/(58.*163.), -1*s3, -1*s3, 0.5*s3 ],
+	    'y': [ 2.5, 0.5, -47./58., -2, -2, 1, 2.5 ]
+	},
+	type_partial_wafer_hexagon_corner2 : {
+		'x': [-s3/2., s3, s3, 0, -1*s3, -1*s3, -s3/2.],
+        'y': [1., -17./28., -1, -2, -1, 1, 1.]
+	},
 	type_pentagon_corner1 : {
 		'x': [s3/2., 1*s3, 1*s3, 0, -69.*s3/58., s3/2.],
 	 	'y': [1, 1, -1, -2, -47./58., 1]
@@ -260,6 +288,18 @@ base = {
 	type_partial_wafer_pentagon_corner6: {
 		'x': [-1885*s3/(58.*163.), 1*s3, 1*s3, 0, -s3/4., -1885*s3/(58.*163.)],
 	    'y': [1, 1, -1, -2, -1.25, 1]
+	},
+	type_partial_wafer_pentagon_corner3: {
+		'x': [ -1*s3, 1885*s3/(58.*163.), s3/4., 0, -1*s3, -1*s3 ],
+	    'y': [ 1, 1, -1.25, -2, -1, 1 ]
+	},
+	type_partial_wafer_pentagon_merged_cell_corner2 : {
+		'x': [-s3, -s3/6., 1.5*s3, 0, -1*s3, -s3],
+        'y': [151./28., 4.5, -0.5, -2, -1, 151./28.]
+	},
+	type_partial_wafer_pentagon_merged_cell_corner4 : {
+		'x': [0, 1*s3, -0.25*s3, -1*s3, -1*s3, 0],
+        'y': [2, 1, -11./4., -100./29., 1, 2]
 	},
 	type_triangle : {
 		'x': [0, 1*s3, -1*s3, 0],
@@ -338,6 +378,22 @@ special_cells = { # dictionary for special cells using sicell padID
 	    type_partial_wafer_hexagon_corner6 : [85],
     },
     "LD4" : {
+        type_hollow : [64, 148, 159],
+        type_hexagon_small : [65, 149, 160],
+        type_trapezoid_right : [15, 36, 62, 127, 158, 186], # 41, 68, 132, 164, 191],
+        type_trapezoid_extended_right : [94, 208, 99],
+        type_trapezoid_left : [19], # 40, 67, 131, 163, 190],
+        type_parallelogram : [212],
+	    type_pentagon_side1 : [5, 6, 7, 111, 112, 113, 114, 115, 116, 117],
+	    type_pentagon_side2 : [42, 54, 70, 84],
+	    type_pentagon_side3 : [135, 150, 166, 179, 192],
+	    type_pentagon_side4 : [209, 210, 95, 96, 97, 98, 99, 100, 101],
+	    type_partial_wafer_pentagon_corner3 : [118],
+	    type_partial_wafer_pentagon_merged_cell_corner2 : [29],
+	    type_partial_wafer_pentagon_merged_cell_corner4 : [202],
+	    type_partial_wafer_hexagon_corner3 : [102],
+	    type_partial_wafer_hexagon_corner2 : [8],
+        type_hexagon_corner4 : [211],
     },
     "HD" : {
         type_hollow : [29, 150, 157, 36, 387, 411, 297, 267, 261, 87, 207, 381], # cells around a calib channel

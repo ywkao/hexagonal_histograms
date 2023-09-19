@@ -296,7 +296,40 @@ class PolygonManager:
     def get_polygon_info_LD4_partial(self):
         """ conditional statements for LD4 partial wafer """
         cellDict = self.special_cells[self.waferType]
-        return tg.type_hexagon, 6
+        if self.sicell in cellDict[tg.type_hollow]:
+            return tg.type_hollow, 14
+        elif(isinstance(self.rocpin, str)): # "CALIB"
+            return tg.type_hexagon_small, 6
+        elif self.sicell in cellDict[tg.type_pentagon_side1]:
+            return tg.type_pentagon_side1, 5
+        elif self.sicell in cellDict[tg.type_pentagon_side2]:
+            return tg.type_pentagon_side2, 5
+        elif self.sicell in cellDict[tg.type_pentagon_side3]:
+            return tg.type_pentagon_side3, 5
+        elif self.sicell in cellDict[tg.type_pentagon_side4]:
+            return tg.type_pentagon_side4, 5
+        elif self.sicell in cellDict[tg.type_trapezoid_right]:
+            return tg.type_trapezoid_right, 4
+        elif self.sicell in cellDict[tg.type_trapezoid_extended_right]:
+            return tg.type_trapezoid_extended_right, 4
+        elif self.sicell in cellDict[tg.type_trapezoid_left]:
+            return tg.type_trapezoid_left, 4
+        elif self.sicell in cellDict[tg.type_partial_wafer_pentagon_corner3]:
+            return tg.type_partial_wafer_pentagon_corner3, 5
+        elif self.sicell in cellDict[tg.type_partial_wafer_hexagon_corner3]:
+            return tg.type_partial_wafer_hexagon_corner3, 6
+        elif self.sicell in cellDict[tg.type_partial_wafer_hexagon_corner2]:
+            return tg.type_partial_wafer_hexagon_corner2, 6
+        elif self.sicell in cellDict[tg.type_partial_wafer_pentagon_merged_cell_corner2]:
+            return tg.type_partial_wafer_pentagon_merged_cell_corner2, 5
+        elif self.sicell in cellDict[tg.type_partial_wafer_pentagon_merged_cell_corner4]:
+            return tg.type_partial_wafer_pentagon_merged_cell_corner4, 5
+        elif self.sicell in cellDict[tg.type_hexagon_corner4]:
+            return tg.type_hexagon_corner4, 6
+        elif self.sicell in cellDict[tg.type_parallelogram]:
+            return tg.type_parallelogram, 4
+        else:
+            return tg.type_hexagon, 6
 
     def get_polygon_info_LD3_partial(self):
         """ conditional statements for LD3 partial wafer """
