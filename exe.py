@@ -70,7 +70,7 @@ def main():
     with open("./data/WaferCellMapTrg.txt", 'r') as fin: contents = fin.readlines()[beginIdx:endIdx]
     print("[DEBUG] len(contents) = %d" % len(contents))
     
-    # Iterate normal channels & non-connected channels
+    # Loop over normal channels & non-connected channels
     for i, line in enumerate(contents):
         density, _, roc, halfroc, seq, rocpin, sicell, _, _, iu, iv, t = retrieve_info(line)
         if(iu==-1 and iv==-1): # treatment for non-connected channels
