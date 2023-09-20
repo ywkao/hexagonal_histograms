@@ -217,6 +217,9 @@ void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag =
             line.DrawLine(aux::x1_HD_full_wafer[i], aux::y1_HD_full_wafer[i], aux::x1_HD_full_wafer[i+1], aux::y1_HD_full_wafer[i+1]);
             line.DrawLine(aux::x2_HD_full_wafer[i], aux::y2_HD_full_wafer[i], aux::x2_HD_full_wafer[i+1], aux::y2_HD_full_wafer[i+1]);
             line.DrawLine(aux::x3_HD_full_wafer[i], aux::y3_HD_full_wafer[i], aux::x3_HD_full_wafer[i+1], aux::y3_HD_full_wafer[i+1]);
+            line.DrawLine(aux::x4_HD_full_wafer[i], aux::y4_HD_full_wafer[i], aux::x4_HD_full_wafer[i+1], aux::y4_HD_full_wafer[i+1]);
+            line.DrawLine(aux::x5_HD_full_wafer[i], aux::y5_HD_full_wafer[i], aux::x5_HD_full_wafer[i+1], aux::y5_HD_full_wafer[i+1]);
+            line.DrawLine(aux::x6_HD_full_wafer[i], aux::y6_HD_full_wafer[i], aux::x6_HD_full_wafer[i+1], aux::y6_HD_full_wafer[i+1]);
         }
 
     } else if(drawLine) {

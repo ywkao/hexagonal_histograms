@@ -108,11 +108,14 @@ if __name__ == "__main__":
         fout.write("\n")
 
         fout.write("namespace aux {\n")
-        fout.write("const int N_HD_boundary_points = 25;\n")
+        fout.write("const int N_HD_boundary_points = 24;\n")
         fout.write("\n")
         print_coordinate(("x1_HD_full_wafer", "y1_HD_full_wafer"), tc.query_HD_full_wafer_line1, "N_HD_boundary_points")
         print_coordinate(("x2_HD_full_wafer", "y2_HD_full_wafer"), tc.query_HD_full_wafer_line2, "N_HD_boundary_points")
         print_coordinate(("x3_HD_full_wafer", "y3_HD_full_wafer"), tc.query_HD_full_wafer_line3, "N_HD_boundary_points")
+        print_coordinate(("x4_HD_full_wafer", "y4_HD_full_wafer"), tc.query_HD_full_wafer_line4, "N_HD_boundary_points")
+        print_coordinate(("x5_HD_full_wafer", "y5_HD_full_wafer"), tc.query_HD_full_wafer_line5, "N_HD_boundary_points")
+        print_coordinate(("x6_HD_full_wafer", "y6_HD_full_wafer"), tc.query_HD_full_wafer_line6, "N_HD_boundary_points")
         fout.write("}; // end of aux\n")
 
         fout.write("\n")
