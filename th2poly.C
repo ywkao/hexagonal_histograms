@@ -195,48 +195,35 @@ void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag =
     //-----------------------------------------------------------------
     // cosmetics
     //-----------------------------------------------------------------
-    if(drawLine && NameTag.Contains("LD3")) {
+    if(drawLine) {
         TLine line;
         line.SetLineStyle(1);
         line.SetLineColor(2);
         line.SetLineWidth(2);
 
-        for(int i=0; i<14; ++i)
-            line.DrawLine(aux::x1_partial_wafer[i], aux::y1_partial_wafer[i], aux::x1_partial_wafer[i+1], aux::y1_partial_wafer[i+1]);
-
-        for(int i=0; i<16; ++i)
-            line.DrawLine(aux::x2_partial_wafer[i], aux::y2_partial_wafer[i], aux::x2_partial_wafer[i+1], aux::y2_partial_wafer[i+1]);
-
-    } else if(drawLine && NameTag.Contains("HD")) {
-        TLine line;
-        line.SetLineStyle(1);
-        line.SetLineColor(2);
-        line.SetLineWidth(2);
-
-        for(int i=0; i<aux::N_HD_boundary_points-1; ++i) {
-            line.DrawLine(aux::x1_HD_full_wafer[i], aux::y1_HD_full_wafer[i], aux::x1_HD_full_wafer[i+1], aux::y1_HD_full_wafer[i+1]);
-            line.DrawLine(aux::x2_HD_full_wafer[i], aux::y2_HD_full_wafer[i], aux::x2_HD_full_wafer[i+1], aux::y2_HD_full_wafer[i+1]);
-            line.DrawLine(aux::x3_HD_full_wafer[i], aux::y3_HD_full_wafer[i], aux::x3_HD_full_wafer[i+1], aux::y3_HD_full_wafer[i+1]);
-            line.DrawLine(aux::x4_HD_full_wafer[i], aux::y4_HD_full_wafer[i], aux::x4_HD_full_wafer[i+1], aux::y4_HD_full_wafer[i+1]);
-            line.DrawLine(aux::x5_HD_full_wafer[i], aux::y5_HD_full_wafer[i], aux::x5_HD_full_wafer[i+1], aux::y5_HD_full_wafer[i+1]);
-            line.DrawLine(aux::x6_HD_full_wafer[i], aux::y6_HD_full_wafer[i], aux::x6_HD_full_wafer[i+1], aux::y6_HD_full_wafer[i+1]);
-        }
-
-    } else if(drawLine) {
-        // load N_boundary_points, x1, x2, x3, y1, y2, y3 from auxiliary_boundary_lines.h
-
-        TLine line;
-        line.SetLineStyle(1);
-        line.SetLineColor(2);
-        line.SetLineWidth(2);
-
-        for(int i=0; i<aux::N_boundary_points-1; ++i) {
-            line.DrawLine(aux::x1[i], aux::y1[i], aux::x1[i+1], aux::y1[i+1]);
-            line.DrawLine(aux::x2[i], aux::y2[i], aux::x2[i+1], aux::y2[i+1]);
-            line.DrawLine(aux::x3[i], aux::y3[i], aux::x3[i+1], aux::y3[i+1]);
-            line.DrawLine(aux::x4[i], aux::y4[i], aux::x4[i+1], aux::y4[i+1]);
-            line.DrawLine(aux::x5[i], aux::y5[i], aux::x5[i+1], aux::y5[i+1]);
-            line.DrawLine(aux::x6[i], aux::y6[i], aux::x6[i+1], aux::y6[i+1]);
+        if(NameTag.Contains("LD3")) {
+            for(int i=0; i<14; ++i)
+                line.DrawLine(aux::x1_partial_wafer[i], aux::y1_partial_wafer[i], aux::x1_partial_wafer[i+1], aux::y1_partial_wafer[i+1]);
+            for(int i=0; i<16; ++i)
+                line.DrawLine(aux::x2_partial_wafer[i], aux::y2_partial_wafer[i], aux::x2_partial_wafer[i+1], aux::y2_partial_wafer[i+1]);
+        } else if(NameTag.Contains("HD")) {
+            for(int i=0; i<aux::N_HD_boundary_points-1; ++i) {
+                line.DrawLine(aux::x1_HD_full_wafer[i], aux::y1_HD_full_wafer[i], aux::x1_HD_full_wafer[i+1], aux::y1_HD_full_wafer[i+1]);
+                line.DrawLine(aux::x2_HD_full_wafer[i], aux::y2_HD_full_wafer[i], aux::x2_HD_full_wafer[i+1], aux::y2_HD_full_wafer[i+1]);
+                line.DrawLine(aux::x3_HD_full_wafer[i], aux::y3_HD_full_wafer[i], aux::x3_HD_full_wafer[i+1], aux::y3_HD_full_wafer[i+1]);
+                line.DrawLine(aux::x4_HD_full_wafer[i], aux::y4_HD_full_wafer[i], aux::x4_HD_full_wafer[i+1], aux::y4_HD_full_wafer[i+1]);
+                line.DrawLine(aux::x5_HD_full_wafer[i], aux::y5_HD_full_wafer[i], aux::x5_HD_full_wafer[i+1], aux::y5_HD_full_wafer[i+1]);
+                line.DrawLine(aux::x6_HD_full_wafer[i], aux::y6_HD_full_wafer[i], aux::x6_HD_full_wafer[i+1], aux::y6_HD_full_wafer[i+1]);
+            }
+        } else { // LD full wafer
+            for(int i=0; i<aux::N_boundary_points-1; ++i) {
+                line.DrawLine(aux::x1[i], aux::y1[i], aux::x1[i+1], aux::y1[i+1]);
+                line.DrawLine(aux::x2[i], aux::y2[i], aux::x2[i+1], aux::y2[i+1]);
+                line.DrawLine(aux::x3[i], aux::y3[i], aux::x3[i+1], aux::y3[i+1]);
+                line.DrawLine(aux::x4[i], aux::y4[i], aux::x4[i+1], aux::y4[i+1]);
+                line.DrawLine(aux::x5[i], aux::y5[i], aux::x5[i+1], aux::y5[i+1]);
+                line.DrawLine(aux::x6[i], aux::y6[i], aux::x6[i+1], aux::y6[i+1]);
+            }
         }
     }
 
@@ -253,7 +240,6 @@ void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag =
 
             std::vector<double> theta_angle_text = {0, 0, 120, 120, -120, -120};
             std::vector<double> theta_coordinate_text = {theta1, theta1, theta2, theta2, theta3, theta3};
-
             std::vector<double> x_coordinate_text = {-6.25, 6.25, -6.25, 6.25, -6.25, 6.25};
             std::vector<double> y_coordinate_text = {26, 26, 26, 26, 26, 26};
             std::vector<TString> v_texts = {"chip-0", "chip-1", "chip-2", "chip-3", "chip-4", "chip-5"};

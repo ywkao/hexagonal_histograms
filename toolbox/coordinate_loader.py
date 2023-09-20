@@ -9,8 +9,10 @@ if args.waferType == "HD":
     json_file = "data/output_my_coordinate_HD_wafer.json"
 elif args.waferType == "full": # LD full
     json_file = "data/output_my_coordinate_data.json"
-elif args.waferType == "LD3": # LD3
+elif args.waferType == "LD3":
     json_file = "data/output_my_coordinate_LD3_wafer.json"
+elif args.waferType == "LD4":
+    json_file = "data/output_my_coordinate_LD4_wafer.json"
 
 with open(json_file, 'r') as f:
     data = f.read()
