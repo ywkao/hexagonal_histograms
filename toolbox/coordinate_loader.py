@@ -88,7 +88,7 @@ if __name__ == "__main__":
         fout.write("#endif // __auxiliary_boundary_lines__\n")
         fout.close()
 
-    elif args.waferType == "partial": # LD3
+    elif args.waferType == "LD3":
         fout = open("include/auxiliary_boundary_lines_partial_wafer.h", 'w')
         fout.write("#ifndef __auxiliary_boundary_lines_partial_wafer__\n")
         fout.write("#define __auxiliary_boundary_lines_partial_wafer__\n")
@@ -101,6 +101,21 @@ if __name__ == "__main__":
 
         fout.write("\n")
         fout.write("#endif // __auxiliary_boundary_lines_partial_wafer__\n")
+        fout.close()
+
+    elif args.waferType == "LD4":
+        fout = open("include/auxiliary_boundary_lines_LD4_partial_wafer.h", 'w')
+        fout.write("#ifndef __auxiliary_boundary_lines_LD4_partial_wafer__\n")
+        fout.write("#define __auxiliary_boundary_lines_LD4_partial_wafer__\n")
+        fout.write("\n")
+
+        fout.write("namespace aux {\n")
+        print_coordinate(("x1_LD4_partial_wafer", "y1_LD4_partial_wafer"), tc.query_LD4_wafer_line1, "15")
+        print_coordinate(("x2_LD4_partial_wafer", "y2_LD4_partial_wafer"), tc.query_LD4_wafer_line2, "17")
+        fout.write("}; // end of aux\n")
+
+        fout.write("\n")
+        fout.write("#endif // __auxiliary_boundary_lines_LD4_partial_wafer__\n")
         fout.close()
 
     elif args.waferType == "HD":

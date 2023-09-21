@@ -1,5 +1,6 @@
 #include "include/auxiliary_boundary_lines.h"
 #include "include/auxiliary_boundary_lines_partial_wafer.h"
+#include "include/auxiliary_boundary_lines_LD4_partial_wafer.h"
 #include "include/auxiliary_boundary_lines_HD_full_wafer.h"
 #include "include/map_channel_numbers.h"
 #include <map>
@@ -206,6 +207,11 @@ void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag =
                 line.DrawLine(aux::x1_partial_wafer[i], aux::y1_partial_wafer[i], aux::x1_partial_wafer[i+1], aux::y1_partial_wafer[i+1]);
             for(int i=0; i<16; ++i)
                 line.DrawLine(aux::x2_partial_wafer[i], aux::y2_partial_wafer[i], aux::x2_partial_wafer[i+1], aux::y2_partial_wafer[i+1]);
+        } else if(NameTag.Contains("LD4")) {
+            for(int i=0; i<14; ++i)
+                line.DrawLine(aux::x1_LD4_partial_wafer[i], aux::y1_LD4_partial_wafer[i], aux::x1_LD4_partial_wafer[i+1], aux::y1_LD4_partial_wafer[i+1]);
+            for(int i=0; i<16; ++i)
+                line.DrawLine(aux::x2_LD4_partial_wafer[i], aux::y2_LD4_partial_wafer[i], aux::x2_LD4_partial_wafer[i+1], aux::y2_LD4_partial_wafer[i+1]);
         } else if(NameTag.Contains("HD")) {
             for(int i=0; i<aux::N_HD_boundary_points-1; ++i) {
                 line.DrawLine(aux::x1_HD_full_wafer[i], aux::y1_HD_full_wafer[i], aux::x1_HD_full_wafer[i+1], aux::y1_HD_full_wafer[i+1]);
