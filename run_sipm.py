@@ -13,7 +13,9 @@ args = parser.parse_args()
 """
 Reminder: range of indices (line numbers) is decided from the text file, ./data/WaferCellMapTrg.txt
 """
-if args.waferType == "sipm": # cassette level
+if args.waferType == "user": # cassette level
+    waferType, beginIdx, endIdx = "user", 0, 0
+elif args.waferType == "sipm": # cassette level
     #waferType, beginIdx, endIdx = "sipm", 190, 477
     waferType, beginIdx, endIdx = "sipm", 1, 188 # 188 # 96 
 elif args.waferType == "HD":
@@ -58,7 +60,12 @@ def retrieve_info_sipm(line):
 
 def get_macro_arguments():
     # Reminder: outputName is not used for the moment
-    if args.waferType == "sipm":
+    if args.waferType == "user":
+        scope = 50 
+        markerSize = 0.7
+        tag = "user"
+        outputName = "waferMaps/DQM_user_map.png"
+    elif args.waferType == "sipm":
         scope = 2000 
         markerSize = 0.7
         tag = "sipm"
@@ -86,22 +93,46 @@ def get_macro_arguments():
 
     return scope, tag, outputName, markerSize
 
+def transform_base_shape(pm, polygon_base, deltaPhi, shift, resize_factor):
+    """apply rotation and translation on a base polygon"""
+    shift = [10.*element for element in shift]
+    polygon = {'x':[], 'y':[]}
+    for idx in range(len(polygon_base['x'])):
+        x, y = polygon_base['x'][idx], polygon_base['y'][idx]
+        x, y = pm.rotate_coordinate(x, y, deltaPhi) if deltaPhi>0. else (x, y)
+        x, y = pm.translate_coordinate(x, y, resize_factor, tuple(shift))
+        polygon['x'].append(x)
+        polygon['y'].append(y)
+    return polygon
+
 def main():
     polygon_manager = tp.PolygonManager(waferType)
     polygon_manager.globalId = 0
-    
-    # Load geometry text file
-    with open("./data/geometry_sipmontile.hgcal.txt", 'r') as fin: contents = fin.readlines()[beginIdx:endIdx]
-    print("[DEBUG] len(contents) = %d" % len(contents))
+    scope, _, _, _ = get_macro_arguments()
 
-    # Loop over normal channels & non-connected channels
-    if args.waferType=="sipm":
+    #----------------------------------------------------------------------------------------------------
+    # 2024 user deinfed polygons
+    #----------------------------------------------------------------------------------------------------
+    if args.waferType=="user":
+        nvertices = 6
+        resize_factor = 10 # arbitrary scale
+        shifts = [[0.,2.], [-1.*tp.tg.s3, -1.], [tp.tg.s3, -1.]]
+        for idx in range(3):
+            hexagon = tp.tg.base[tp.tg.type_hexagon]
+            polygon = transform_base_shape(polygon_manager, hexagon, 0., shifts[idx], resize_factor)
+            polygon_manager.run_sipm(nvertices, polygon, scope, "module_%d"%idx)
+
+    #----------------------------------------------------------------------------------------------------
+    # 2024 sipm on tiles, cassette level
+    #----------------------------------------------------------------------------------------------------
+    elif args.waferType=="sipm":
+        # Load geometry text file
+        with open("./data/geometry_sipmontile.hgcal.txt", 'r') as fin: contents = fin.readlines()[beginIdx:endIdx]
+        print("[DEBUG] len(contents) = %d" % len(contents))
+
         for i, line in enumerate(contents):
             plane, u, v, itype, typecode, x0, y0, irot, nvertices, vx_0, vy_0, vx_1, vy_1, vx_2, vy_2, vx_3, vy_3, vx_4, vy_4, vx_5, vy_5, vx_6, vy_6, icassette = retrieve_info_sipm(line)
             print(plane, u, v, itype, typecode, x0, y0, irot, nvertices, vx_0, vy_0, vx_1, vy_1, vx_2, vy_2, vx_3, vy_3, vx_4, vy_4, vx_5, vy_5, vx_6, vy_6, icassette)
-
-            vx = [vx_0, vx_1, vx_2, vx_3, vx_4, vx_5, vx_6]
-            vy = [vy_0, vy_1, vy_2, vy_3, vy_4, vy_5, vy_6]
 
             polygon = {'x':[], 'y':[]}
             for i in range(nvertices):
@@ -111,9 +142,17 @@ def main():
                     polygon['x'].append(vx[0])
                     polygon['y'].append(vy[0])
                     
-            polygon_manager.run_sipm(nvertices, polygon)
+            polygon_manager.run_sipm(nvertices, polygon, scope)
 
+    #----------------------------------------------------------------------------------------------------
+    # 2023 recipe for wafer maps: load from WaferCellMapTrg.txt
+    #----------------------------------------------------------------------------------------------------
     else:
+        # Load geometry text file
+        with open("./data/WaferCellMapTrg.txt", 'r') as fin: contents = fin.readlines()[beginIdx:endIdx]
+        print("[DEBUG] len(contents) = %d" % len(contents))
+
+        # Loop over normal channels & non-connected channels
         for i, line in enumerate(contents):
             density, _, roc, halfroc, seq, rocpin, sicell, _, _, iu, iv, t = retrieve_info(line)
             if(iu==-1 and iv==-1): # treatment for non-connected channels
@@ -146,7 +185,7 @@ if __name__ == "__main__":
 
     # if args.drawLine:
     #     exe("./toolbox/coordinate_loader.py -w %s" % args.waferType)
-    macro = "th2poly_sipm.C" if args.waferType=="sipm" else "th2poly.C"
+    macro = "th2poly_sipm.C" if (args.waferType=="sipm" or args.waferType=="user") else "th2poly.C"
     scope, tag, outputName, markerSize = get_macro_arguments()
     exe("root -l -b -q %s'(\"%s\", \"%s\", %d, %d, \"%s\", %f)'" % (macro, geometry_rootfile, outputName, scope, args.drawLine, tag, markerSize)) # execute root macro for TH2Poly
 

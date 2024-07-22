@@ -27,7 +27,9 @@ class PolygonManager:
         self.cm2mm = 10.0
 
         # output geometry root file
-        if self.waferType == "sipm":
+        if self.waferType == "user":
+            self.output_geometry_root_file = "./data/geometry_modules_testbeam_2024.root"
+        elif self.waferType == "sipm":
             self.output_geometry_root_file = "./data/geometry_sipm.root"
         elif self.waferType == "HD":
             self.output_geometry_root_file = "./data/geometry_HD_full_wafer.root"
@@ -74,7 +76,7 @@ class PolygonManager:
         dx, dy = shift
         return x*scale+dx, y*scale+dy
 
-    def get_polygon_sipm(self, polygon):
+    def get_polygon_sipm(self, polygon, scope):
         """ derive coordinates for a polygon & create an instance of TGraph """
 
         # create a graph
@@ -83,10 +85,11 @@ class PolygonManager:
         graph.GetXaxis().SetTitle("x (arb. unit)")
         graph.GetYaxis().SetTitle("y (arb. unit)")
 
-        graph.SetMaximum(2000)
-        graph.SetMinimum(-2000)
-        graph.GetXaxis().SetLimits(-2000, 2000)
-        graph.SetName(self.cellName + "_%d" % self.globalId)
+        graph.SetMaximum(scope)
+        graph.SetMinimum(-1.*scope)
+        graph.GetXaxis().SetLimits(-1.*scope, scope)
+        graph.SetName(self.cellName)
+        # graph.SetName(self.cellName + "_%d" % self.globalId)
 
         self.counter += 1
         return graph
@@ -374,7 +377,9 @@ class PolygonManager:
 
     def export_cpp_id_mapping(self):
         """ export chId mapping for information wafer map """
-        if self.waferType == "sipm":
+        if self.waferType == "user":
+            output_json = "data/output_user_mapping.json"
+        elif self.waferType == "sipm":
             output_json = "data/output_sipm_mapping.json"
         elif self.waferType == "full":
             output_json = "data/output_my_chId_mapping.json"
@@ -389,7 +394,9 @@ class PolygonManager:
 
     def export_coordinate_data(self):
         """ export values for auxiliary boundary lines on the wafer map """
-        if self.waferType == "sipm":
+        if self.waferType == "user":
+            output_json = "data/output_my_coordinate_user.json"
+        elif self.waferType == "sipm":
             output_json = "data/output_my_coordinate_sipm.json"
         elif self.waferType == "full":
             output_json = "data/output_my_coordinate_data.json"
@@ -419,12 +426,12 @@ class PolygonManager:
         # globalId and area
         return "{0} {1}".format(self.globalId, "%.2f"%(self.area*pow(self.cm2mm,2)))
 
-    def run_sipm(self, nvertices, polygon, cellName="hex"):
+    def run_sipm(self, nvertices, polygon, scope, cellName="hex"):
         """ main method for controling flow """
         self.globalId += 1
         self.cellName = cellName
         self.nCorner = nvertices
-        self.graph = self.get_polygon_sipm(polygon) # need polygon type, number of corners, coordinates of cell center
+        self.graph = self.get_polygon_sipm(polygon, scope) # need polygon type, number of corners, coordinates of cell center
         self.collections[self.globalId] = self.graph
 
     def run(self, channelIds, coor_uv, cellType="", cellIdx=-1, cellName="hex"):
