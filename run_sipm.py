@@ -116,7 +116,7 @@ def main():
     if args.waferType=="user":
         nvertices = 6
         resize_factor = 10 # arbitrary scale
-        shifts = [[0.,2.], [-1.*tp.tg.s3, -1.], [tp.tg.s3, -1.]]
+        shifts = [[0.,-2.], [-1.*tp.tg.s3, 1.], [tp.tg.s3, 1.]]
         for idx in range(3):
             hexagon = tp.tg.base[tp.tg.type_hexagon]
             polygon = transform_base_shape(polygon_manager, hexagon, 0., shifts[idx], resize_factor)
