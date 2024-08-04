@@ -5,9 +5,9 @@
 #include "include/map_channel_numbers.h"
 #include <map>
 
-void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag = "LD_wafer");
+void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag = "LD_wafer", double extra_angle = 0.0);
 
-void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=false, TString NameTag="LD_wafer", double MarkerSize = 0.7){
+void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=false, TString NameTag="LD_wafer", double MarkerSize = 0.7, double extra_angle = 0.0){
     TCanvas *c1 = new TCanvas("c1", "", 900, 900);
     c1->SetRightMargin(0.15);
     gStyle->SetPaintTextFormat(".0f");
@@ -162,25 +162,25 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
     if(scheme==0) {
         p->SetMarkerSize(MarkerSize);
         p->Draw("colz;text");
-        beautify_plot(drawLine, true, NameTag);
+        beautify_plot(drawLine, true, NameTag, extra_angle);
         c1->SaveAs("waferMaps/info_"+NameTag+"_globalChannelId_readoutSequence.png");
         c1->SaveAs("waferMaps/info_"+NameTag+"_globalChannelId_readoutSequence.pdf");
 
         p_pin->SetMarkerSize(MarkerSize);
         p_pin->Draw("colz;text");
-        beautify_plot(drawLine, true, NameTag);
+        beautify_plot(drawLine, true, NameTag, extra_angle);
         c1->SaveAs("waferMaps/info_"+NameTag+"_HGCROC_pin_chan.png");
         c1->SaveAs("waferMaps/info_"+NameTag+"_HGCROC_pin_chan.pdf");
 
         p_sicell->SetMarkerSize(MarkerSize);
         p_sicell->Draw("colz;text");
-        beautify_plot(drawLine, true, NameTag);
+        beautify_plot(drawLine, true, NameTag, extra_angle);
         c1->SaveAs("waferMaps/info_"+NameTag+"_SiCell_padId.png");
         c1->SaveAs("waferMaps/info_"+NameTag+"_SiCell_padId.pdf");
     } else {
         p->SetMarkerSize(MarkerSize);
         p->Draw("colz;text");
-        beautify_plot(drawLine, true, NameTag);
+        beautify_plot(drawLine, true, NameTag, extra_angle);
         c1->SaveAs("test_injection_"+NameTag+".png");
     }
 
@@ -192,7 +192,7 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
 
 }
 
-void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag = "LD_wafer") {
+void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag = "LD_wafer", double extra_angle = 0.0) {
     //-----------------------------------------------------------------
     // cosmetics
     //-----------------------------------------------------------------
@@ -271,9 +271,10 @@ void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag =
             }
 
         } else { // LD
-            double theta1 = -TMath::Pi()/3.;
-            double theta2 = TMath::Pi()/3.;
-            double theta3 = TMath::Pi();
+            double theta1 = -TMath::Pi()/3. + extra_angle;
+            double theta2 = TMath::Pi()/3. + extra_angle;
+            double theta3 = TMath::Pi() + extra_angle;
+            double a = extra_angle * 180. / TMath::Pi();
             std::vector<double> theta_angle_text = {60, 60, -60, -60, 0, 0};
             std::vector<double> theta_coordinate_text = {theta1, theta1, theta2, theta2, theta3, theta3};
             std::vector<double> x_coordinate_text = {-6.25, 6.25, -6.25, 6.25, -6.25, 6.25};
@@ -288,7 +289,10 @@ void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag =
             for(int i=0; i<6; ++i) {
                 if(NameTag.Contains("LD3") && (i==2||i==3||i==4)) continue;
                 if(NameTag.Contains("LD4") && (i==0||i==1||i==5)) continue;
-                text.SetTextAngle(theta_angle_text[i]);
+
+                double angle = theta_angle_text[i] - a;
+                angle = (fabs(angle)<90.) ? angle : angle+180;
+                text.SetTextAngle(angle);
                 double theta = theta_coordinate_text[i];
                 double cos_theta = TMath::Cos(theta);
                 double sin_theta = TMath::Sin(theta);

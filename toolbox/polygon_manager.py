@@ -38,17 +38,28 @@ class PolygonManager:
         else:
             self.output_geometry_root_file = "./data/hexagons.root"
 
+        self.extra_rotation_tb2024 = 0. # math.pi/6. # 7*math.pi/6. # 0.25*math.pi # 45 degree
+        self.global_theta = 5.*math.pi/6. + self.extra_rotation_tb2024 # 150 + extra degree
+        self.cos_global_theta = math.cos(self.global_theta)
+        self.sin_global_theta = math.sin(self.global_theta)
+
         # global corrections on coordinates
         if self.waferType == "HD":
             self.global_correction_x = 0.805403625519528
             self.global_correction_y = -1.395
         else:
-            self.global_correction_x = -1.2083998869165784
-            self.global_correction_y = 2.09301
-
-        self.global_theta = 5.*math.pi/6. # 150 degree
-        self.cos_global_theta = math.cos(self.global_theta)
-        self.sin_global_theta = math.sin(self.global_theta)
+            if (self.extra_rotation_tb2024 == 7*math.pi/6):
+                # LD extra rotate 210 degree
+                self.global_correction_x = 0.0
+                self.global_correction_y = -2.416800
+            elif (self.extra_rotation_tb2024 == math.pi/6):
+                # LD extra rotate 30 degree
+                self.global_correction_x = 0.0
+                self.global_correction_y = 2.416800
+            else:
+                # LD default
+                self.global_correction_x = -1.2083998869165784
+                self.global_correction_y = 2.09301
 
         # containers
         self.counter = 0
@@ -134,7 +145,7 @@ class PolygonManager:
             elif self.waferType == "LD3" or self.waferType == "LD4":
                 theta = tg.Coordinates_NC_channels[self.waferType]['theta'][self.cellIdx]
 
-            x, y = self.rotate_coordinate(x, y, theta)
+            x, y = self.rotate_coordinate(x, y, theta + self.extra_rotation_tb2024)
             x, y = self.translate_coordinate(x, y, self.arbUnit_to_cm, (0., 0.))
             return x, y
 
@@ -153,7 +164,7 @@ class PolygonManager:
                 y = tg.Coordinates_CM_channels[self.waferType]['y'][self.cellIdx]
                 theta = tg.Coordinates_CM_channels[self.waferType]['theta'][self.cellIdx]
 
-            x, y = self.rotate_coordinate(x, y, theta)
+            x, y = self.rotate_coordinate(x, y, theta + self.extra_rotation_tb2024)
             x, y = self.translate_coordinate(x, y, self.arbUnit_to_cm, (0., 0.))
             return x, y
 
@@ -401,7 +412,7 @@ class PolygonManager:
             return tg.base[tg.type_HD_hexagon_side2_corner2], 4*tg.p3
 
         else:
-            return tg.base[self.type_polygon], 0
+            return tg.base[self.type_polygon], self.extra_rotation_tb2024 
 
     def export_cpp_id_mapping(self):
         """ export chId mapping for information wafer map """
@@ -460,7 +471,7 @@ class PolygonManager:
 
         # evaluation + creation
         self.center_x, self.center_y = self.get_cell_center_coordinates()
-        self.type_polygon, self.nCorner  = self.get_polygon_information()
+        self.type_polygon, self.nCorner = self.get_polygon_information()
         self.graph = self.get_polygon() # need polygon type, number of corners, coordinates of cell center
         self.collections[self.globalId] = self.graph
 

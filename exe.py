@@ -95,15 +95,15 @@ def main():
     polygon_manager.export_coordinate_data() # store coordinates for auxiliary lines
     polygon_manager.export_cpp_id_mapping() # store chIds for information wafer map
 
-    return polygon_manager.output_geometry_root_file
+    return polygon_manager.output_geometry_root_file, polygon_manager.extra_rotation_tb2024
 
 
 if __name__ == "__main__":
-    geometry_rootfile = main()
+    geometry_rootfile, extra_angle = main()
 
     if args.drawLine:
         exe("./toolbox/coordinate_loader.py -w %s" % args.waferType)
 
     scope, tag, outputName, markerSize = get_macro_arguments()
-    exe("root -l -b -q th2poly.C'(\"%s\", \"%s\", %d, %d, \"%s\", %f)'" % (geometry_rootfile, outputName, scope, args.drawLine, tag, markerSize)) # execute root macro for TH2Poly
+    exe("root -l -b -q th2poly.C'(\"%s\", \"%s\", %d, %d, \"%s\", %f, %f)'" % (geometry_rootfile, outputName, scope, args.drawLine, tag, markerSize, extra_angle)) # execute root macro for TH2Poly
 
