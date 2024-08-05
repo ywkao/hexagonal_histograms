@@ -6,7 +6,7 @@ import ROOT
 ROOT.gROOT.SetBatch(True)
 
 class PolygonManager:
-    def __init__(self, wafer_type):
+    def __init__(self, wafer_type, extra_angle, offset_x, offset_y):
         # configuration parameters & shared library
         mm2cm = 0.10
         arbUnit_to_cm = (6.9767/2.)*mm2cm if not wafer_type=="HD" else (4.65/2.)*mm2cm
@@ -38,7 +38,7 @@ class PolygonManager:
         else:
             self.output_geometry_root_file = "./data/hexagons.root"
 
-        self.extra_rotation_tb2024 = 0. # math.pi/6. # 7*math.pi/6. # 0.25*math.pi # 45 degree
+        self.extra_rotation_tb2024 = extra_angle
         self.global_theta = 5.*math.pi/6. + self.extra_rotation_tb2024 # 150 + extra degree
         self.cos_global_theta = math.cos(self.global_theta)
         self.sin_global_theta = math.sin(self.global_theta)
@@ -48,18 +48,8 @@ class PolygonManager:
             self.global_correction_x = 0.805403625519528
             self.global_correction_y = -1.395
         else:
-            if (self.extra_rotation_tb2024 == 7*math.pi/6):
-                # LD extra rotate 210 degree
-                self.global_correction_x = 0.0
-                self.global_correction_y = -2.416800
-            elif (self.extra_rotation_tb2024 == math.pi/6):
-                # LD extra rotate 30 degree
-                self.global_correction_x = 0.0
-                self.global_correction_y = 2.416800
-            else:
-                # LD default
-                self.global_correction_x = -1.2083998869165784
-                self.global_correction_y = 2.09301
+            self.global_correction_x = offset_x
+            self.global_correction_y = offset_y
 
         # containers
         self.counter = 0

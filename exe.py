@@ -1,4 +1,5 @@
 #!/usr/bin/env python2
+import math
 import argparse
 import subprocess
 import toolbox.polygon_manager as tp
@@ -63,8 +64,8 @@ def get_macro_arguments():
 
     return scope, tag, outputName, markerSize
 
-def main():
-    polygon_manager = tp.PolygonManager(waferType)
+def get_registered_polygon_manager(extra_angle, offset_x, offset_y):
+    polygon_manager = tp.PolygonManager(waferType, extra_angle, offset_x, offset_y)
     
     # Load geometry text file
     with open("./data/WaferCellMapTrg.txt", 'r') as fin: contents = fin.readlines()[beginIdx:endIdx]
@@ -95,8 +96,14 @@ def main():
     polygon_manager.export_coordinate_data() # store coordinates for auxiliary lines
     polygon_manager.export_cpp_id_mapping() # store chIds for information wafer map
 
-    return polygon_manager.output_geometry_root_file, polygon_manager.extra_rotation_tb2024
+    # return polygon_manager.output_geometry_root_file, polygon_manager.extra_rotation_tb2024
+    return polygon_manager
 
+def main():
+    pm = get_registered_polygon_manager(0., -1.20840 , 2.09301) # default
+    # pm = get_registered_polygon_manager(5*math.pi/6. ,  2.09301 , -1.20840) # 150 degree
+    # pm = get_registered_polygon_manager(math.pi/6.   ,  0.0     ,  2.41680) # 30 degree
+    return pm.output_geometry_root_file, pm.extra_rotation_tb2024
 
 if __name__ == "__main__":
     geometry_rootfile, extra_angle = main()
