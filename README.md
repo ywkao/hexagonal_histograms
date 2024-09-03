@@ -2,7 +2,7 @@
 
 ## Commands
 ```
-$ git clone -b dev git@github.com:ywkao/hexagonal_histograms.git
+$ git clone -b tutorial git@github.com:ywkao/hexagonal_histograms.git
 $ cd hexagonal_histograms
 $ make
 $ ./exe.py -w full -d -v # LD full wafer
