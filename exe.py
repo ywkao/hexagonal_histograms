@@ -111,6 +111,8 @@ if __name__ == "__main__":
     if args.drawLine:
         exe("./toolbox/coordinate_loader.py -w %s" % args.waferType)
 
+    exe("mkdir -p ./waferMaps")
+
     scope, tag, outputName, markerSize = get_macro_arguments()
     exe("root -l -b -q th2poly.C'(\"%s\", \"%s\", %d, %d, \"%s\", %f, %f)'" % (geometry_rootfile, outputName, scope, args.drawLine, tag, markerSize, extra_angle)) # execute root macro for TH2Poly
 
