@@ -24,7 +24,7 @@ elif args.waferType == "LD4":
     waferType, beginIdx, endIdx = "LD4", 778, 889
 
 def exe(command):
-    print "\n>>> executing command, ", command
+    print("\n>>> executing command, ", command)
     subprocess.call(command, shell=True)
 
 def retrieve_info(line):
@@ -100,17 +100,23 @@ def get_registered_polygon_manager(extra_angle, offset_x, offset_y):
     return polygon_manager
 
 def main():
-    pm = get_registered_polygon_manager(0., -1.20840 , 2.09301) # default
+    # pm = get_registered_polygon_manager(0., -1.20840 , 2.09301) # default
     # pm = get_registered_polygon_manager(5*math.pi/6. ,  2.09301 , -1.20840) # 150 degree
-    # pm = get_registered_polygon_manager(math.pi/6.   ,  0.0     ,  2.41680) # 30 degree
+    pm = get_registered_polygon_manager(math.pi/6.   ,  0.0     ,  2.41680) # 30 degree
     return pm.output_geometry_root_file, pm.extra_rotation_tb2024
 
 if __name__ == "__main__":
     geometry_rootfile, extra_angle = main()
 
+    rotationTag = ""
+    if(extra_angle==5*math.pi/6.):
+        rotationTag = "_rotation150"
+    if(extra_angle==math.pi/6.):
+        rotationTag = "_rotation30"
+
     if args.drawLine:
         exe("./toolbox/coordinate_loader.py -w %s" % args.waferType)
 
     scope, tag, outputName, markerSize = get_macro_arguments()
-    exe("root -l -b -q th2poly.C'(\"%s\", \"%s\", %d, %d, \"%s\", %f, %f)'" % (geometry_rootfile, outputName, scope, args.drawLine, tag, markerSize, extra_angle)) # execute root macro for TH2Poly
+    exe("root -l -b -q th2poly.C'(\"%s\", \"%s\", %d, %d, \"%s\", %f, \"%s\")'" % (geometry_rootfile, outputName, scope, args.drawLine, tag, markerSize, rotationTag)) # execute root macro for TH2Poly
 

@@ -5,9 +5,19 @@
 #include "include/map_channel_numbers.h"
 #include <map>
 
-void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag = "LD_wafer", double extra_angle = 0.0);
+#include "TMath.h"
 
-void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=false, TString NameTag="LD_wafer", double MarkerSize = 0.7, double extra_angle = 0.0){
+void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag = "LD_wafer", double extra_angle = 0.0, TString rotationTag = "");
+
+void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=false, TString NameTag="LD_wafer", double MarkerSize = 0.7, TString rotationTag = ""){
+
+    double extra_angle = 0.0;
+
+    if(rotationTag=="_rotation150")
+        extra_angle = 5. * TMath::Pi() / 6.;
+    if(rotationTag=="_rotation30")
+        extra_angle = TMath::Pi() / 6.;
+
     TCanvas *c1 = new TCanvas("c1", "", 900, 900);
     c1->SetRightMargin(0.15);
     gStyle->SetPaintTextFormat(".0f");
@@ -162,25 +172,25 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
     if(scheme==0) {
         p->SetMarkerSize(MarkerSize);
         p->Draw("colz;text");
-        beautify_plot(drawLine, true, NameTag, extra_angle);
-        c1->SaveAs("waferMaps/info_"+NameTag+"_globalChannelId_readoutSequence.png");
-        c1->SaveAs("waferMaps/info_"+NameTag+"_globalChannelId_readoutSequence.pdf");
+        beautify_plot(drawLine, true, NameTag, extra_angle, rotationTag);
+        c1->SaveAs("waferMaps/info_"+NameTag+"_globalChannelId_readoutSequence"+rotationTag+".png");
+        c1->SaveAs("waferMaps/info_"+NameTag+"_globalChannelId_readoutSequence"+rotationTag+".pdf");
 
         p_pin->SetMarkerSize(MarkerSize);
         p_pin->Draw("colz;text");
-        beautify_plot(drawLine, true, NameTag, extra_angle);
-        c1->SaveAs("waferMaps/info_"+NameTag+"_HGCROC_pin_chan.png");
-        c1->SaveAs("waferMaps/info_"+NameTag+"_HGCROC_pin_chan.pdf");
+        beautify_plot(drawLine, true, NameTag, extra_angle, rotationTag);
+        c1->SaveAs("waferMaps/info_"+NameTag+"_HGCROC_pin_chan"+rotationTag+".png");
+        c1->SaveAs("waferMaps/info_"+NameTag+"_HGCROC_pin_chan"+rotationTag+".pdf");
 
         p_sicell->SetMarkerSize(MarkerSize);
         p_sicell->Draw("colz;text");
-        beautify_plot(drawLine, true, NameTag, extra_angle);
-        c1->SaveAs("waferMaps/info_"+NameTag+"_SiCell_padId.png");
-        c1->SaveAs("waferMaps/info_"+NameTag+"_SiCell_padId.pdf");
+        beautify_plot(drawLine, true, NameTag, extra_angle, rotationTag);
+        c1->SaveAs("waferMaps/info_"+NameTag+"_SiCell_padId"+rotationTag+".png");
+        c1->SaveAs("waferMaps/info_"+NameTag+"_SiCell_padId"+rotationTag+".pdf");
     } else {
         p->SetMarkerSize(MarkerSize);
         p->Draw("colz;text");
-        beautify_plot(drawLine, true, NameTag, extra_angle);
+        beautify_plot(drawLine, true, NameTag, extra_angle, rotationTag);
         c1->SaveAs("test_injection_"+NameTag+".png");
     }
 
@@ -192,7 +202,7 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
 
 }
 
-void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag = "LD_wafer", double extra_angle = 0.0) {
+void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag = "LD_wafer", double extra_angle = 0.0, TString rotationTag = "") {
     //-----------------------------------------------------------------
     // cosmetics
     //-----------------------------------------------------------------
@@ -240,11 +250,18 @@ void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag =
         text.SetTextSize(12);
 
         if(NameTag.Contains("HD")) {
-            double theta1 = 0.;
-            double theta2 = 4*TMath::Pi()/3.;
-            double theta3 = 2*TMath::Pi()/3.;
+            double theta1 = 0. + extra_angle;
+            double theta2 = 4*TMath::Pi()/3. + extra_angle;
+            double theta3 = 2*TMath::Pi()/3. + extra_angle;
 
             std::vector<double> theta_angle_text = {0, 0, 120, 120, -120, -120};
+            if(rotationTag.Contains("150"))
+                theta_angle_text = {-150, -150, -30, -30, 90, 90};
+            else if(rotationTag.Contains("30"))
+                theta_angle_text = {-30, -30, 90, 90, -150, -150};
+
+            // std::vector<double> theta_angle_text = {0, 0, 120, 120, -120, -120};
+            // std::vector<double> theta_angle_text = {-extra_angle, -extra_angle, -extra_angle+120, -extra_angle+120, -extra_angle-120, -extra_angle-120};
             std::vector<double> theta_coordinate_text = {theta1, theta1, theta2, theta2, theta3, theta3};
             std::vector<double> x_coordinate_text = {-6.25, 6.25, -6.25, 6.25, -6.25, 6.25};
             std::vector<double> y_coordinate_text = {26, 26, 26, 26, 26, 26};

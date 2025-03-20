@@ -39,7 +39,7 @@ class PolygonManager:
             self.output_geometry_root_file = "./data/hexagons.root"
 
         self.extra_rotation_tb2024 = extra_angle
-        self.global_theta = 5.*math.pi/6. + self.extra_rotation_tb2024 # 150 + extra degree
+        self.global_theta = 5.*math.pi/6. # + self.extra_rotation_tb2024 # 150 + extra degree
         self.cos_global_theta = math.cos(self.global_theta)
         self.sin_global_theta = math.sin(self.global_theta)
 
@@ -163,6 +163,7 @@ class PolygonManager:
             coor = self.cell_helper.cellUV2XY1(int(self.iu), int(self.iv), 0, self.cell_fine_or_coarse)
             x, y = self.rotate_coordinate(coor[0], coor[1], self.global_theta)
             x, y = self.translate_coordinate(x, y, 1., (-1*self.global_correction_x, -1*self.global_correction_y))
+            x, y = self.rotate_coordinate(x, y, self.extra_rotation_tb2024)
             return x, y
 
     def get_polygon_information(self):
@@ -375,31 +376,31 @@ class PolygonManager:
         CAVEAT: mind the internal indices of corner polygons when querying auxiliary lines
         """
         if self.type_polygon==tg.type_HD_hexagon_side3_corner3:
-            return tg.base[tg.type_HD_hexagon_side1_corner1], 2*tg.p3
+            return tg.base[tg.type_HD_hexagon_side1_corner1], 2*tg.p3 + self.extra_rotation_tb2024
         elif self.type_polygon==tg.type_HD_hexagon_side3_corner4:
-            return tg.base[tg.type_HD_hexagon_side1_corner2], 2*tg.p3
+            return tg.base[tg.type_HD_hexagon_side1_corner2], 2*tg.p3 + self.extra_rotation_tb2024
         elif self.type_polygon==tg.type_HD_hexagon_side5_corner5:
-            return tg.base[tg.type_HD_hexagon_side1_corner1], 4*tg.p3
+            return tg.base[tg.type_HD_hexagon_side1_corner1], 4*tg.p3 + self.extra_rotation_tb2024
         elif self.type_polygon==tg.type_HD_hexagon_side5_corner6:
-            return tg.base[tg.type_HD_hexagon_side1_corner2], 4*tg.p3
+            return tg.base[tg.type_HD_hexagon_side1_corner2], 4*tg.p3 + self.extra_rotation_tb2024
 
         elif self.type_polygon==tg.type_HD_trpezoid_corner3:
-            return tg.base[tg.type_HD_trpezoid_corner1], 2*tg.p3
+            return tg.base[tg.type_HD_trpezoid_corner1], 2*tg.p3 + self.extra_rotation_tb2024
         elif self.type_polygon==tg.type_HD_trpezoid_corner4:
-            return tg.base[tg.type_HD_trpezoid_corner2], 2*tg.p3
+            return tg.base[tg.type_HD_trpezoid_corner2], 2*tg.p3 + self.extra_rotation_tb2024
         elif self.type_polygon==tg.type_HD_trpezoid_corner5:
-            return tg.base[tg.type_HD_trpezoid_corner1], 4*tg.p3
+            return tg.base[tg.type_HD_trpezoid_corner1], 4*tg.p3 + self.extra_rotation_tb2024
         elif self.type_polygon==tg.type_HD_trpezoid_corner6:
-            return tg.base[tg.type_HD_trpezoid_corner2], 4*tg.p3
+            return tg.base[tg.type_HD_trpezoid_corner2], 4*tg.p3 + self.extra_rotation_tb2024
 
         elif self.type_polygon==tg.type_HD_hexagon_side2_corner3:
-            return tg.base[tg.type_HD_hexagon_side6_corner1], 2*tg.p3
+            return tg.base[tg.type_HD_hexagon_side6_corner1], 2*tg.p3 + self.extra_rotation_tb2024
         elif self.type_polygon==tg.type_HD_hexagon_side4_corner4:
-            return tg.base[tg.type_HD_hexagon_side2_corner2], 2*tg.p3
+            return tg.base[tg.type_HD_hexagon_side2_corner2], 2*tg.p3 + self.extra_rotation_tb2024
         elif self.type_polygon==tg.type_HD_hexagon_side4_corner5:
-            return tg.base[tg.type_HD_hexagon_side6_corner1], 4*tg.p3
+            return tg.base[tg.type_HD_hexagon_side6_corner1], 4*tg.p3 + self.extra_rotation_tb2024
         elif self.type_polygon==tg.type_HD_hexagon_side6_corner6:
-            return tg.base[tg.type_HD_hexagon_side2_corner2], 4*tg.p3
+            return tg.base[tg.type_HD_hexagon_side2_corner2], 4*tg.p3 + self.extra_rotation_tb2024
 
         else:
             return tg.base[self.type_polygon], self.extra_rotation_tb2024 
@@ -464,4 +465,9 @@ class PolygonManager:
         self.type_polygon, self.nCorner = self.get_polygon_information()
         self.graph = self.get_polygon() # need polygon type, number of corners, coordinates of cell center
         self.collections[self.globalId] = self.graph
+
+        # if self.sicell==193:
+        #     print(f"[DEBUG] globalId = {self.globalId}, rocpin = {self.rocpin}, sicell = {self.sicell}")
+        #     print(f"[DEBUG] x, y = {self.center_x}, {self.center_y}")
+
 
