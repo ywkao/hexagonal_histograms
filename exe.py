@@ -100,9 +100,10 @@ def get_registered_polygon_manager(extra_angle, offset_x, offset_y):
     return polygon_manager
 
 def main():
-    # pm = get_registered_polygon_manager(0., -1.20840 , 2.09301) # default
+    pm = get_registered_polygon_manager(0., -1.20840 , 2.09301) # default
+    # pm = get_registered_polygon_manager(5*math.pi/6., -1.20840 , 2.09301) # default
     # pm = get_registered_polygon_manager(5*math.pi/6. ,  2.09301 , -1.20840) # 150 degree
-    pm = get_registered_polygon_manager(math.pi/6.   ,  0.0     ,  2.41680) # 30 degree
+    # pm = get_registered_polygon_manager(math.pi/6.   ,  0.0     ,  2.41680) # 30 degree
     return pm.output_geometry_root_file, pm.extra_rotation_tb2024
 
 if __name__ == "__main__":
