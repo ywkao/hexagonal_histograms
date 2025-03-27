@@ -1,0 +1,33 @@
+# wafer_config.yaml
+wafer_types:
+  HD:
+    begin_idx: 223
+    end_idx: 667
+    scope: 12
+    marker_size: 0.5
+    tag: "HD_wafer"
+    output_name: "waferMaps/DQM_HD_wafer_map.png"
+  
+  full:  # LD full
+    begin_idx: 1
+    end_idx: 223
+    scope: 14
+    marker_size: 0.7
+    tag: "LD_wafer"
+    output_name: "waferMaps/DQM_LD_wafer_map.png"
+  
+  LD3:
+    begin_idx: 667
+    end_idx: 778
+    scope: 14
+    marker_size: 0.7
+    tag: "LD3_partial_wafer"
+    output_name: "waferMaps/DQM_LD3_partial_wafer_map.png"
+  
+  LD4:
+    begin_idx: 778
+    end_idx: 889
+    scope: 14
+    marker_size: 0.7
+    tag: "LD4_partial_wafer"
+    output_name: "waferMaps/DQM_LD4_partial_wafer_map.png"

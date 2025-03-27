@@ -3,6 +3,7 @@ import math
 import argparse
 import subprocess
 import toolbox.polygon_manager as tp
+from utils.config_handler import load_wafer_contents, get_macro_arguments
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-n', help="number of cells", type=int, default=9999)
@@ -14,15 +15,6 @@ args = parser.parse_args()
 """
 Reminder: range of indices (line numbers) is decided from the text file, ./data/WaferCellMapTrg.txt
 """
-if args.waferType == "HD":
-    waferType, beginIdx, endIdx = "HD", 223, 667
-elif args.waferType == "full": # LD full
-    waferType, beginIdx, endIdx = "full", 1, 223
-elif args.waferType == "LD3":
-    waferType, beginIdx, endIdx = "LD3", 667, 778
-elif args.waferType == "LD4":
-    waferType, beginIdx, endIdx = "LD4", 778, 889
-
 def exe(command):
     print("\n>>> executing command, ", command)
     subprocess.call(command, shell=True)
@@ -39,36 +31,13 @@ def retrieve_info(line):
             result.append(int(ele))
     return tuple(result)
 
-def get_macro_arguments():
-    # Reminder: outputName is not used for the moment
-    if args.waferType == "LD3":
-        scope = 14
-        markerSize = 0.7
-        tag = "LD3_partial_wafer"
-        outputName = "waferMaps/DQM_LD3_partial_wafer_map.png"
-    elif args.waferType == "LD4":
-        scope = 14
-        markerSize = 0.7
-        tag = "LD4_partial_wafer"
-        outputName = "waferMaps/DQM_LD4_partial_wafer_map.png"
-    elif args.waferType == "full":
-        scope = 14
-        markerSize = 0.7
-        tag = "LD_wafer"
-        outputName = "waferMaps/DQM_LD_wafer_map.png"
-    elif args.waferType == "HD":
-        scope = 12
-        markerSize = 0.5
-        tag = "HD_wafer"
-        outputName = "waferMaps/DQM_HD_wafer_map.png"
-
-    return scope, tag, outputName, markerSize
-
 def get_registered_polygon_manager(extra_angle, offset_x, offset_y):
     polygon_manager = tp.PolygonManager(waferType, extra_angle, offset_x, offset_y)
     
     # Load geometry text file
     with open("./data/WaferCellMapTrg.txt", 'r') as fin: contents = fin.readlines()[beginIdx:endIdx]
+
+    contents = load_wafer_contents(waferType)
     print("[DEBUG] len(contents) = %d" % len(contents))
     
     # Loop over normal channels & non-connected channels
