@@ -1,9 +1,9 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 import yaml
 import os
 from typing import Tuple, Dict, List
 
-def load_wafer_config(config_path="./config/wafer_config.yaml"):
+def load_wafer_config(config_path="./config/wafer_config.yaml")->Dict:
     """ Load wafer type configuration from YAML file """
     if not os.path.exists(config_path):
         raise FileNotFoundError("Configuration file not found:", config_path)
@@ -13,7 +13,7 @@ def load_wafer_config(config_path="./config/wafer_config.yaml"):
     
     return config['wafer_types']
 
-def get_macro_arguments(wafer_type):
+def get_macro_arguments(wafer_type)->Tuple:
     """ Get macro arguments for a specific wafer type """
     config = load_wafer_config()
     
@@ -23,7 +23,17 @@ def get_macro_arguments(wafer_type):
     params = config[wafer_type]
     return params['scope'], params['tag'], params['output_name'], params['marker_size']
 
-def load_wafer_contents(wafer_type, file_path="./data/WaferCellMapTrg.txt"):
+def get_json_name_to_export_coordinates(wafer_type)->str:
+    """ Get json file name to export coordinates """
+    config = load_wafer_config()
+    
+    if wafer_type not in config:
+        raise ValueError("Unknown wafer type:", wafer_type)
+    
+    params = config[wafer_type]
+    return params['json_file']
+
+def load_wafer_contents(wafer_type, file_path="./data/WaferCellMapTrg.txt")->List:
     """ Load contents from text file based on wafer type indices """
     config = load_wafer_config()
     

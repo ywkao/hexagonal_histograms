@@ -6,6 +6,7 @@ wafer_types:
     scope: 12
     marker_size: 0.5
     tag: "HD_wafer"
+    json_file: "config/cell_coordinates/hd_wafer.json"
     output_name: "waferMaps/DQM_HD_wafer_map.png"
   
   full:  # LD full
@@ -14,6 +15,7 @@ wafer_types:
     scope: 14
     marker_size: 0.7
     tag: "LD_wafer"
+    json_file: "config/cell_coordinates/ld_wafer.json"
     output_name: "waferMaps/DQM_LD_wafer_map.png"
   
   LD3:
@@ -22,6 +24,7 @@ wafer_types:
     scope: 14
     marker_size: 0.7
     tag: "LD3_partial_wafer"
+    json_file: "config/cell_coordinates/ld3_wafer.json"
     output_name: "waferMaps/DQM_LD3_partial_wafer_map.png"
   
   LD4:
@@ -30,4 +33,5 @@ wafer_types:
     scope: 14
     marker_size: 0.7
     tag: "LD4_partial_wafer"
+    json_file: "config/cell_coordinates/ld4_wafer.json"
     output_name: "waferMaps/DQM_LD4_partial_wafer_map.png"

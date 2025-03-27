@@ -418,16 +418,8 @@ class PolygonManager:
         with open(output_json, 'w') as f:
             json.dump(self.dict_my_chId_mapping, f, indent=4)
 
-    def export_coordinate_data(self):
+    def export_coordinate_data(self, output_json):
         """ export values for auxiliary boundary lines on the wafer map """
-        if self.waferType == "full":
-            output_json = "data/output_my_coordinate_data.json"
-        elif self.waferType == "LD3":
-            output_json = "data/output_my_coordinate_LD3_wafer.json"
-        elif self.waferType == "LD4":
-            output_json = "data/output_my_coordinate_LD4_wafer.json"
-        elif self.waferType == "HD":
-            output_json = "data/output_my_coordinate_HD_wafer.json"
         with open(output_json, 'w') as f:
             json.dump(self.dict_my_coordinate_data, f, indent=4)
 

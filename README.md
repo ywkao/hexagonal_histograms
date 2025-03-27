@@ -1,5 +1,12 @@
 # hexagonal_histograms
 
+## Environment
+
+On lxplus,
+```
+source /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.34.04/x86_64-almalinux9.5-gcc115-opt/bin/thisroot.sh
+```
+
 ## Commands
 ```
 $ git clone -b dev git@github.com:ywkao/hexagonal_histograms.git

@@ -1,9 +1,10 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 import math
 import argparse
 import subprocess
 import toolbox.polygon_manager as tp
-from utils.config_handler import load_wafer_contents, get_macro_arguments
+from utils.config_handler import load_wafer_contents, get_macro_arguments, get_json_name_to_export_coordinates
+from utils.auxiliary_line_producer import AuxiliaryLineProducer
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-n', help="number of cells", type=int, default=9999)
@@ -32,12 +33,10 @@ def retrieve_info(line):
     return tuple(result)
 
 def get_registered_polygon_manager(extra_angle, offset_x, offset_y):
-    polygon_manager = tp.PolygonManager(waferType, extra_angle, offset_x, offset_y)
+    polygon_manager = tp.PolygonManager(args.waferType, extra_angle, offset_x, offset_y)
     
     # Load geometry text file
-    with open("./data/WaferCellMapTrg.txt", 'r') as fin: contents = fin.readlines()[beginIdx:endIdx]
-
-    contents = load_wafer_contents(waferType)
+    contents = load_wafer_contents(args.waferType)
     print("[DEBUG] len(contents) = %d" % len(contents))
     
     # Loop over normal channels & non-connected channels
@@ -55,20 +54,22 @@ def get_registered_polygon_manager(extra_angle, offset_x, offset_y):
         if polygon_manager.counter==args.n : break # manually control how many cells to display
 
     # Add additional cells for CM channels
-    for idx, CM in enumerate(tp.tg.gcId[waferType]["CMIds"]):
+    for idx, CM in enumerate(tp.tg.gcId[args.waferType]["CMIds"]):
         channelIds = (CM, -1, -1) # globalId, artificial sicell, rocpin
         polygon_manager.run(channelIds, (-1,-1), "CM", idx, "hex_cm")
         if args.verbose: print(polygon_manager)
 
     # Export geometry root file
+    json_name = get_json_name_to_export_coordinates(args.waferType)
     polygon_manager.export_root_file() # geometry root file for DQM
-    polygon_manager.export_coordinate_data() # store coordinates for auxiliary lines
+    polygon_manager.export_coordinate_data(json_name) # store coordinates for auxiliary lines
     polygon_manager.export_cpp_id_mapping() # store chIds for information wafer map
 
     # return polygon_manager.output_geometry_root_file, polygon_manager.extra_rotation_tb2024
     return polygon_manager
 
 def main():
+    global args
     pm = get_registered_polygon_manager(0., -1.20840 , 2.09301) # default
     # pm = get_registered_polygon_manager(5*math.pi/6., -1.20840 , 2.09301) # default
     # pm = get_registered_polygon_manager(5*math.pi/6. ,  2.09301 , -1.20840) # 150 degree
@@ -85,8 +86,10 @@ if __name__ == "__main__":
         rotationTag = "_rotation30"
 
     if args.drawLine:
-        exe("./toolbox/coordinate_loader.py -w %s" % args.waferType)
+        json_name = get_json_name_to_export_coordinates(args.waferType)
+        producer = AuxiliaryLineProducer(args.waferType, json_name)
+        producer.create_cpp_headers()
 
-    scope, tag, outputName, markerSize = get_macro_arguments()
+    scope, tag, outputName, markerSize = get_macro_arguments(args.waferType)
     exe("root -l -b -q th2poly.C'(\"%s\", \"%s\", %d, %d, \"%s\", %f, \"%s\")'" % (geometry_rootfile, outputName, scope, args.drawLine, tag, markerSize, rotationTag)) # execute root macro for TH2Poly
 
