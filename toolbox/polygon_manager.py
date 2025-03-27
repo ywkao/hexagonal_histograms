@@ -426,7 +426,7 @@ class PolygonManager:
     def export_root_file(self):
         """ generate geometry root file for DQM in raw data handling chain"""
         fout = ROOT.TFile(self.output_geometry_root_file, "RECREATE")
-        for key, graph in self.collections.items():
+        for key, graph in sorted(self.collections.items()):
             graph.Write()
         fout.Close()
 
