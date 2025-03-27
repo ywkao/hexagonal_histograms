@@ -23,15 +23,15 @@ def get_macro_arguments(wafer_type)->Tuple:
     params = config[wafer_type]
     return params['scope'], params['tag'], params['output_name'], params['marker_size']
 
-def get_json_name_to_export_coordinates(wafer_type)->str:
-    """ Get json file name to export coordinates """
+def get_exported_file_names(wafer_type)->Tuple:
+    """ Get file names to export geometry/coordinates/id mapping """
     config = load_wafer_config()
     
     if wafer_type not in config:
         raise ValueError("Unknown wafer type:", wafer_type)
     
     params = config[wafer_type]
-    return params['json_file']
+    return params['geometry_root_file'], params['cell_coordinate_json_file'], params['cell_id_mapping_json_file']
 
 def load_wafer_contents(wafer_type, file_path="./data/input/WaferCellMapTrg.txt")->List:
     """ Load contents from text file based on wafer type indices """

@@ -6,26 +6,21 @@ wafer_types:
     scope: 12
     marker_size: 0.5
     tag: "HD_wafer"
-    json_file: "config/cell_coordinates/hd_wafer.json"
-    output_name: "waferMaps/DQM_HD_wafer_map.png"
+    cell_coordinate_json_file: "output/coordinates/hd_wafer_coordinates.json"
+    cell_id_mapping_json_file: "output/mapping/hd_wafer_mapping.json"
+    geometry_root_file: "output/geometry/hd_wafer_geometry.root"
+    output_name: "output/waferMaps/hd_wafer_map.png"
 
-  HD2:
-    begin_idx: 889
-    end_idx: 1185
-    scope: 12
-    marker_size: 0.5
-    tag: "HD2_wafer"
-    json_file: "config/cell_coordinates/hd2_wafer.json"
-    output_name: "waferMaps/DQM_HD2_wafer_map.png"
-  
   full:  # LD full
     begin_idx: 1
     end_idx: 223
     scope: 14
     marker_size: 0.7
     tag: "LD_wafer"
-    json_file: "config/cell_coordinates/ld_wafer.json"
-    output_name: "waferMaps/DQM_LD_wafer_map.png"
+    cell_coordinate_json_file: "output/coordinates/ld_wafer_coordinates.json"
+    cell_id_mapping_json_file: "output/mapping/ld_wafer_mapping.json"
+    geometry_root_file: "output/geometry/ld_wafer_geometry.root"
+    output_name: "output/waferMaps/ld_wafer_map.png"
   
   LD3:
     begin_idx: 667
@@ -33,8 +28,10 @@ wafer_types:
     scope: 14
     marker_size: 0.7
     tag: "LD3_partial_wafer"
-    json_file: "config/cell_coordinates/ld3_wafer.json"
-    output_name: "waferMaps/DQM_LD3_partial_wafer_map.png"
+    cell_coordinate_json_file: "output/coordinates/ld3_wafer_coordinates.json"
+    cell_id_mapping_json_file: "output/mapping/ld3_wafer_mapping.json"
+    geometry_root_file: "output/geometry/ld3_wafer_geometry.root"
+    output_name: "output/waferMaps/ld3_wafer_map.png"
   
   LD4:
     begin_idx: 778
@@ -42,5 +39,7 @@ wafer_types:
     scope: 14
     marker_size: 0.7
     tag: "LD4_partial_wafer"
-    json_file: "config/cell_coordinates/ld4_wafer.json"
-    output_name: "waferMaps/DQM_LD4_partial_wafer_map.png"
+    cell_coordinate_json_file: "output/coordinates/ld4_wafer_coordinates.json"
+    cell_id_mapping_json_file: "output/mapping/ld4_wafer_mapping.json"
+    geometry_root_file: "output/geometry/ld4_wafer_geometry.root"
+    output_name: "output/waferMaps/ld4_wafer_map.png"

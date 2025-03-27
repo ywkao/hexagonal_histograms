@@ -4,7 +4,7 @@ import argparse
 import subprocess
 from utils.geometry import gcId
 from utils.polygon_manager import PolygonManager
-from utils.config_handler import load_wafer_contents, get_macro_arguments, get_json_name_to_export_coordinates
+from utils.config_handler import load_wafer_contents, get_macro_arguments, get_exported_file_names
 from utils.auxiliary_line_producer import AuxiliaryLineProducer
 
 parser = argparse.ArgumentParser()
@@ -61,10 +61,10 @@ def get_registered_polygon_manager(extra_angle, offset_x, offset_y):
         if args.verbose: print(polygon_manager)
 
     # Export geometry root file
-    json_name = get_json_name_to_export_coordinates(args.waferType)
-    polygon_manager.export_root_file() # geometry root file for DQM
-    polygon_manager.export_coordinate_data(json_name) # store coordinates for auxiliary lines
-    polygon_manager.export_cpp_id_mapping() # store chIds for information wafer map
+    geometry_rootfile, coordinate_json, mapping_json = get_exported_file_names(args.waferType)
+    polygon_manager.export_root_file(geometry_rootfile) # geometry root file for DQM
+    polygon_manager.export_coordinate_data(coordinate_json) # store coordinates for auxiliary lines
+    polygon_manager.export_channel_id_mapping(mapping_json) # store chIds for information wafer map
 
     # return polygon_manager.output_geometry_root_file, polygon_manager.extra_rotation_tb2024
     return polygon_manager
@@ -75,10 +75,10 @@ def main():
     # pm = get_registered_polygon_manager(5*math.pi/6., -1.20840 , 2.09301) # default
     # pm = get_registered_polygon_manager(5*math.pi/6. ,  2.09301 , -1.20840) # 150 degree
     # pm = get_registered_polygon_manager(math.pi/6.   ,  0.0     ,  2.41680) # 30 degree
-    return pm.output_geometry_root_file, pm.extra_rotation_tb2024
+    return pm.extra_rotation_tb2024
 
 if __name__ == "__main__":
-    geometry_rootfile, extra_angle = main()
+    extra_angle = main()
 
     rotationTag = ""
     if(extra_angle==5*math.pi/6.):
@@ -86,9 +86,9 @@ if __name__ == "__main__":
     if(extra_angle==math.pi/6.):
         rotationTag = "_rotation30"
 
+    geometry_rootfile, coordinate_json, mapping_json = get_exported_file_names(args.waferType)
     if args.drawLine:
-        json_name = get_json_name_to_export_coordinates(args.waferType)
-        producer = AuxiliaryLineProducer(args.waferType, json_name)
+        producer = AuxiliaryLineProducer(args.waferType, coordinate_json)
         producer.create_cpp_headers()
 
     scope, tag, outputName, markerSize = get_macro_arguments(args.waferType)

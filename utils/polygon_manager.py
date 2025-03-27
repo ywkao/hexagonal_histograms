@@ -26,18 +26,6 @@ class PolygonManager:
         self.arbUnit_to_cm = arbUnit_to_cm
         self.cm2mm = 10.0
 
-        # output geometry root file
-        if self.waferType == "HD":
-            self.output_geometry_root_file = "./data/geometry_HD_full_wafer.root"
-        elif self.waferType == "LD3":
-            self.output_geometry_root_file = "./data/geometry_LD3_partial_wafer.root"
-        elif self.waferType == "LD4":
-            self.output_geometry_root_file = "./data/geometry_LD4_partial_wafer.root"
-        elif self.waferType == "full":
-            self.output_geometry_root_file = "./data/geometry_LD_full_wafer.root"
-        else:
-            self.output_geometry_root_file = "./data/hexagons.root"
-
         self.extra_rotation_tb2024 = extra_angle
         self.global_theta = 5.*math.pi/6. # + self.extra_rotation_tb2024 # 150 + extra degree
         self.cos_global_theta = math.cos(self.global_theta)
@@ -405,30 +393,22 @@ class PolygonManager:
         else:
             return tg.base[self.type_polygon], self.extra_rotation_tb2024 
 
-    def export_cpp_id_mapping(self):
-        """ export chId mapping for information wafer map """
-        if self.waferType == "full":
-            output_json = "data/output_my_chId_mapping.json"
-        elif self.waferType == "LD3":
-            output_json = "data/output_my_chId_mapping_LD3_wafer.json"
-        elif self.waferType == "LD4":
-            output_json = "data/output_my_chId_mapping_LD4_wafer.json"
-        elif self.waferType == "HD":
-            output_json = "data/output_my_chId_mapping_HD_wafer.json"
-        with open(output_json, 'w') as f:
-            json.dump(self.dict_my_chId_mapping, f, indent=4)
+    def export_root_file(self, output_geometry_root):
+        """ generate geometry root file for DQM in raw data handling chain"""
+        fout = ROOT.TFile(output_geometry_root, "RECREATE")
+        for key, graph in sorted(self.collections.items()):
+            graph.Write()
+        fout.Close()
 
     def export_coordinate_data(self, output_json):
         """ export values for auxiliary boundary lines on the wafer map """
         with open(output_json, 'w') as f:
             json.dump(self.dict_my_coordinate_data, f, indent=4)
 
-    def export_root_file(self):
-        """ generate geometry root file for DQM in raw data handling chain"""
-        fout = ROOT.TFile(self.output_geometry_root_file, "RECREATE")
-        for key, graph in sorted(self.collections.items()):
-            graph.Write()
-        fout.Close()
+    def export_channel_id_mapping(self, output_json):
+        """ export chId mapping for information wafer map """
+        with open(output_json, 'w') as f:
+            json.dump(self.dict_my_chId_mapping, f, indent=4)
 
     def __str__(self):
         # more info
