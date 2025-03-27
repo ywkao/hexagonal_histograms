@@ -2,7 +2,8 @@
 import math
 import argparse
 import subprocess
-import toolbox.polygon_manager as tp
+from utils.geometry import gcId
+from utils.polygon_manager import PolygonManager
 from utils.config_handler import load_wafer_contents, get_macro_arguments, get_json_name_to_export_coordinates
 from utils.auxiliary_line_producer import AuxiliaryLineProducer
 
@@ -33,7 +34,7 @@ def retrieve_info(line):
     return tuple(result)
 
 def get_registered_polygon_manager(extra_angle, offset_x, offset_y):
-    polygon_manager = tp.PolygonManager(args.waferType, extra_angle, offset_x, offset_y)
+    polygon_manager = PolygonManager(args.waferType, extra_angle, offset_x, offset_y)
     
     # Load geometry text file
     contents = load_wafer_contents(args.waferType)
@@ -54,7 +55,7 @@ def get_registered_polygon_manager(extra_angle, offset_x, offset_y):
         if polygon_manager.counter==args.n : break # manually control how many cells to display
 
     # Add additional cells for CM channels
-    for idx, CM in enumerate(tp.tg.gcId[args.waferType]["CMIds"]):
+    for idx, CM in enumerate(gcId[args.waferType]["CMIds"]):
         channelIds = (CM, -1, -1) # globalId, artificial sicell, rocpin
         polygon_manager.run(channelIds, (-1,-1), "CM", idx, "hex_cm")
         if args.verbose: print(polygon_manager)
@@ -91,5 +92,5 @@ if __name__ == "__main__":
         producer.create_cpp_headers()
 
     scope, tag, outputName, markerSize = get_macro_arguments(args.waferType)
-    exe("root -l -b -q th2poly.C'(\"%s\", \"%s\", %d, %d, \"%s\", %f, \"%s\")'" % (geometry_rootfile, outputName, scope, args.drawLine, tag, markerSize, rotationTag)) # execute root macro for TH2Poly
+    exe(f"root -l -b -q th2poly.C'(\"{geometry_rootfile}\", \"{outputName}\", {scope}, {int(args.drawLine)}, \"{tag}\", {markerSize}, \"{rotationTag}\")'") # execute root macro for TH2Poly
 
