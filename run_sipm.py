@@ -11,7 +11,7 @@ parser.add_argument('-v', '--verbose', help="set verbosity level", action='store
 args = parser.parse_args()
 
 """
-Reminder: range of indices (line numbers) is decided from the text file, ./data/WaferCellMapTrg.txt
+Reminder: range of indices (line numbers) is decided from the text file, ./data/input/WaferCellMapTrg.txt
 """
 if args.waferType == "user": # cassette level
     waferType, beginIdx, endIdx = "user", 0, 0
@@ -149,7 +149,7 @@ def main():
     #----------------------------------------------------------------------------------------------------
     else:
         # Load geometry text file
-        with open("./data/WaferCellMapTrg.txt", 'r') as fin: contents = fin.readlines()[beginIdx:endIdx]
+        with open("./data/input/WaferCellMapTrg.txt", 'r') as fin: contents = fin.readlines()[beginIdx:endIdx]
         print("[DEBUG] len(contents) = %d" % len(contents))
 
         # Loop over normal channels & non-connected channels

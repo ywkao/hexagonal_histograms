@@ -29,7 +29,7 @@ $ ./exe.py -w HD -d -v # HD full wafer
 ## Workflow in the code
 - Build a c++ shared library which contains a function to convert HGCAL (u, v) to (x, y)
 - Import c++ class using PyRoot gInterpreter and gSystem
-- Load cell information from `data/WaferCellMapTrg.txt`
+- Load cell information from `data/input/WaferCellMapTrg.txt`
 - Generate polygonal bins in TGraph
 - Produce a geometry root file with a collection of graphs
 - Make a hexagonal histogram using TH2Poly in a ROOT macro

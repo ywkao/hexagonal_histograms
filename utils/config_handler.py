@@ -33,7 +33,7 @@ def get_json_name_to_export_coordinates(wafer_type)->str:
     params = config[wafer_type]
     return params['json_file']
 
-def load_wafer_contents(wafer_type, file_path="./data/WaferCellMapTrg.txt")->List:
+def load_wafer_contents(wafer_type, file_path="./data/input/WaferCellMapTrg.txt")->List:
     """ Load contents from text file based on wafer type indices """
     config = load_wafer_config()
     

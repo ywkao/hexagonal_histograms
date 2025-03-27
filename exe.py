@@ -15,7 +15,7 @@ parser.add_argument('-v', '--verbose', help="set verbosity level", action='store
 args = parser.parse_args()
 
 """
-Reminder: range of indices (line numbers) is decided from the text file, ./data/WaferCellMapTrg.txt
+Reminder: range of indices (line numbers) is decided from the text file, ./data/input/WaferCellMapTrg.txt
 """
 def exe(command):
     print("\n>>> executing command, ", command)

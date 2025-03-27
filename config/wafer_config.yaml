@@ -8,6 +8,15 @@ wafer_types:
     tag: "HD_wafer"
     json_file: "config/cell_coordinates/hd_wafer.json"
     output_name: "waferMaps/DQM_HD_wafer_map.png"
+
+  HD2:
+    begin_idx: 889
+    end_idx: 1185
+    scope: 12
+    marker_size: 0.5
+    tag: "HD2_wafer"
+    json_file: "config/cell_coordinates/hd2_wafer.json"
+    output_name: "waferMaps/DQM_HD2_wafer_map.png"
   
   full:  # LD full
     begin_idx: 1

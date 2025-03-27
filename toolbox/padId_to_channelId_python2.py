@@ -68,9 +68,9 @@ def test_and_validate_global_channel_id():
 
 if __name__ == "__main__":
     #--------------------------------------------------
-    # load data/WaferCellMapTrg.txt
+    # load data/input/WaferCellMapTrg.txt
     #--------------------------------------------------
-    with open('./data/WaferCellMapTrg.txt', 'r') as fin: contents = fin.readlines()
+    with open('./data/input/WaferCellMapTrg.txt', 'r') as fin: contents = fin.readlines()
     with open('./test_01.txt', 'w') as fout:
         #fout.write("# globalchannelId padId\n")
         fout.write("PAD,ASIC,Channel,Channeltype\n")
