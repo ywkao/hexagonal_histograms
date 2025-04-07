@@ -48,7 +48,80 @@ class PolygonManager:
 
         self._build_polygon_lookup_tables()
 
-    def rotate_coordinate(self, x, y, theta):
+    def create_and_register_polygon(self, channelIds, coor_uv, cellType="", cellIdx=-1, cellName="hex"):
+        """
+        Create and register a polygon for a cell based on its coordinates and IDs.
+
+        This is the main method controlling the flow of polygon creation. It:
+        1. Sets cell properties based on input parameters
+        2. Calculates the cell's center coordinates
+        3. Determines the polygon type and number of corners
+        4. Generates the polygon graph
+        5. Stores the graph in the collections dictionary
+
+        Parameters
+        ----------
+        channelIds : tuple
+            Tuple containing (globalId, sicell, rocpin) identifiers
+        coor_uv : tuple
+            Tuple containing (u, v) coordinates of the cell
+        cellType : str, optional
+            Type of cell ("", "CM", or "NC"), default is ""
+        cellIdx : int, optional
+            Index of the cell for CM and NC channels, default is -1
+        cellName : str, optional
+            Name of the cell for graph naming, default is "hex"
+
+        Side Effects
+        ------------
+        Adds a new polygon to self.collections using globalId as the key
+        Updates instance attributes with cell properties
+        """
+
+        # cell (u, v) coordinates and cell IDs
+        self.iu, self.iv = coor_uv
+        self.globalId, self.sicell, self.rocpin = channelIds
+
+        # cell info (ad hoc for CM and non-connected channels)
+        self.cellType = cellType
+        self.cellIdx = cellIdx
+        self.cellName = cellName
+
+        # generate a polygon graph using cell center coordinates, polygon type, and the number of corners
+        self.center_x, self.center_y = self._get_cell_center_coordinates()
+        self.type_polygon, self.nCorner = self._get_polygon_information()
+        self.graph = self._generate_polygon_graph() # need polygon type, number of corners, coordinates of cell center
+        self.collections[self.globalId] = self.graph
+
+    def export_root_file(self, output_geometry_root):
+        """ generate geometry root file for DQM in raw data handling chain"""
+        fout = ROOT.TFile(output_geometry_root, "RECREATE")
+        for key, graph in sorted(self.collections.items()):
+            graph.Write()
+        fout.Close()
+
+    def export_coordinate_data(self, output_json):
+        """ export values for auxiliary boundary lines on the wafer map """
+        with open(output_json, 'w') as f:
+            json.dump(self.dict_my_coordinate_data, f, indent=4)
+
+    def export_channel_id_mapping(self, output_json):
+        """ export chId mapping for information wafer map """
+        with open(output_json, 'w') as f:
+            json.dump(self.dict_my_chId_mapping, f, indent=4)
+
+    def _build_polygon_lookup_tables(self):
+        """Build lookup tables for quick polygon type and corner count determination"""
+        self._polygon_info_cache = {}
+
+        for wafer_type, type_dict in self.irregular_polygonal_cells.items():
+            self._polygon_info_cache[wafer_type] = {}
+            for polygon_type, cell_list in type_dict.items():
+                corner_count = len(tg.base[polygon_type]['x']) - 1
+                for sicell in cell_list:
+                    self._polygon_info_cache[wafer_type][sicell] = (polygon_type, corner_count)
+
+    def _rotate_coordinate(self, x, y, theta):
         """ evaluate (r, phi) and apply rotation """
         r = math.sqrt(pow(x,2)+pow(y,2))
         cos_phi, sin_phi = x/r, y/r
@@ -58,15 +131,113 @@ class PolygonManager:
         yprime = r*(sin_phi*cos_theta - cos_phi*sin_theta)
         return xprime, yprime
 
-    def translate_coordinate(self, x, y, scale, shift):
+    def _translate_coordinate(self, x, y, scale, shift):
         """ apply scale and translation """
         dx, dy = shift
         return x*scale+dx, y*scale+dy
 
-    def generate_polygon_graph(self):
+    def _get_cell_center_coordinates(self):
+        """ convert (u, v) to (x, y) coordinates with global coorections """
+
+        # non-connected channels
+        if self.cellType == "NC":
+            x = tg.Coordinates_NC_channels[self.waferType]['x'][self.cellIdx%8]
+            y = tg.Coordinates_NC_channels[self.waferType]['y'][self.cellIdx%8]
+            if self.waferType == "full":
+                theta = 2*math.pi/3. * (self.cellIdx//8) - math.pi/3.
+            elif self.waferType == "LD3" or self.waferType == "LD4":
+                theta = tg.Coordinates_NC_channels[self.waferType]['theta'][self.cellIdx]
+
+            x, y = self._rotate_coordinate(x, y, theta + self.extra_rotation_tb2024)
+            x, y = self._translate_coordinate(x, y, self.arbUnit_to_cm, (0., 0.))
+            return x, y
+
+        # CM channels
+        elif self.cellType == "CM":
+            if self.waferType == "HD":
+                x = tg.Coordinates_CM_channels[self.waferType]['x'][self.cellIdx%8]
+                y = tg.Coordinates_CM_channels[self.waferType]['y'][self.cellIdx%8]
+                theta = 2*math.pi/3. * (self.cellIdx//8)
+            elif self.waferType == "full":
+                x = tg.Coordinates_CM_channels[self.waferType]['x'][self.cellIdx%4]
+                y = tg.Coordinates_CM_channels[self.waferType]['y'][self.cellIdx%4]
+                theta = 2*math.pi/3. * (self.cellIdx//4) - math.pi/3.
+            elif self.waferType == "LD3" or self.waferType == "LD4":
+                x = tg.Coordinates_CM_channels[self.waferType]['x'][self.cellIdx]
+                y = tg.Coordinates_CM_channels[self.waferType]['y'][self.cellIdx]
+                theta = tg.Coordinates_CM_channels[self.waferType]['theta'][self.cellIdx]
+
+            x, y = self._rotate_coordinate(x, y, theta + self.extra_rotation_tb2024)
+            x, y = self._translate_coordinate(x, y, self.arbUnit_to_cm, (0., 0.))
+            return x, y
+
+        # normal channels
+        else:
+            coor = self.cell_helper.cellUV2XY1(int(self.iu), int(self.iv), 0, self.cell_fine_or_coarse)
+            x, y = self._rotate_coordinate(coor[0], coor[1], self.global_theta)
+            x, y = self._translate_coordinate(x, y, 1., (-1*self.global_correction_x, -1*self.global_correction_y))
+            x, y = self._rotate_coordinate(x, y, self.extra_rotation_tb2024)
+            return x, y
+
+    def _get_polygon_information(self):
+        """Unified method to determine polygon type and corner count for any wafer type"""
+        # Handle CM and NC channels
+        if self.cellType == "CM":
+            if self.cellIdx % 2 == 0:  # CM0
+                return tg.type_regular_pentagon, 5
+            else:  # CM1
+                return tg.type_square, 4
+        elif self.cellType == "NC":
+            return tg.type_circle, 12
+
+        # Handle calibration cells
+        if isinstance(self.rocpin, str):  # "CALIB"
+            return tg.type_circle, 12
+
+        # Look up sicell in the cache
+        polygon_info = self._polygon_info_cache.get(self.waferType, {}).get(self.sicell)
+        if polygon_info:
+            return polygon_info
+
+        # Default for regular cells
+        return tg.type_hexagon, 6
+
+    def _get_polygon_base_and_rotation(self):
+        """
+        Use local rotation for corner cells on HD full wafers
+        CAVEAT: mind the internal indices of corner polygons when querying auxiliary lines
+        """
+        # Define rotation mapping: maps derived polygon types to (base_type, rotation_angle) tuples
+        rotation_mapping = {
+            # Rotations by 2*pi/3 (120 degrees)
+            tg.type_HD_hexagon_side3_corner3: (tg.type_HD_hexagon_side1_corner1, 2*tg.p3),
+            tg.type_HD_hexagon_side3_corner4: (tg.type_HD_hexagon_side1_corner2, 2*tg.p3),
+            tg.type_HD_trpezoid_corner3: (tg.type_HD_trpezoid_corner1, 2*tg.p3),
+            tg.type_HD_trpezoid_corner4: (tg.type_HD_trpezoid_corner2, 2*tg.p3),
+            tg.type_HD_hexagon_side2_corner3: (tg.type_HD_hexagon_side6_corner1, 2*tg.p3),
+            tg.type_HD_hexagon_side4_corner4: (tg.type_HD_hexagon_side2_corner2, 2*tg.p3),
+
+            # Rotations by 4*pi/3 (240 degrees)
+            tg.type_HD_hexagon_side5_corner5: (tg.type_HD_hexagon_side1_corner1, 4*tg.p3),
+            tg.type_HD_hexagon_side5_corner6: (tg.type_HD_hexagon_side1_corner2, 4*tg.p3),
+            tg.type_HD_trpezoid_corner5: (tg.type_HD_trpezoid_corner1, 4*tg.p3),
+            tg.type_HD_trpezoid_corner6: (tg.type_HD_trpezoid_corner2, 4*tg.p3),
+            tg.type_HD_hexagon_side4_corner5: (tg.type_HD_hexagon_side6_corner1, 4*tg.p3),
+            tg.type_HD_hexagon_side6_corner6: (tg.type_HD_hexagon_side2_corner2, 4*tg.p3)
+        }
+
+        # Look up base type and rotation angle
+        if self.type_polygon in rotation_mapping:
+            base_type, rotation = rotation_mapping[self.type_polygon]
+            return tg.base[base_type], rotation + self.extra_rotation_tb2024
+
+        # Default case - no rotation mapping found
+        return tg.base[self.type_polygon], self.extra_rotation_tb2024
+
+    def _generate_polygon_graph(self):
         """ derive coordinates for a polygon & create an instance of TGraph """
         polygon = {'x':[], 'y':[]}
-        polygon_base, deltaPhi = self.get_polygon_base_and_rotation()
+        polygon_base, deltaPhi = self._get_polygon_base_and_rotation()
 
         resize_factor = 1.0
         if self.cellType == "CM": resize_factor = 0.6
@@ -76,8 +247,8 @@ class PolygonManager:
         # apply rotation and translation on a base polygon
         for idx in range(self.nCorner+1):
             x, y = polygon_base['x'][idx], polygon_base['y'][idx]
-            x, y = self.rotate_coordinate(x, y, deltaPhi) if deltaPhi>0. else (x, y)
-            x, y = self.translate_coordinate(x, y, self.arbUnit_to_cm*resize_factor, (self.center_x, self.center_y))
+            x, y = self._rotate_coordinate(x, y, deltaPhi) if deltaPhi>0. else (x, y)
+            x, y = self._translate_coordinate(x, y, self.arbUnit_to_cm*resize_factor, (self.center_x, self.center_y))
             polygon['x'].append(x)
             polygon['y'].append(y)
 
@@ -113,161 +284,5 @@ class PolygonManager:
 
         return graph
 
-    def get_cell_center_coordinates(self):
-        """ convert (u, v) to (x, y) coordinates with global coorections """
-
-        # non-connected channels
-        if self.cellType == "NC":
-            x = tg.Coordinates_NC_channels[self.waferType]['x'][self.cellIdx%8]
-            y = tg.Coordinates_NC_channels[self.waferType]['y'][self.cellIdx%8]
-            if self.waferType == "full":
-                theta = 2*math.pi/3. * (self.cellIdx//8) - math.pi/3.
-            elif self.waferType == "LD3" or self.waferType == "LD4":
-                theta = tg.Coordinates_NC_channels[self.waferType]['theta'][self.cellIdx]
-
-            x, y = self.rotate_coordinate(x, y, theta + self.extra_rotation_tb2024)
-            x, y = self.translate_coordinate(x, y, self.arbUnit_to_cm, (0., 0.))
-            return x, y
-
-        # CM channels
-        elif self.cellType == "CM":
-            if self.waferType == "HD":
-                x = tg.Coordinates_CM_channels[self.waferType]['x'][self.cellIdx%8]
-                y = tg.Coordinates_CM_channels[self.waferType]['y'][self.cellIdx%8]
-                theta = 2*math.pi/3. * (self.cellIdx//8)
-            elif self.waferType == "full":
-                x = tg.Coordinates_CM_channels[self.waferType]['x'][self.cellIdx%4]
-                y = tg.Coordinates_CM_channels[self.waferType]['y'][self.cellIdx%4]
-                theta = 2*math.pi/3. * (self.cellIdx//4) - math.pi/3.
-            elif self.waferType == "LD3" or self.waferType == "LD4":
-                x = tg.Coordinates_CM_channels[self.waferType]['x'][self.cellIdx]
-                y = tg.Coordinates_CM_channels[self.waferType]['y'][self.cellIdx]
-                theta = tg.Coordinates_CM_channels[self.waferType]['theta'][self.cellIdx]
-
-            x, y = self.rotate_coordinate(x, y, theta + self.extra_rotation_tb2024)
-            x, y = self.translate_coordinate(x, y, self.arbUnit_to_cm, (0., 0.))
-            return x, y
-
-        # normal channels
-        else:
-            coor = self.cell_helper.cellUV2XY1(int(self.iu), int(self.iv), 0, self.cell_fine_or_coarse)
-            x, y = self.rotate_coordinate(coor[0], coor[1], self.global_theta)
-            x, y = self.translate_coordinate(x, y, 1., (-1*self.global_correction_x, -1*self.global_correction_y))
-            x, y = self.rotate_coordinate(x, y, self.extra_rotation_tb2024)
-            return x, y
-
-    def _build_polygon_lookup_tables(self):
-        """Build lookup tables for quick polygon type and corner count determination"""
-        self._polygon_info_cache = {}
-
-        for wafer_type, type_dict in self.irregular_polygonal_cells.items():
-            self._polygon_info_cache[wafer_type] = {}
-            for polygon_type, cell_list in type_dict.items():
-                corner_count = len(tg.base[polygon_type]['x']) - 1
-                for sicell in cell_list:
-                    self._polygon_info_cache[wafer_type][sicell] = (polygon_type, corner_count)
-
-    def get_polygon_information(self):
-        """Unified method to determine polygon type and corner count for any wafer type"""
-        # Handle CM and NC channels
-        if self.cellType == "CM":
-            if self.cellIdx % 2 == 0:  # CM0
-                return tg.type_regular_pentagon, 5
-            else:  # CM1
-                return tg.type_square, 4
-        elif self.cellType == "NC":
-            return tg.type_circle, 12
-
-        # Handle calibration cells
-        if isinstance(self.rocpin, str):  # "CALIB"
-            return tg.type_circle, 12
-
-        # Look up sicell in the cache
-        polygon_info = self._polygon_info_cache.get(self.waferType, {}).get(self.sicell)
-        if polygon_info:
-            return polygon_info
-
-        # Default for regular cells
-        return tg.type_hexagon, 6
-
-    def get_polygon_base_and_rotation(self):
-        """
-        Use local rotation for corner cells on HD full wafers
-        CAVEAT: mind the internal indices of corner polygons when querying auxiliary lines
-        """
-        # Define rotation mapping: maps derived polygon types to (base_type, rotation_angle) tuples
-        rotation_mapping = {
-            # Rotations by 2*pi/3 (120 degrees)
-            tg.type_HD_hexagon_side3_corner3: (tg.type_HD_hexagon_side1_corner1, 2*tg.p3),
-            tg.type_HD_hexagon_side3_corner4: (tg.type_HD_hexagon_side1_corner2, 2*tg.p3),
-            tg.type_HD_trpezoid_corner3: (tg.type_HD_trpezoid_corner1, 2*tg.p3),
-            tg.type_HD_trpezoid_corner4: (tg.type_HD_trpezoid_corner2, 2*tg.p3),
-            tg.type_HD_hexagon_side2_corner3: (tg.type_HD_hexagon_side6_corner1, 2*tg.p3),
-            tg.type_HD_hexagon_side4_corner4: (tg.type_HD_hexagon_side2_corner2, 2*tg.p3),
-
-            # Rotations by 4*pi/3 (240 degrees)
-            tg.type_HD_hexagon_side5_corner5: (tg.type_HD_hexagon_side1_corner1, 4*tg.p3),
-            tg.type_HD_hexagon_side5_corner6: (tg.type_HD_hexagon_side1_corner2, 4*tg.p3),
-            tg.type_HD_trpezoid_corner5: (tg.type_HD_trpezoid_corner1, 4*tg.p3),
-            tg.type_HD_trpezoid_corner6: (tg.type_HD_trpezoid_corner2, 4*tg.p3),
-            tg.type_HD_hexagon_side4_corner5: (tg.type_HD_hexagon_side6_corner1, 4*tg.p3),
-            tg.type_HD_hexagon_side6_corner6: (tg.type_HD_hexagon_side2_corner2, 4*tg.p3)
-        }
-
-        # Look up base type and rotation angle
-        if self.type_polygon in rotation_mapping:
-            base_type, rotation = rotation_mapping[self.type_polygon]
-            return tg.base[base_type], rotation + self.extra_rotation_tb2024
-
-        # Default case - no rotation mapping found
-        return tg.base[self.type_polygon], self.extra_rotation_tb2024
-
-    def export_root_file(self, output_geometry_root):
-        """ generate geometry root file for DQM in raw data handling chain"""
-        fout = ROOT.TFile(output_geometry_root, "RECREATE")
-        for key, graph in sorted(self.collections.items()):
-            graph.Write()
-        fout.Close()
-
-    def export_coordinate_data(self, output_json):
-        """ export values for auxiliary boundary lines on the wafer map """
-        with open(output_json, 'w') as f:
-            json.dump(self.dict_my_coordinate_data, f, indent=4)
-
-    def export_channel_id_mapping(self, output_json):
-        """ export chId mapping for information wafer map """
-        with open(output_json, 'w') as f:
-            json.dump(self.dict_my_chId_mapping, f, indent=4)
-
     def __str__(self):
-        # more info
-        return "globalId = {0}, rocpin = {1}, sicell = {2}, {3}, area = {4} mm^{{2}}".format(self.globalId, self.rocpin, self.sicell, (self.iu,self.iv), "%.2f"%(self.area*pow(self.cm2mm,2)))
-
-        # channel ID info
-        return "{0} {1} {2} {3}".format(self.globalId, self.rocpin, self.sicell, (self.iu,self.iv))
-
-        # globalId and area
-        return "{0} {1}".format(self.globalId, "%.2f"%(self.area*pow(self.cm2mm,2)))
-
-    def run(self, channelIds, coor_uv, cellType="", cellIdx=-1, cellName="hex"):
-        """ main method for controling flow """
-
-        # cell (u, v) coordinates and cell IDs
-        self.iu, self.iv = coor_uv
-        self.globalId, self.sicell, self.rocpin = channelIds
-
-        # cell info (ad hoc for CM and non-connected channels)
-        self.cellType = cellType
-        self.cellIdx = cellIdx
-        self.cellName = cellName
-
-        # generate a polygon graph using cell center coordinates, polygon type, and the number of corners
-        self.center_x, self.center_y = self.get_cell_center_coordinates()
-        self.type_polygon, self.nCorner = self.get_polygon_information()
-        self.graph = self.generate_polygon_graph() # need polygon type, number of corners, coordinates of cell center
-        self.collections[self.globalId] = self.graph
-
-        # if self.sicell==193:
-        #     print(f"[DEBUG] globalId = {self.globalId}, rocpin = {self.rocpin}, sicell = {self.sicell}")
-        #     print(f"[DEBUG] x, y = {self.center_x}, {self.center_y}")
-
+        return "globalId = {0}, rocpin = {1}, sicell = {2}, u-v coordinates = {3}, area = {4} mm^{{2}}".format(self.globalId, self.rocpin, self.sicell, (self.iu,self.iv), "%.2f"%(self.area*pow(self.cm2mm,2)))
