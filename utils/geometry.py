@@ -376,12 +376,6 @@ irregular_polygonal_cells = {
         # type_hexagon_small : [14, 62, 70, 143, 154, 163], # calibration_cells
     },
     "LD3" : {
-        #--------------------------------------------------
-        # Next to-do tuning:
-        # 89 has to be a hollow pentagon
-        # 85 is a pentagon
-        # 14, 35, 61, 93, 126, 157, 185, 207 have to be cut half
-        #--------------------------------------------------
         type_hollow : [12, 168], # cells around a calib channel
         type_pentagon_hollow : [89], # cells around a calib channel
         # type_hexagon_small : [13, 90, 169], # calibration_cells

@@ -22,8 +22,8 @@ $ ./exe.py -w HD -d -v # HD full wafer
 | File                         | Description                                                           |
 | ---------------------------- | --------------------------------------------------------------------- |
 | `exe.py`                     | Top-level script steering workflow with the following options:<br> -w, --waferType [full\|LD3\|LD4\|HD] # set wafer type<br> -d, --drawLine # draw boundary lines<br> -v, --verbose # set verbosity level |
-| `toolbox/polygon_manager.py` | Methods for generating polygonal bins & producing geometry root files |
-| `toolbox/geometry.py`        | Parameters of polygons                                                |
+| `utils/polygon_manager.py`   | Methods for generating polygonal bins & producing geometry root files |
+| `utils/geometry.py`          | Parameters of polygons                                                |
 | `th2poly.C`                  | Macro drawing wafer maps from a geometry root file                    |
 
 ## Workflow in the code
