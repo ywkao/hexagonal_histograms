@@ -48,7 +48,6 @@ class PolygonManager:
 
         self._build_polygon_lookup_tables()
 
-
     def rotate_coordinate(self, x, y, theta):
         """ evaluate (r, phi) and apply rotation """
         r = math.sqrt(pow(x,2)+pow(y,2))

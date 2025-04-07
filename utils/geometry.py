@@ -367,7 +367,7 @@ special_cells = { # dictionary for special cells using sicell padID
         type_trapezoid_left : [14, 35, 61, 126, 157, 185],
         type_trapezoid_extended_left : [93, 207],
 	    type_pentagon_side1 : [2, 3, 4, 104, 105, 106, 107, 108, 109, 110],
-	    type_pentagon_side4 : [86, 87, 88, 91, 92, 93, 205, 206, 207],
+	    type_pentagon_side4 : [86, 87, 88, 91, 92, 205, 206],
 	    type_pentagon_side5 : [119, 136, 151, 167, 180, 193],
 	    type_pentagon_side6 : [20, 30, 43, 55, 71],
 	    type_pentagon_corner1 : [1],
