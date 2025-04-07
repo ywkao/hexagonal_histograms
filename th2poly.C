@@ -173,20 +173,20 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
         p->SetMarkerSize(MarkerSize);
         p->Draw("colz;text");
         beautify_plot(drawLine, true, NameTag, extra_angle, rotationTag);
-        c1->SaveAs("waferMaps/info_"+NameTag+"_globalChannelId_readoutSequence"+rotationTag+".png");
-        c1->SaveAs("waferMaps/info_"+NameTag+"_globalChannelId_readoutSequence"+rotationTag+".pdf");
+        c1->SaveAs("output/waferMaps/info_"+NameTag+"_globalChannelId_readoutSequence"+rotationTag+".png");
+        c1->SaveAs("output/waferMaps/info_"+NameTag+"_globalChannelId_readoutSequence"+rotationTag+".pdf");
 
         p_pin->SetMarkerSize(MarkerSize);
         p_pin->Draw("colz;text");
         beautify_plot(drawLine, true, NameTag, extra_angle, rotationTag);
-        c1->SaveAs("waferMaps/info_"+NameTag+"_HGCROC_pin_chan"+rotationTag+".png");
-        c1->SaveAs("waferMaps/info_"+NameTag+"_HGCROC_pin_chan"+rotationTag+".pdf");
+        c1->SaveAs("output/waferMaps/info_"+NameTag+"_HGCROC_pin_chan"+rotationTag+".png");
+        c1->SaveAs("output/waferMaps/info_"+NameTag+"_HGCROC_pin_chan"+rotationTag+".pdf");
 
         p_sicell->SetMarkerSize(MarkerSize);
         p_sicell->Draw("colz;text");
         beautify_plot(drawLine, true, NameTag, extra_angle, rotationTag);
-        c1->SaveAs("waferMaps/info_"+NameTag+"_SiCell_padId"+rotationTag+".png");
-        c1->SaveAs("waferMaps/info_"+NameTag+"_SiCell_padId"+rotationTag+".pdf");
+        c1->SaveAs("output/waferMaps/info_"+NameTag+"_SiCell_padId"+rotationTag+".png");
+        c1->SaveAs("output/waferMaps/info_"+NameTag+"_SiCell_padId"+rotationTag+".pdf");
     } else {
         p->SetMarkerSize(MarkerSize);
         p->Draw("colz;text");

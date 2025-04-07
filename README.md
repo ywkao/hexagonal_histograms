@@ -1,5 +1,12 @@
 # hexagonal_histograms
 
+## Environment
+
+On lxplus,
+```
+source /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.34.04/x86_64-almalinux9.5-gcc115-opt/bin/thisroot.sh
+```
+
 ## Commands
 ```
 $ git clone -b dev git@github.com:ywkao/hexagonal_histograms.git
@@ -15,14 +22,14 @@ $ ./exe.py -w HD -d -v # HD full wafer
 | File                         | Description                                                           |
 | ---------------------------- | --------------------------------------------------------------------- |
 | `exe.py`                     | Top-level script steering workflow with the following options:<br> -w, --waferType [full\|LD3\|LD4\|HD] # set wafer type<br> -d, --drawLine # draw boundary lines<br> -v, --verbose # set verbosity level |
-| `toolbox/polygon_manager.py` | Methods for generating polygonal bins & producing geometry root files |
-| `toolbox/geometry.py`        | Parameters of polygons                                                |
+| `utils/polygon_manager.py`   | Methods for generating polygonal bins & producing geometry root files |
+| `utils/geometry.py`          | Parameters of polygons                                                |
 | `th2poly.C`                  | Macro drawing wafer maps from a geometry root file                    |
 
 ## Workflow in the code
 - Build a c++ shared library which contains a function to convert HGCAL (u, v) to (x, y)
 - Import c++ class using PyRoot gInterpreter and gSystem
-- Load cell information from `data/WaferCellMapTrg.txt`
+- Load cell information from `data/input/WaferCellMapTrg.txt`
 - Generate polygonal bins in TGraph
 - Produce a geometry root file with a collection of graphs
 - Make a hexagonal histogram using TH2Poly in a ROOT macro
