@@ -149,9 +149,9 @@ Coordinates_NC_channels = {
     },
 }
 
-#--------------------------------------------------
+#----------------------------------------------------------------------------------------------------
 # Define base polygons
-#--------------------------------------------------
+#----------------------------------------------------------------------------------------------------
 base = {
     type_hexagon : {
         'x': [0, 1*s3, 1*s3, 0, -1*s3, -1*s3, 0],
@@ -331,7 +331,28 @@ base = {
     },
 }
 
-special_cells = { # dictionary for special cells using sicell padID
+# Define derived polygon types that use rotation in PolygonManager
+base_derived_types = {
+    type_HD_hexagon_side3_corner3: base[type_HD_hexagon_side1_corner1],
+    type_HD_hexagon_side3_corner4: base[type_HD_hexagon_side1_corner2],
+    type_HD_hexagon_side5_corner5: base[type_HD_hexagon_side1_corner1],
+    type_HD_hexagon_side5_corner6: base[type_HD_hexagon_side1_corner2],
+    type_HD_trpezoid_corner3: base[type_HD_trpezoid_corner1],
+    type_HD_trpezoid_corner4: base[type_HD_trpezoid_corner2],
+    type_HD_trpezoid_corner5: base[type_HD_trpezoid_corner1],
+    type_HD_trpezoid_corner6: base[type_HD_trpezoid_corner2],
+    type_HD_hexagon_side2_corner3: base[type_HD_hexagon_side6_corner1],
+    type_HD_hexagon_side4_corner4: base[type_HD_hexagon_side2_corner2],
+    type_HD_hexagon_side4_corner5: base[type_HD_hexagon_side6_corner1],
+    type_HD_hexagon_side6_corner6: base[type_HD_hexagon_side2_corner2],
+}
+
+base.update(base_derived_types)
+
+#----------------------------------------------------------------------------------------------------
+# Irregular polygons mapping using SiCell padID 
+#----------------------------------------------------------------------------------------------------
+irregular_polygonal_cells = {
     "full": {
         type_pentagon_side1 : [2, 3, 4, 5, 6, 7],
         type_pentagon_side2 : [18, 28, 39, 51, 65, 80, 95],

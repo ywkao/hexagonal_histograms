@@ -20,7 +20,7 @@ class PolygonManager:
 
         # wafer information
         self.waferType = wafer_type
-        self.special_cells = tg.special_cells
+        self.irregular_polygonal_cells = tg.irregular_polygonal_cells
         self.cell_helper = cell_helper
         self.cell_fine_or_coarse = typeCoarse
         self.arbUnit_to_cm = arbUnit_to_cm
@@ -63,10 +63,10 @@ class PolygonManager:
         dx, dy = shift
         return x*scale+dx, y*scale+dy
 
-    def get_polygon(self):
+    def generate_polygon_graph(self):
         """ derive coordinates for a polygon & create an instance of TGraph """
         polygon = {'x':[], 'y':[]}
-        polygon_base, deltaPhi = self.get_base()
+        polygon_base, deltaPhi = self.get_polygon_base_and_rotation()
 
         resize_factor = 1.0
         if self.cellType == "CM": resize_factor = 0.6
@@ -116,7 +116,7 @@ class PolygonManager:
     def get_cell_center_coordinates(self):
         """ convert (u, v) to (x, y) coordinates with global coorections """
 
-        # unconnected channels
+        # non-connected channels
         if self.cellType == "NC":
             x = tg.Coordinates_NC_channels[self.waferType]['x'][self.cellIdx%8]
             y = tg.Coordinates_NC_channels[self.waferType]['y'][self.cellIdx%8]
@@ -160,65 +160,12 @@ class PolygonManager:
         """Build lookup tables for quick polygon type and corner count determination"""
         self._polygon_info_cache = {}
 
-        for wafer_type, type_dict in self.special_cells.items():
+        for wafer_type, type_dict in self.irregular_polygonal_cells.items():
             self._polygon_info_cache[wafer_type] = {}
             for polygon_type, cell_list in type_dict.items():
-                corner_count = self._get_corner_count(polygon_type)
+                corner_count = len(tg.base[polygon_type]['x']) - 1
                 for sicell in cell_list:
                     self._polygon_info_cache[wafer_type][sicell] = (polygon_type, corner_count)
-
-    def _get_corner_count(self, polygon_type):
-        """Helper method to get corner count from polygon type"""
-        # Pentagon types (all have 5 corners)
-        if polygon_type in [
-            tg.type_pentagon_side1, tg.type_pentagon_side2, tg.type_pentagon_side3,
-            tg.type_pentagon_side4, tg.type_pentagon_side5, tg.type_pentagon_side6,
-            tg.type_pentagon_corner1, tg.type_pentagon_corner2, tg.type_pentagon_corner3,
-            tg.type_pentagon_corner4, tg.type_pentagon_corner5, tg.type_pentagon_corner6,
-            tg.type_partial_wafer_pentagon_corner3, tg.type_partial_wafer_pentagon_corner6,
-            tg.type_partial_wafer_pentagon_merged_cell_corner2, tg.type_partial_wafer_pentagon_merged_cell_corner4
-        ]:
-            return 5
-
-        # Hexagon types (all have 6 corners)
-        elif polygon_type in [
-            tg.type_hexagon, tg.type_hexagon_corner1, tg.type_hexagon_corner2, tg.type_hexagon_corner3,
-            tg.type_hexagon_corner4, tg.type_hexagon_corner5, tg.type_hexagon_corner6,
-            tg.type_partial_wafer_hexagon_corner2, tg.type_partial_wafer_hexagon_corner3, tg.type_partial_wafer_hexagon_corner6,
-            tg.type_HD_hexagon_side1_corner1, tg.type_HD_hexagon_side1_corner2,
-            tg.type_HD_hexagon_side3_corner3, tg.type_HD_hexagon_side3_corner4,
-            tg.type_HD_hexagon_side5_corner5, tg.type_HD_hexagon_side5_corner6,
-            tg.type_HD_hexagon_side6_corner1, tg.type_HD_hexagon_side2_corner2,
-            tg.type_HD_hexagon_side2_corner3, tg.type_HD_hexagon_side4_corner4,
-            tg.type_HD_hexagon_side4_corner5, tg.type_HD_hexagon_side6_corner6
-        ]:
-            return 6
-
-        # Trapezoid and parallelogram types (all have 4 corners)
-        elif polygon_type in [
-            tg.type_trapezoid_left, tg.type_trapezoid_extended_left,
-            tg.type_trapezoid_right, tg.type_trapezoid_extended_right,
-            tg.type_parallelogram,
-            tg.type_HD_trpezoid_corner1, tg.type_HD_trpezoid_corner2,
-            tg.type_HD_trpezoid_corner3, tg.type_HD_trpezoid_corner4,
-            tg.type_HD_trpezoid_corner5, tg.type_HD_trpezoid_corner6,
-            tg.type_square
-        ]:
-            return 4
-
-        # Special cases
-        elif polygon_type == tg.type_hollow:
-            return 20
-        elif polygon_type == tg.type_pentagon_hollow:
-            return 19
-        elif polygon_type == tg.type_circle:
-            return 12
-        elif polygon_type == tg.type_triangle:
-            return 3
-
-        # Default case - derive from base definition
-        else:
-            return len(tg.base[polygon_type]['x']) - 1
 
     def get_polygon_information(self):
         """Unified method to determine polygon type and corner count for any wafer type"""
@@ -243,40 +190,37 @@ class PolygonManager:
         # Default for regular cells
         return tg.type_hexagon, 6
 
-    def get_base(self):
+    def get_polygon_base_and_rotation(self):
         """
         Use local rotation for corner cells on HD full wafers
         CAVEAT: mind the internal indices of corner polygons when querying auxiliary lines
         """
-        if self.type_polygon==tg.type_HD_hexagon_side3_corner3:
-            return tg.base[tg.type_HD_hexagon_side1_corner1], 2*tg.p3 + self.extra_rotation_tb2024
-        elif self.type_polygon==tg.type_HD_hexagon_side3_corner4:
-            return tg.base[tg.type_HD_hexagon_side1_corner2], 2*tg.p3 + self.extra_rotation_tb2024
-        elif self.type_polygon==tg.type_HD_hexagon_side5_corner5:
-            return tg.base[tg.type_HD_hexagon_side1_corner1], 4*tg.p3 + self.extra_rotation_tb2024
-        elif self.type_polygon==tg.type_HD_hexagon_side5_corner6:
-            return tg.base[tg.type_HD_hexagon_side1_corner2], 4*tg.p3 + self.extra_rotation_tb2024
+        # Define rotation mapping: maps derived polygon types to (base_type, rotation_angle) tuples
+        rotation_mapping = {
+            # Rotations by 2*pi/3 (120 degrees)
+            tg.type_HD_hexagon_side3_corner3: (tg.type_HD_hexagon_side1_corner1, 2*tg.p3),
+            tg.type_HD_hexagon_side3_corner4: (tg.type_HD_hexagon_side1_corner2, 2*tg.p3),
+            tg.type_HD_trpezoid_corner3: (tg.type_HD_trpezoid_corner1, 2*tg.p3),
+            tg.type_HD_trpezoid_corner4: (tg.type_HD_trpezoid_corner2, 2*tg.p3),
+            tg.type_HD_hexagon_side2_corner3: (tg.type_HD_hexagon_side6_corner1, 2*tg.p3),
+            tg.type_HD_hexagon_side4_corner4: (tg.type_HD_hexagon_side2_corner2, 2*tg.p3),
 
-        elif self.type_polygon==tg.type_HD_trpezoid_corner3:
-            return tg.base[tg.type_HD_trpezoid_corner1], 2*tg.p3 + self.extra_rotation_tb2024
-        elif self.type_polygon==tg.type_HD_trpezoid_corner4:
-            return tg.base[tg.type_HD_trpezoid_corner2], 2*tg.p3 + self.extra_rotation_tb2024
-        elif self.type_polygon==tg.type_HD_trpezoid_corner5:
-            return tg.base[tg.type_HD_trpezoid_corner1], 4*tg.p3 + self.extra_rotation_tb2024
-        elif self.type_polygon==tg.type_HD_trpezoid_corner6:
-            return tg.base[tg.type_HD_trpezoid_corner2], 4*tg.p3 + self.extra_rotation_tb2024
+            # Rotations by 4*pi/3 (240 degrees)
+            tg.type_HD_hexagon_side5_corner5: (tg.type_HD_hexagon_side1_corner1, 4*tg.p3),
+            tg.type_HD_hexagon_side5_corner6: (tg.type_HD_hexagon_side1_corner2, 4*tg.p3),
+            tg.type_HD_trpezoid_corner5: (tg.type_HD_trpezoid_corner1, 4*tg.p3),
+            tg.type_HD_trpezoid_corner6: (tg.type_HD_trpezoid_corner2, 4*tg.p3),
+            tg.type_HD_hexagon_side4_corner5: (tg.type_HD_hexagon_side6_corner1, 4*tg.p3),
+            tg.type_HD_hexagon_side6_corner6: (tg.type_HD_hexagon_side2_corner2, 4*tg.p3)
+        }
 
-        elif self.type_polygon==tg.type_HD_hexagon_side2_corner3:
-            return tg.base[tg.type_HD_hexagon_side6_corner1], 2*tg.p3 + self.extra_rotation_tb2024
-        elif self.type_polygon==tg.type_HD_hexagon_side4_corner4:
-            return tg.base[tg.type_HD_hexagon_side2_corner2], 2*tg.p3 + self.extra_rotation_tb2024
-        elif self.type_polygon==tg.type_HD_hexagon_side4_corner5:
-            return tg.base[tg.type_HD_hexagon_side6_corner1], 4*tg.p3 + self.extra_rotation_tb2024
-        elif self.type_polygon==tg.type_HD_hexagon_side6_corner6:
-            return tg.base[tg.type_HD_hexagon_side2_corner2], 4*tg.p3 + self.extra_rotation_tb2024
+        # Look up base type and rotation angle
+        if self.type_polygon in rotation_mapping:
+            base_type, rotation = rotation_mapping[self.type_polygon]
+            return tg.base[base_type], rotation + self.extra_rotation_tb2024
 
-        else:
-            return tg.base[self.type_polygon], self.extra_rotation_tb2024
+        # Default case - no rotation mapping found
+        return tg.base[self.type_polygon], self.extra_rotation_tb2024
 
     def export_root_file(self, output_geometry_root):
         """ generate geometry root file for DQM in raw data handling chain"""
@@ -308,7 +252,7 @@ class PolygonManager:
     def run(self, channelIds, coor_uv, cellType="", cellIdx=-1, cellName="hex"):
         """ main method for controling flow """
 
-        # cell Id and (u, v) coordinates
+        # cell (u, v) coordinates and cell IDs
         self.iu, self.iv = coor_uv
         self.globalId, self.sicell, self.rocpin = channelIds
 
@@ -317,14 +261,13 @@ class PolygonManager:
         self.cellIdx = cellIdx
         self.cellName = cellName
 
-        # evaluation + creation
+        # generate a polygon graph using cell center coordinates, polygon type, and the number of corners
         self.center_x, self.center_y = self.get_cell_center_coordinates()
         self.type_polygon, self.nCorner = self.get_polygon_information()
-        self.graph = self.get_polygon() # need polygon type, number of corners, coordinates of cell center
+        self.graph = self.generate_polygon_graph() # need polygon type, number of corners, coordinates of cell center
         self.collections[self.globalId] = self.graph
 
         # if self.sicell==193:
         #     print(f"[DEBUG] globalId = {self.globalId}, rocpin = {self.rocpin}, sicell = {self.sicell}")
         #     print(f"[DEBUG] x, y = {self.center_x}, {self.center_y}")
-
 
