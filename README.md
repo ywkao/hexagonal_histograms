@@ -7,6 +7,16 @@ On lxplus,
 source /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.34.04/x86_64-almalinux9.5-gcc115-opt/bin/thisroot.sh
 ```
 
+Create env to use pandas module
+```
+python3 -m venv pandas_env
+source pandas_env/bin/activate
+pip install pandas
+
+# deactivate the environment when finished
+deactivate
+```
+
 ## Commands
 ```
 $ git clone -b dev git@github.com:ywkao/hexagonal_histograms.git

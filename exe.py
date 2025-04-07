@@ -2,16 +2,18 @@
 import math
 import argparse
 import subprocess
+from utils.data_loader import WaferDataLoader
 from utils.geometry import gcId
 from utils.polygon_manager import PolygonManager
-from utils.config_handler import load_wafer_contents, get_macro_arguments, get_exported_file_names
+from utils.config_handler import get_macro_arguments, get_exported_file_names, get_type_config
 from utils.auxiliary_line_producer import AuxiliaryLineProducer
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-n', help="number of cells", type=int, default=9999)
-parser.add_argument('-w', '--waferType', help="set wafer type (full, LD3, LD4, HD)", type=str, default="full")
+parser.add_argument('-t', '--type', help="wafer type code (ML-F, MH-F, etc.)", type=str, default="ML-F")
 parser.add_argument('-d', '--drawLine', help="draw boundary lines", action='store_true')
 parser.add_argument('-v', '--verbose', help="set verbosity level", action='store_true')
+parser.add_argument('--list-types', help="list available type codes", action='store_true')
 args = parser.parse_args()
 
 """
@@ -33,17 +35,34 @@ def retrieve_info(line):
             result.append(int(ele))
     return tuple(result)
 
-def main(extra_angle, offset_x, offset_y):
+def main(extra_angle):
     global args
-    polygon_manager = PolygonManager(args.waferType, extra_angle, offset_x, offset_y)
-    
-    # Load geometry text file
-    contents = load_wafer_contents(args.waferType)
-    print("[DEBUG] len(contents) = %d" % len(contents))
-    
+
+    # Initialize data loader
+    data_loader = WaferDataLoader()
+
+    # List available types if requested
+    if args.list_types:
+        print("Available type codes:")
+        for code in data_loader.get_all_type_codes():
+            print(f"  {code}")
+        return
+
+    # Get type-specific configuration
+    type_config = get_type_config(args.type)
+    offset_x = type_config.get('offset_x', 0.0)
+    offset_y = type_config.get('offset_y', 0.0)
+
+    # Initialize polygon manager
+    polygon_manager = PolygonManager(args.type, extra_angle, offset_x, offset_y)
+
+    # Get data for specified type
+    contents = data_loader.get_data_as_lines(args.type)
+    print(f"[DEBUG] Processing {args.type}, len(contents) = {len(contents)}")
+
     # Loop over normal channels & non-connected channels
     for i, line in enumerate(contents):
-        density, _, roc, halfroc, seq, rocpin, sicell, _, _, iu, iv, t = retrieve_info(line)
+        density, roc, halfroc, seq, rocpin, sicell, _, _, iu, iv, _, t = retrieve_info(line)
         if(iu==-1 and iv==-1): # treatment for non-connected channels
             cellType, cellIdx, cellName = "NC", polygon_manager.idxNC, "hex_nc"
             polygon_manager.idxNC += 1
@@ -69,11 +88,13 @@ def main(extra_angle, offset_x, offset_y):
 
 
 if __name__ == "__main__":
+    # Reminder: create output directories
+
     #----------------------------------------------------------------------------------------------------
     # generate wafermap geometry root files
     #----------------------------------------------------------------------------------------------------
     extra_rotation_tb2024 = 0.
-    main(extra_rotation_tb2024, -1.20840 , 2.09301)
+    main(extra_rotation_tb2024)
 
     #----------------------------------------------------------------------------------------------------
     # create plots using C++ root macro (validation for CMSSW DQMEDAnalyzer and DQM GUI rendering plugins)
