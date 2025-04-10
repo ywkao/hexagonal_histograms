@@ -45,6 +45,9 @@ $ make
 $ ./exe.py --list-types # List all available wafer types
 $ ./exe.py -t ML-L
 $ ./exe.py -t ML-R
+$ ./exe.py -t ML-T
+$ ./exe.py -t ML-B
+$ ./exe.py -t ML-5
 
 # Output files will be created in:
 # - output/geometry/: Root geometry files

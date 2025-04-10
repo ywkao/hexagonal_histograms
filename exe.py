@@ -66,6 +66,7 @@ def main(extra_angle):
         if(iu==-1 and iv==-1): # treatment for non-connected channels
             cellType, cellIdx, cellName = "NC", polygon_manager.idxNC, "hex_nc"
             polygon_manager.idxNC += 1
+            continue
         else: # default values for normal channels
             cellType, cellIdx, cellName = "", -1, "hex"
         globalId = 78*roc + 39*halfroc + seq
@@ -74,11 +75,11 @@ def main(extra_angle):
         if args.verbose: print(polygon_manager)
         if polygon_manager.counter==args.n : break # manually control how many cells to display
 
-    # Add additional cells for CM channels
-    for idx, CM in enumerate(gcId[args.waferType]["CMIds"]):
-        channelIds = (CM, -1, -1) # globalId, artificial sicell, rocpin
-        polygon_manager.create_and_register_polygon(channelIds, (-1,-1), "CM", idx, "hex_cm")
-        if args.verbose: print(polygon_manager)
+    # # Add additional cells for CM channels
+    # for idx, CM in enumerate(gcId[args.waferType]["CMIds"]):
+    #     channelIds = (CM, -1, -1) # globalId, artificial sicell, rocpin
+    #     polygon_manager.create_and_register_polygon(channelIds, (-1,-1), "CM", idx, "hex_cm")
+    #     if args.verbose: print(polygon_manager)
 
     # Export geometry data
     geometry_rootfile, coordinate_json, mapping_json = get_exported_file_names(args.waferType)
