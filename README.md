@@ -1,5 +1,20 @@
 # hexagonal_histograms
 
+The package is used to generate geometry root files for the HGCAL DQM wafer maps.
+
+We use PyROOT to create a collection of polygons/cells/silicon pads as TGraph objects in geometry root file.
+For each cell, the center position (x, y) is derived using HGCAL DPG tool, `src/HGCalCell.cc`.
+The C++ class is used in Python script through `ROOT.gInterpreter` in `utils/polygon_manager.py`, as shown the following lines:
+
+```
+ROOT.gInterpreter.ProcessLine('#include "include/HGCalCell.h"')
+ROOT.gSystem.Load("./build/libHGCalCell.so")
+cell_helper = ROOT.HGCalCell(waferSize, nFine, nCoarse)
+```
+
+Therefore, to run the package, we need to ensure that the Python version is compatible with the one used to build ROOT.
+To avoid building ROOT from scratch and potential compatible issues, we recommend using the pre-built CVMFS ROOT from LCG releases.
+
 ## Environment
 
 On lxplus,
@@ -7,14 +22,19 @@ On lxplus,
 source /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.34.04/x86_64-almalinux9.5-gcc115-opt/bin/thisroot.sh
 ```
 
-Create env to use pandas module
+Create env to use pandas module (only for the first time)
 ```
 python3 -m venv pandas_env
 source pandas_env/bin/activate
 pip install pandas
+pip install pyyaml
+```
 
-# deactivate the environment when finished
-deactivate
+Routine environment setting
+```
+source /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.34.04/x86_64-almalinux9.5-gcc115-opt/bin/thisroot.sh
+source pandas_env/bin/activate
+deactivate # deactivate the environment when finished
 ```
 
 ## Commands
@@ -22,10 +42,15 @@ deactivate
 $ git clone -b dev git@github.com:ywkao/hexagonal_histograms.git
 $ cd hexagonal_histograms
 $ make
-$ ./exe.py -w full -d -v # LD full wafer
-$ ./exe.py -w LD3 -d -v # LD3 partial wafer
-$ ./exe.py -w LD4 -d -v # LD4 partial wafer
-$ ./exe.py -w HD -d -v # HD full wafer
+$ ./exe.py --list-types # List all available wafer types
+$ ./exe.py -t ML-F -d -v # ML-F wafer type
+$ ./exe.py -t MH-F -d -v # MH-F wafer type
+
+# Output files will be created in:
+# - output/geometry/: Root geometry files
+# - output/waferMaps/: Wafer map visualizations
+# - output/coordinates/: JSON files with cell coordinates
+# - output/mapping/: JSON files with cell ID mappings
 ```
 
 ## Description of main scripts

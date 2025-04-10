@@ -9,7 +9,7 @@ class PolygonManager:
     def __init__(self, wafer_type, extra_angle, offset_x, offset_y):
         # configuration parameters & shared library
         mm2cm = 0.10
-        arbUnit_to_cm = (6.9767/2.)*mm2cm if not wafer_type=="HD" else (4.65/2.)*mm2cm
+        arbUnit_to_cm = (6.9767/2.)*mm2cm if "ML" in wafer_type else (4.65/2.)*mm2cm
         waferSize = 60 * arbUnit_to_cm
         nFine, nCoarse = 0, 10 #222
         typeFine, typeCoarse = 0, 1
@@ -143,9 +143,9 @@ class PolygonManager:
         if self.cellType == "NC":
             x = tg.Coordinates_NC_channels[self.waferType]['x'][self.cellIdx%8]
             y = tg.Coordinates_NC_channels[self.waferType]['y'][self.cellIdx%8]
-            if self.waferType == "full":
+            if self.waferType == "ML-F":
                 theta = 2*math.pi/3. * (self.cellIdx//8) - math.pi/3.
-            elif self.waferType == "LD3" or self.waferType == "LD4":
+            elif self.waferType == "ML-L" or self.waferType == "ML-R":
                 theta = tg.Coordinates_NC_channels[self.waferType]['theta'][self.cellIdx]
 
             x, y = self._rotate_coordinate(x, y, theta + self.extra_rotation_tb2024)
@@ -158,11 +158,11 @@ class PolygonManager:
                 x = tg.Coordinates_CM_channels[self.waferType]['x'][self.cellIdx%8]
                 y = tg.Coordinates_CM_channels[self.waferType]['y'][self.cellIdx%8]
                 theta = 2*math.pi/3. * (self.cellIdx//8)
-            elif self.waferType == "full":
+            elif self.waferType == "ML-F":
                 x = tg.Coordinates_CM_channels[self.waferType]['x'][self.cellIdx%4]
                 y = tg.Coordinates_CM_channels[self.waferType]['y'][self.cellIdx%4]
                 theta = 2*math.pi/3. * (self.cellIdx//4) - math.pi/3.
-            elif self.waferType == "LD3" or self.waferType == "LD4":
+            elif self.waferType == "ML-L" or self.waferType == "ML-R":
                 x = tg.Coordinates_CM_channels[self.waferType]['x'][self.cellIdx]
                 y = tg.Coordinates_CM_channels[self.waferType]['y'][self.cellIdx]
                 theta = tg.Coordinates_CM_channels[self.waferType]['theta'][self.cellIdx]
@@ -255,7 +255,7 @@ class PolygonManager:
         # save info in dictionary for mapping
         self.dict_my_chId_mapping[self.globalId] = [self.sicell, self.rocpin]
         if not (self.cellType=="CM" or self.cellType=="NC"):
-            if self.waferType == "full":
+            if self.waferType == "ML-F":
                 self.dict_my_coordinate_data[self.sicell] = polygon
             else:
                 self.dict_my_coordinate_data[self.globalId] = polygon

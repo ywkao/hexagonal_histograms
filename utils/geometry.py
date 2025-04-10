@@ -71,15 +71,15 @@ type_HD_hexagon_side6_corner6 = 655 # by rotation
 
 # information of CM and NC in global Id (readout sequence)
 global_channel_Id_special_channels = {
-    "full" : {
+    "ML-F" : {
         "CMIds" : [37, 38, 76, 77, 115, 116, 154, 155, 193, 194, 232, 233],
         "NonConnIds" : [8, 17, 19, 28, 47, 56, 58, 67, 86, 95, 97, 106, 125, 134, 136, 145, 164, 173, 175, 184, 203, 212, 214, 223]
     },
-    "LD3" : {
+    "ML-L" : {
         "CMIds" : [37, 38, 76, 77, 115, 116],
         "NonConnIds" : [8, 17, 47, 56, 58, 67, 86, 95]
     },
-    "LD4" : {
+    "ML-R" : {
         "CMIds" : [37, 38, 76, 77, 115, 116],
         "NonConnIds" : [8, 17, 47, 56, 58, 67, 86, 95]
     },
@@ -107,45 +107,53 @@ Coordinates_calib_channels = {
 }
 
 # Coordinates of CM and NC channels
+cm_ld_theta = [2*p3*(i//4) - p3 for i in range(12)]  # 3 sectors × 4 points each
+cm_hd_theta = [2*p3*(i//8) for i in range(24)]       # 3 sectors × 8 points each
+
+nc_ld_theta = [2*p3*(i//8) - p3/3 for i in range(24)]  # 3 sectors × 8 points each
+nc_hd_theta = [2*p3*(i//16) for i in range(48)]        # 3 sectors × 8 points each
+
 Coordinates_CM_channels = {
-    "LD3": {
-        'x' : [-8.75, -3.75, 3.75, 8.75, 8.75, 3.75],
-        'y' : [29, 29, 29, 29, 29, 29],
-        'theta' : [-p3, -p3, -p3, -p3, p3*3, p3*3]
-    },
-    "LD4": {
-        'x' : [-8.75, -3.75, 3.75, 8.75, -3.75, -8.75],
-        'y' : [29, 29, 29, 29, 29, 29],
-        'theta' : [p3, p3, p3, p3, p3*3, p3*3]
-    },
-    "full": {
+    "ML-F": {
         'x' : [8.75, 3.75, -3.75, -8.75],
         'y' : [29, 29, 29, 29],
+        'theta' : cm_ld_theta,
     },
     "HD": {
         'x' : [-14., -10.5, -7.0, -3.5, 3.5, 7.0, 10.5, 14.],
         'y' : [43, 43, 43, 43, 43, 43, 43, 43],
+        'theta' : cm_hd_theta,
+    },
+    "ML-L": {
+        'x' : [-8.75, -3.75, 3.75, 8.75, 8.75, 3.75],
+        'y' : [29, 29, 29, 29, 29, 29],
+        'theta' : [-p3, -p3, -p3, -p3, p3*3, p3*3]
+    },
+    "ML-R": {
+        'x' : [-8.75, -3.75, 3.75, 8.75, -3.75, -8.75],
+        'y' : [29, 29, 29, 29, 29, 29],
+        'theta' : [p3, p3, p3, p3, p3*3, p3*3]
     },
 }
 
 Coordinates_NC_channels = {
-    "full": {
+    "ML-F": {
         'x' : [10., 7.5, 5.0, 2.5, -2.5, -5.0, -7.5, -10.],
         'y' : [32, 32, 32, 32, 32, 32, 32, 32],
-    },
-    "LD3": {
-        'x' : [-7.5, -5.0, 2.5, 5.0, 7.5, 10., 7.5, 5.0],
-        'y' : [32, 32, 32, 32, 32, 32, 32, 32],
-        'theta' : [-p3, -p3, -p3, -p3, -p3, -p3, p3*3, p3*3]
-    },
-    "LD4": {
-        'x' : [-7.5, -5.0, 2.5, 5.0, 7.5, 10., -5.0, -7.5],
-        'y' : [32, 32, 32, 32, 32, 32, 32, 32],
-        'theta' : [p3, p3, p3, p3, p3, p3, p3*3, p3*3]
     },
     "HD": {
         'x' : [10., 7.5, 5.0, 2.5, -2.5, -5.0, -7.5, -10.],
         'y' : [32, 32, 32, 32, 32, 32, 32, 32],
+    },
+    "ML-L": {
+        'x' : [-7.5, -5.0, 2.5, 5.0, 7.5, 10., 7.5, 5.0],
+        'y' : [32, 32, 32, 32, 32, 32, 32, 32],
+        'theta' : [-p3, -p3, -p3, -p3, -p3, -p3, p3*3, p3*3]
+    },
+    "ML-R": {
+        'x' : [-7.5, -5.0, 2.5, 5.0, 7.5, 10., -5.0, -7.5],
+        'y' : [32, 32, 32, 32, 32, 32, 32, 32],
+        'theta' : [p3, p3, p3, p3, p3, p3, p3*3, p3*3]
     },
 }
 
@@ -353,7 +361,7 @@ base.update(base_derived_types)
 # Irregular polygons mapping using SiCell padID 
 #----------------------------------------------------------------------------------------------------
 irregular_polygonal_cells = {
-    "full": {
+    "ML-F": {
         type_pentagon_side1 : [2, 3, 4, 5, 6, 7],
         type_pentagon_side2 : [18, 28, 39, 51, 65, 80, 95],
         type_pentagon_side3 : [126, 140, 155, 168, 179, 189],
@@ -375,7 +383,7 @@ irregular_polygonal_cells = {
         type_hollow : [13, 61, 69, 142, 153, 162], # cells around a calib channel
         # type_hexagon_small : [14, 62, 70, 143, 154, 163], # calibration_cells
     },
-    "LD3" : {
+    "ML-L" : {
         type_hollow : [12, 168], # cells around a calib channel
         type_pentagon_hollow : [89], # cells around a calib channel
         # type_hexagon_small : [13, 90, 169], # calibration_cells
@@ -392,7 +400,7 @@ irregular_polygonal_cells = {
         type_hexagon_corner5 : [204],
         type_partial_wafer_hexagon_corner6 : [85],
     },
-    "LD4" : {
+    "ML-R" : {
         type_hollow : [64, 148, 159],
         # type_hexagon_small : [65, 149, 160],
         type_trapezoid_right : [15, 36, 62, 127, 158, 186], # 41, 68, 132, 164, 191],

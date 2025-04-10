@@ -10,10 +10,10 @@ from utils.auxiliary_line_producer import AuxiliaryLineProducer
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-n', help="number of cells", type=int, default=9999)
-parser.add_argument('-t', '--type', help="wafer type code (ML-F, MH-F, etc.)", type=str, default="ML-F")
+parser.add_argument('-t', '--waferType', help="wafer type code (ML-F, MH-F, etc.)", type=str, default="ML-F")
 parser.add_argument('-d', '--drawLine', help="draw boundary lines", action='store_true')
 parser.add_argument('-v', '--verbose', help="set verbosity level", action='store_true')
-parser.add_argument('--list-types', help="list available type codes", action='store_true')
+parser.add_argument('--listTypes', help="list available type codes", action='store_true')
 args = parser.parse_args()
 
 """
@@ -27,7 +27,7 @@ def retrieve_info(line):
     info = line.strip().split()
     result = []
     for ele in info:
-        if "LD" in ele or "HD" in ele or "CALIB" in ele:
+        if "ML" in ele or "MH" in ele or "CALIB" in ele:
             result.append(str(ele))
         elif "." in ele:
             result.append(float(ele))
@@ -42,23 +42,23 @@ def main(extra_angle):
     data_loader = WaferDataLoader()
 
     # List available types if requested
-    if args.list_types:
+    if args.listTypes:
         print("Available type codes:")
         for code in data_loader.get_all_type_codes():
             print(f"  {code}")
         return
 
     # Get type-specific configuration
-    type_config = get_type_config(args.type)
+    type_config = get_type_config(args.waferType)
     offset_x = type_config.get('offset_x', 0.0)
     offset_y = type_config.get('offset_y', 0.0)
 
     # Initialize polygon manager
-    polygon_manager = PolygonManager(args.type, extra_angle, offset_x, offset_y)
+    polygon_manager = PolygonManager(args.waferType, extra_angle, offset_x, offset_y)
 
     # Get data for specified type
-    contents = data_loader.get_data_as_lines(args.type)
-    print(f"[DEBUG] Processing {args.type}, len(contents) = {len(contents)}")
+    contents = data_loader.get_data_as_lines(args.waferType)
+    print(f"[DEBUG] Processing {args.waferType}, len(contents) = {len(contents)}")
 
     # Loop over normal channels & non-connected channels
     for i, line in enumerate(contents):
@@ -95,6 +95,9 @@ if __name__ == "__main__":
     #----------------------------------------------------------------------------------------------------
     extra_rotation_tb2024 = 0.
     main(extra_rotation_tb2024)
+
+    if args.listTypes:
+        exit()
 
     #----------------------------------------------------------------------------------------------------
     # create plots using C++ root macro (validation for CMSSW DQMEDAnalyzer and DQM GUI rendering plugins)

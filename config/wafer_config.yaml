@@ -2,14 +2,14 @@
 default_params:
   scope: 14
   marker_size: 0.7
+  offset_x: -1.20840
+  offset_y: 2.09301
 
 type_specific_params:
   ML-F:
     scope: 14
     marker_size: 0.7
     tag: "ML_F_wafer"
-    offset_x: -1.20840
-    offset_y: 2.09301
   MH-F:
     scope: 12
     marker_size: 0.5
