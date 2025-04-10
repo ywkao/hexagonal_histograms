@@ -43,8 +43,8 @@ $ git clone -b dev git@github.com:ywkao/hexagonal_histograms.git
 $ cd hexagonal_histograms
 $ make
 $ ./exe.py --list-types # List all available wafer types
-$ ./exe.py -t ML-F -d -v # ML-F wafer type
-$ ./exe.py -t MH-F -d -v # MH-F wafer type
+$ ./exe.py -t ML-L
+$ ./exe.py -t ML-R
 
 # Output files will be created in:
 # - output/geometry/: Root geometry files
