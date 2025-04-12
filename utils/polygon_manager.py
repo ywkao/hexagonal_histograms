@@ -15,7 +15,7 @@ class PolygonManager:
         nFine, nCoarse = 0, 10 #222
         typeFine, typeCoarse = 0, 1
 
-        ROOT.gInterpreter.ProcessLine('#include "include/HGCalCell.h"')
+        ROOT.gInterpreter.ProcessLine('#include "scripts/include/HGCalCell.h"')
         ROOT.gSystem.Load("./build/libHGCalCell.so")
         cell_helper = ROOT.HGCalCell(waferSize, nFine, nCoarse)
 

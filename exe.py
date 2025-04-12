@@ -104,6 +104,6 @@ if __name__ == "__main__":
     # execute root macro for TH2Poly
     #--------------------------------------------------
     scope, tag, outputName, markerSize = get_macro_arguments(args.waferType)
-    command = f"root -l -b -q th2poly.C'(\"{geometry_rootfile}\", \"{outputName}\", {scope}, {int(args.drawLine)}, \"{tag}\", {markerSize}, \"{rotationTag}\")'"
+    command = f"root -l -b -q ./scripts/generate_wafer_maps.C'(\"{geometry_rootfile}\", \"{outputName}\", {scope}, {int(args.drawLine)}, \"{tag}\", {markerSize}, \"{rotationTag}\")'"
     print(f"running command: {command}")
     subprocess.call(command, shell=True)

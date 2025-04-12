@@ -56,6 +56,13 @@ $ ./exe.py -t ML-5
 # - output/waferMaps/: Wafer map visualizations
 # - output/coordinates/: JSON files with cell coordinates
 # - output/mapping/: JSON files with cell ID mappings
+
+
+# A command for tutorial purpose
+$ root -l -b -q scripts/tutorial_th2poly.C
+
+# Expected output plot 
+# ./output/waferMaps/tutorial.png 
 ```
 
 ## Description of main scripts

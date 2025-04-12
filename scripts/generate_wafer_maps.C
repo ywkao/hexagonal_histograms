@@ -1,15 +1,10 @@
-#include "include/auxiliary_boundary_lines.h"
-#include "include/auxiliary_boundary_lines_partial_wafer.h"
-#include "include/auxiliary_boundary_lines_LD4_partial_wafer.h"
-#include "include/auxiliary_boundary_lines_HD_full_wafer.h"
-#include "include/map_channel_numbers.h"
 #include <map>
-
 #include "TMath.h"
+#include "generate_wafer_maps.h"
 
 void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag = "LD_wafer", double extra_angle = 0.0, TString rotationTag = "");
 
-void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=false, TString NameTag="LD_wafer", double MarkerSize = 0.7, TString rotationTag = ""){
+void generate_wafer_maps(TString inputfile, TString outputfile, double range, bool drawLine=false, TString NameTag="LD_wafer", double MarkerSize = 0.7, TString rotationTag = ""){
 
     double extra_angle = 0.0;
 
@@ -68,7 +63,7 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
         }
     }
 
-    printf("[DEBUG] th2poly::counter = %d\n", counter);
+    printf("[DEBUG] ./scripts/generate_wafer_maps::counter = %d\n", counter);
 
     //--------------------------------------------------
     // Test profile
@@ -174,19 +169,19 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
         p->Draw("colz;text");
         beautify_plot(drawLine, true, NameTag, extra_angle, rotationTag);
         c1->SaveAs("output/waferMaps/info_"+NameTag+"_globalChannelId_readoutSequence"+rotationTag+".png");
-        c1->SaveAs("output/waferMaps/info_"+NameTag+"_globalChannelId_readoutSequence"+rotationTag+".pdf");
+        // c1->SaveAs("output/waferMaps/info_"+NameTag+"_globalChannelId_readoutSequence"+rotationTag+".pdf");
 
         p_pin->SetMarkerSize(MarkerSize);
         p_pin->Draw("colz;text");
         beautify_plot(drawLine, true, NameTag, extra_angle, rotationTag);
         c1->SaveAs("output/waferMaps/info_"+NameTag+"_HGCROC_pin_chan"+rotationTag+".png");
-        c1->SaveAs("output/waferMaps/info_"+NameTag+"_HGCROC_pin_chan"+rotationTag+".pdf");
+        // c1->SaveAs("output/waferMaps/info_"+NameTag+"_HGCROC_pin_chan"+rotationTag+".pdf");
 
         p_sicell->SetMarkerSize(MarkerSize);
         p_sicell->Draw("colz;text");
         beautify_plot(drawLine, true, NameTag, extra_angle, rotationTag);
         c1->SaveAs("output/waferMaps/info_"+NameTag+"_SiCell_padId"+rotationTag+".png");
-        c1->SaveAs("output/waferMaps/info_"+NameTag+"_SiCell_padId"+rotationTag+".pdf");
+        // c1->SaveAs("output/waferMaps/info_"+NameTag+"_SiCell_padId"+rotationTag+".pdf");
     } else {
         p->SetMarkerSize(MarkerSize);
         p->Draw("colz;text");
@@ -248,8 +243,6 @@ void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag =
         text.SetTextAlign(22);
         text.SetTextFont(43);
         text.SetTextSize(12);
-
-        printf("[DEBUG] %s, %s\n", NameTag.Data(), rotationTag.Data());
 
         if(NameTag.Contains("MH_F")) {
             double theta1 = 0. + extra_angle;
