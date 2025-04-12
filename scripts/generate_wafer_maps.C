@@ -1,6 +1,6 @@
 #include <map>
 #include "TMath.h"
-#include "generate_wafer_maps.h"
+#include "auxiliary.h"
 
 void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag = "LD_wafer", double extra_angle = 0.0, TString rotationTag = "");
 
@@ -137,18 +137,39 @@ void generate_wafer_maps(TString inputfile, TString outputfile, double range, bo
     std::map<int, int> map_HGCROC_pin;
     std::map<int, int> map_SiCell_pad;
 
-    if(NameTag.Contains("ML_R")) {
-        map_HGCROC_pin = map_HGCROC_pin_LD4_partial_wafer;
-        map_SiCell_pad = map_SiCell_pad_LD4_partial_wafer;
-    } else if(NameTag.Contains("ML_L")) {
-        map_HGCROC_pin = map_HGCROC_pin_LD3_partial_wafer;
-        map_SiCell_pad = map_SiCell_pad_LD3_partial_wafer;
-    } else if (NameTag.Contains("MH_F")){
-        map_HGCROC_pin = map_HGCROC_pin_HD_full_wafer;
-        map_SiCell_pad = map_SiCell_pad_HD_full_wafer;
-    } else { // LD full
-        map_HGCROC_pin = map_HGCROC_pin_full_wafer;
-        map_SiCell_pad = map_SiCell_pad_full_wafer;
+    if (NameTag.Contains("MH_B")) {
+        map_HGCROC_pin = map_HGCROC_pin_MH_B;
+        map_SiCell_pad = map_SiCell_pad_MH_B;
+    } else if (NameTag.Contains("MH_F")) {
+        map_HGCROC_pin = map_HGCROC_pin_MH_F;
+        map_SiCell_pad = map_SiCell_pad_MH_F;
+    } else if (NameTag.Contains("MH_L")) {
+        map_HGCROC_pin = map_HGCROC_pin_MH_L;
+        map_SiCell_pad = map_SiCell_pad_MH_L;
+    } else if (NameTag.Contains("MH_R")) {
+        map_HGCROC_pin = map_HGCROC_pin_MH_R;
+        map_SiCell_pad = map_SiCell_pad_MH_R;
+    } else if (NameTag.Contains("MH_T")) {
+        map_HGCROC_pin = map_HGCROC_pin_MH_T;
+        map_SiCell_pad = map_SiCell_pad_MH_T;
+    } else if (NameTag.Contains("ML_5")) {
+        map_HGCROC_pin = map_HGCROC_pin_ML_5;
+        map_SiCell_pad = map_SiCell_pad_ML_5;
+    } else if (NameTag.Contains("ML_B")) {
+        map_HGCROC_pin = map_HGCROC_pin_ML_B;
+        map_SiCell_pad = map_SiCell_pad_ML_B;
+    } else if (NameTag.Contains("ML_F")) {
+        map_HGCROC_pin = map_HGCROC_pin_ML_F;
+        map_SiCell_pad = map_SiCell_pad_ML_F;
+    } else if (NameTag.Contains("ML_L")) {
+        map_HGCROC_pin = map_HGCROC_pin_ML_L;
+        map_SiCell_pad = map_SiCell_pad_ML_L;
+    } else if (NameTag.Contains("ML_R")) {
+        map_HGCROC_pin = map_HGCROC_pin_ML_R;
+        map_SiCell_pad = map_SiCell_pad_ML_R;
+    } else {
+        map_HGCROC_pin = map_HGCROC_pin_ML_T;
+        map_SiCell_pad = map_SiCell_pad_ML_T;
     }
 
     for(int i=0; i<counter; ++i) {

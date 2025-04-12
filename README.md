@@ -62,11 +62,21 @@ $ ./exe.py -t MH-R
 # - output/mapping/: JSON files with cell ID mappings
 
 
+#----------------------------------------------------------------------
 # A command for tutorial purpose
+#----------------------------------------------------------------------
 $ root -l -b -q scripts/tutorial_th2poly.C
 
-# Expected output plot 
-# ./output/waferMaps/tutorial.png 
+# Expected output:
+#   ./output/waferMaps/tutorial.png
+
+#----------------------------------------------------------------------
+# Command to produce {global_channel_id: sicell/rocpin} maps
+#----------------------------------------------------------------------
+$ python3 utils/channel_id_mapper.py
+
+# Expected output:
+#   ./scripts/include/map_channel_numbers.h
 ```
 
 ## Description of main scripts
