@@ -126,8 +126,8 @@ void generate_wafer_maps(TString inputfile, TString outputfile, double range, bo
 
     }
 
-    profile->Draw();
-    c1->SaveAs("test.root");
+    // profile->Draw();
+    // c1->SaveAs("test.root");
 
     //--------------------------------------------------
     // fill information of channel IDs
@@ -164,28 +164,29 @@ void generate_wafer_maps(TString inputfile, TString outputfile, double range, bo
     }
 
     // plotting
+    bool drawText = false;
     if(scheme==0) {
         p->SetMarkerSize(MarkerSize);
         p->Draw("colz;text");
-        beautify_plot(drawLine, true, NameTag, extra_angle, rotationTag);
+        beautify_plot(drawLine, drawText, NameTag, extra_angle, rotationTag);
         c1->SaveAs("output/waferMaps/info_"+NameTag+"_globalChannelId_readoutSequence"+rotationTag+".png");
         // c1->SaveAs("output/waferMaps/info_"+NameTag+"_globalChannelId_readoutSequence"+rotationTag+".pdf");
 
         p_pin->SetMarkerSize(MarkerSize);
         p_pin->Draw("colz;text");
-        beautify_plot(drawLine, true, NameTag, extra_angle, rotationTag);
+        beautify_plot(drawLine, drawText, NameTag, extra_angle, rotationTag);
         c1->SaveAs("output/waferMaps/info_"+NameTag+"_HGCROC_pin_chan"+rotationTag+".png");
         // c1->SaveAs("output/waferMaps/info_"+NameTag+"_HGCROC_pin_chan"+rotationTag+".pdf");
 
         p_sicell->SetMarkerSize(MarkerSize);
         p_sicell->Draw("colz;text");
-        beautify_plot(drawLine, true, NameTag, extra_angle, rotationTag);
+        beautify_plot(drawLine, drawText, NameTag, extra_angle, rotationTag);
         c1->SaveAs("output/waferMaps/info_"+NameTag+"_SiCell_padId"+rotationTag+".png");
         // c1->SaveAs("output/waferMaps/info_"+NameTag+"_SiCell_padId"+rotationTag+".pdf");
     } else {
         p->SetMarkerSize(MarkerSize);
         p->Draw("colz;text");
-        beautify_plot(drawLine, true, NameTag, extra_angle, rotationTag);
+        beautify_plot(drawLine, drawText, NameTag, extra_angle, rotationTag);
         c1->SaveAs("test_injection_"+NameTag+".png");
     }
 
@@ -268,7 +269,7 @@ void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag =
             for(int i=0; i<6; ++i) {
                 text.SetTextAngle(theta_angle_text[i]);
                 double theta = theta_coordinate_text[i];
-                printf("%.2f ", theta);
+                // printf("%.2f ", theta);
                 double cos_theta = TMath::Cos(theta);
                 double sin_theta = TMath::Sin(theta);
 
@@ -282,7 +283,7 @@ void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag =
 
                 text.DrawText(x, y, v_texts[i]);
             }
-            printf("\n");
+            // printf("\n");
 
         } else { // LD
             double theta1 = -TMath::Pi()/3. + extra_angle;

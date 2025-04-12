@@ -6,14 +6,14 @@ default_params:
   offset_y: 2.09301
 
 type_specific_params:
-  ML-F:
+  ML:
     scope: 14
     marker_size: 0.7
-    tag: "ML_F_wafer"
-  MH-F:
+    offset_x: -1.20840
+    offset_y: 2.09301
+  MH:
     scope: 12
     marker_size: 0.5
-    tag: "MH_F_wafer"
     offset_x: 0.805403625519528
     offset_y: -1.395
   # Add other type codes with their specific parameters

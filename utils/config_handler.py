@@ -21,7 +21,7 @@ def get_type_config(type_code: str) -> Dict[str, Any]:
     type_config = config.get('default_params', {}).copy()
 
     # Update with type-specific parameters
-    type_specific = config.get('type_specific_params', {}).get(type_code, {})
+    type_specific = config.get('type_specific_params', {}).get(type_code[:2], {})
     type_config.update(type_specific)
 
     # Generate output paths
@@ -38,7 +38,7 @@ def get_macro_arguments(type_code: str):
     config = get_type_config(type_code)
     return (
         config.get('scope', 14),
-        config.get('tag', f"{type_code}_wafer"),
+        f"{type_code}_wafer",
         config['output_paths']['output_name'],
         config.get('marker_size', 0.7)
     )

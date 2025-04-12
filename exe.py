@@ -2,11 +2,17 @@
 import os, math
 import argparse
 import subprocess
+import warnings
+import logging
+
 from utils.data_loader import WaferDataLoader
 from utils.polygon_manager import PolygonManager
 from utils.config_handler import get_macro_arguments, get_exported_file_names, get_type_config
 from utils.auxiliary_line_producer import AuxiliaryLineProducer
 from utils.special_channels import gcId
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s-%(name)s-%(levelname)s: %(message)s', datefmt='%H:%M:%S') # %Y-%m-%d 
+logger = logging.getLogger("exe.py")
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-n', help="number of cells", type=int, default=9999)
@@ -40,27 +46,39 @@ def main(extra_angle):
 
     # Get data for specified type
     contents = data_loader.get_data_as_lines(args.waferType)
-    print(f"[DEBUG] Processing {args.waferType}, len(contents) = {len(contents)}")
+    logger.info(f"Processing {args.waferType}, len(contents) = {len(contents)}")
+
+    # skip NC and CM if they are not registered
+    nc_channels_are_registered = (args.waferType in gcId and "NonConnIds" in gcId[args.waferType])
+    cm_channels_are_registered = (args.waferType in gcId and "CMIds" in gcId[args.waferType])
+    if not nc_channels_are_registered: logger.warning(f"No NC channel information found for wafer type {args.waferType}")
+    if not cm_channels_are_registered: logger.warning(f"No CM channel information found for wafer type {args.waferType}")
 
     # Loop over normal channels & non-connected channels
     for i, line in enumerate(contents):
         density, roc, halfroc, seq, rocpin, sicell, _, _, iu, iv, _, t = data_loader.retrieve_info(line)
-        if(iu==-1 and iv==-1): # treatment for non-connected channels
+
+        # identify non-connected channels using (iu,iv) == (-1,-1)
+        if(iu==-1 and iv==-1):
             cellType, cellIdx, cellName = "NC", polygon_manager.idxNC, "hex_nc"
             polygon_manager.idxNC += 1
-        else: # default values for normal channels
+            if not nc_channels_are_registered: continue
+        else: 
             cellType, cellIdx, cellName = "", -1, "hex"
+
+        # evaluate channel Ids & create a polygon
         globalId = 78*roc + 39*halfroc + seq
         channelIds = (globalId, sicell, rocpin)
         polygon_manager.create_and_register_polygon(channelIds, (iu,iv), cellType, cellIdx, cellName)
-        if args.verbose: print(polygon_manager)
+        if args.verbose: logger.info(polygon_manager)
         if polygon_manager.counter==args.n : break # manually control how many cells to display
 
     # Add additional cells for CM channels
-    for idx, CM in enumerate(gcId[args.waferType]["CMIds"]):
-        channelIds = (CM, -1, -1) # globalId, artificial sicell, rocpin
-        polygon_manager.create_and_register_polygon(channelIds, (-1,-1), "CM", idx, "hex_cm")
-        if args.verbose: print(polygon_manager)
+    if cm_channels_are_registered:
+        for idx, CM in enumerate(gcId[args.waferType]["CMIds"]):
+            channelIds = (CM, -1, -1) # globalId, artificial sicell, rocpin
+            polygon_manager.create_and_register_polygon(channelIds, (-1,-1), "CM", idx, "hex_cm")
+            if args.verbose: logger.info(polygon_manager)
 
     # Export geometry data
     geometry_rootfile, coordinate_json, mapping_json = get_exported_file_names(args.waferType)
@@ -105,5 +123,5 @@ if __name__ == "__main__":
     #--------------------------------------------------
     scope, tag, outputName, markerSize = get_macro_arguments(args.waferType)
     command = f"root -l -b -q ./scripts/generate_wafer_maps.C'(\"{geometry_rootfile}\", \"{outputName}\", {scope}, {int(args.drawLine)}, \"{tag}\", {markerSize}, \"{rotationTag}\")'"
-    print(f"running command: {command}")
+    logger.info(command)
     subprocess.call(command, shell=True)
