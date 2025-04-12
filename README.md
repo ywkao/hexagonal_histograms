@@ -43,6 +43,8 @@ $ git clone -b dev git@github.com:ywkao/hexagonal_histograms.git
 $ cd hexagonal_histograms
 $ make
 $ ./exe.py --list-types # List all available wafer types
+$ ./exe.py -t ML-F
+$ ./exe.py -t MH-F
 $ ./exe.py -t ML-L
 $ ./exe.py -t ML-R
 $ ./exe.py -t ML-T

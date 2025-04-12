@@ -14,8 +14,8 @@ type_specific_params:
     scope: 12
     marker_size: 0.5
     tag: "MH_F_wafer"
-    offset_x: -0.8
-    offset_y: 1.95
+    offset_x: 0.805403625519528
+    offset_y: -1.395
   # Add other type codes with their specific parameters
   # If a parameter is not specified, it will use the default value
 

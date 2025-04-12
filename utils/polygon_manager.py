@@ -1,4 +1,5 @@
-import utils.geometry as tg
+import utils.geometry as ug
+from utils.special_channels import Coordinates_CM_channels, Coordinates_NC_channels
 import numpy as np
 import json
 import math
@@ -20,7 +21,7 @@ class PolygonManager:
 
         # wafer information
         self.waferType = wafer_type
-        self.irregular_polygonal_cells = tg.irregular_polygonal_cells
+        self.irregular_polygonal_cells = ug.irregular_polygonal_cells
         self.cell_helper = cell_helper
         self.cell_fine_or_coarse = typeCoarse
         self.arbUnit_to_cm = arbUnit_to_cm
@@ -32,12 +33,8 @@ class PolygonManager:
         self.sin_global_theta = math.sin(self.global_theta)
 
         # global corrections on coordinates
-        if self.waferType == "HD":
-            self.global_correction_x = 0.805403625519528
-            self.global_correction_y = -1.395
-        else:
-            self.global_correction_x = offset_x
-            self.global_correction_y = offset_y
+        self.global_correction_x = offset_x
+        self.global_correction_y = offset_y
 
         # containers
         self.counter = 0
@@ -117,7 +114,7 @@ class PolygonManager:
         for wafer_type, type_dict in self.irregular_polygonal_cells.items():
             self._polygon_info_cache[wafer_type] = {}
             for polygon_type, cell_list in type_dict.items():
-                corner_count = len(tg.base[polygon_type]['x']) - 1
+                corner_count = len(ug.base[polygon_type]['x']) - 1
                 for sicell in cell_list:
                     self._polygon_info_cache[wafer_type][sicell] = (polygon_type, corner_count)
 
@@ -141,12 +138,12 @@ class PolygonManager:
 
         # non-connected channels
         if self.cellType == "NC":
-            x = tg.Coordinates_NC_channels[self.waferType]['x'][self.cellIdx%8]
-            y = tg.Coordinates_NC_channels[self.waferType]['y'][self.cellIdx%8]
+            x = Coordinates_NC_channels[self.waferType]['x'][self.cellIdx%8]
+            y = Coordinates_NC_channels[self.waferType]['y'][self.cellIdx%8]
             if self.waferType == "ML-F":
                 theta = 2*math.pi/3. * (self.cellIdx//8) - math.pi/3.
             elif self.waferType == "ML-L" or self.waferType == "ML-R":
-                theta = tg.Coordinates_NC_channels[self.waferType]['theta'][self.cellIdx]
+                theta = Coordinates_NC_channels[self.waferType]['theta'][self.cellIdx]
 
             x, y = self._rotate_coordinate(x, y, theta + self.extra_rotation_tb2024)
             x, y = self._translate_coordinate(x, y, self.arbUnit_to_cm, (0., 0.))
@@ -154,18 +151,18 @@ class PolygonManager:
 
         # CM channels
         elif self.cellType == "CM":
-            if self.waferType == "HD":
-                x = tg.Coordinates_CM_channels[self.waferType]['x'][self.cellIdx%8]
-                y = tg.Coordinates_CM_channels[self.waferType]['y'][self.cellIdx%8]
+            if self.waferType == "MH-F":
+                x = Coordinates_CM_channels[self.waferType]['x'][self.cellIdx%8]
+                y = Coordinates_CM_channels[self.waferType]['y'][self.cellIdx%8]
                 theta = 2*math.pi/3. * (self.cellIdx//8)
             elif self.waferType == "ML-F":
-                x = tg.Coordinates_CM_channels[self.waferType]['x'][self.cellIdx%4]
-                y = tg.Coordinates_CM_channels[self.waferType]['y'][self.cellIdx%4]
+                x = Coordinates_CM_channels[self.waferType]['x'][self.cellIdx%4]
+                y = Coordinates_CM_channels[self.waferType]['y'][self.cellIdx%4]
                 theta = 2*math.pi/3. * (self.cellIdx//4) - math.pi/3.
             elif self.waferType == "ML-L" or self.waferType == "ML-R":
-                x = tg.Coordinates_CM_channels[self.waferType]['x'][self.cellIdx]
-                y = tg.Coordinates_CM_channels[self.waferType]['y'][self.cellIdx]
-                theta = tg.Coordinates_CM_channels[self.waferType]['theta'][self.cellIdx]
+                x = Coordinates_CM_channels[self.waferType]['x'][self.cellIdx]
+                y = Coordinates_CM_channels[self.waferType]['y'][self.cellIdx]
+                theta = Coordinates_CM_channels[self.waferType]['theta'][self.cellIdx]
 
             x, y = self._rotate_coordinate(x, y, theta + self.extra_rotation_tb2024)
             x, y = self._translate_coordinate(x, y, self.arbUnit_to_cm, (0., 0.))
@@ -184,15 +181,15 @@ class PolygonManager:
         # Handle CM and NC channels
         if self.cellType == "CM":
             if self.cellIdx % 2 == 0:  # CM0
-                return tg.type_regular_pentagon, 5
+                return ug.type_regular_pentagon, 5
             else:  # CM1
-                return tg.type_square, 4
+                return ug.type_square, 4
         elif self.cellType == "NC":
-            return tg.type_circle, 12
+            return ug.type_circle, 12
 
         # Handle calibration cells
         if isinstance(self.rocpin, str):  # "CALIB"
-            return tg.type_circle, 12
+            return ug.type_circle, 12
 
         # Look up sicell in the cache
         polygon_info = self._polygon_info_cache.get(self.waferType, {}).get(self.sicell)
@@ -200,7 +197,7 @@ class PolygonManager:
             return polygon_info
 
         # Default for regular cells
-        return tg.type_hexagon, 6
+        return ug.type_hexagon, 6
 
     def _get_polygon_base_and_rotation(self):
         """
@@ -210,29 +207,29 @@ class PolygonManager:
         # Define rotation mapping: maps derived polygon types to (base_type, rotation_angle) tuples
         rotation_mapping = {
             # Rotations by 2*pi/3 (120 degrees)
-            tg.type_HD_hexagon_side3_corner3: (tg.type_HD_hexagon_side1_corner1, 2*tg.p3),
-            tg.type_HD_hexagon_side3_corner4: (tg.type_HD_hexagon_side1_corner2, 2*tg.p3),
-            tg.type_HD_trpezoid_corner3: (tg.type_HD_trpezoid_corner1, 2*tg.p3),
-            tg.type_HD_trpezoid_corner4: (tg.type_HD_trpezoid_corner2, 2*tg.p3),
-            tg.type_HD_hexagon_side2_corner3: (tg.type_HD_hexagon_side6_corner1, 2*tg.p3),
-            tg.type_HD_hexagon_side4_corner4: (tg.type_HD_hexagon_side2_corner2, 2*tg.p3),
+            ug.type_HD_hexagon_side3_corner3: (ug.type_HD_hexagon_side1_corner1, 2*ug.p3),
+            ug.type_HD_hexagon_side3_corner4: (ug.type_HD_hexagon_side1_corner2, 2*ug.p3),
+            ug.type_HD_trpezoid_corner3: (ug.type_HD_trpezoid_corner1, 2*ug.p3),
+            ug.type_HD_trpezoid_corner4: (ug.type_HD_trpezoid_corner2, 2*ug.p3),
+            ug.type_HD_hexagon_side2_corner3: (ug.type_HD_hexagon_side6_corner1, 2*ug.p3),
+            ug.type_HD_hexagon_side4_corner4: (ug.type_HD_hexagon_side2_corner2, 2*ug.p3),
 
             # Rotations by 4*pi/3 (240 degrees)
-            tg.type_HD_hexagon_side5_corner5: (tg.type_HD_hexagon_side1_corner1, 4*tg.p3),
-            tg.type_HD_hexagon_side5_corner6: (tg.type_HD_hexagon_side1_corner2, 4*tg.p3),
-            tg.type_HD_trpezoid_corner5: (tg.type_HD_trpezoid_corner1, 4*tg.p3),
-            tg.type_HD_trpezoid_corner6: (tg.type_HD_trpezoid_corner2, 4*tg.p3),
-            tg.type_HD_hexagon_side4_corner5: (tg.type_HD_hexagon_side6_corner1, 4*tg.p3),
-            tg.type_HD_hexagon_side6_corner6: (tg.type_HD_hexagon_side2_corner2, 4*tg.p3)
+            ug.type_HD_hexagon_side5_corner5: (ug.type_HD_hexagon_side1_corner1, 4*ug.p3),
+            ug.type_HD_hexagon_side5_corner6: (ug.type_HD_hexagon_side1_corner2, 4*ug.p3),
+            ug.type_HD_trpezoid_corner5: (ug.type_HD_trpezoid_corner1, 4*ug.p3),
+            ug.type_HD_trpezoid_corner6: (ug.type_HD_trpezoid_corner2, 4*ug.p3),
+            ug.type_HD_hexagon_side4_corner5: (ug.type_HD_hexagon_side6_corner1, 4*ug.p3),
+            ug.type_HD_hexagon_side6_corner6: (ug.type_HD_hexagon_side2_corner2, 4*ug.p3)
         }
 
         # Look up base type and rotation angle
         if self.type_polygon in rotation_mapping:
             base_type, rotation = rotation_mapping[self.type_polygon]
-            return tg.base[base_type], rotation + self.extra_rotation_tb2024
+            return ug.base[base_type], rotation + self.extra_rotation_tb2024
 
         # Default case - no rotation mapping found
-        return tg.base[self.type_polygon], self.extra_rotation_tb2024
+        return ug.base[self.type_polygon], self.extra_rotation_tb2024
 
     def _generate_polygon_graph(self):
         """ derive coordinates for a polygon & create an instance of TGraph """
@@ -275,7 +272,7 @@ class PolygonManager:
         self.area = graph.Integral()
         if isinstance(self.rocpin, str):
             self.area = 0.29239 # area of LD calibration cell in cm^{2}
-        elif self.type_polygon == tg.type_hollow:
+        elif self.type_polygon == ug.type_hollow:
             self.area = 1.2646 - 0.29239 # area of LD outer calib cell in cm^{2}
         elif self.cellType=="CM" or self.cellType=="NC":
             self.area = 0.

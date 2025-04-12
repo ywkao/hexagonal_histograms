@@ -1,4 +1,3 @@
-#!/usr/bin/env python2
 import math
 
 #--------------------------------------------------
@@ -68,94 +67,6 @@ type_HD_hexagon_side2_corner3 = 652 # by rotation
 type_HD_hexagon_side4_corner4 = 653 # by rotation
 type_HD_hexagon_side4_corner5 = 654 # by rotation
 type_HD_hexagon_side6_corner6 = 655 # by rotation
-
-# information of CM and NC in global Id (readout sequence)
-global_channel_Id_special_channels = {
-    "ML-F" : {
-        "CMIds" : [37, 38, 76, 77, 115, 116, 154, 155, 193, 194, 232, 233],
-        "NonConnIds" : [8, 17, 19, 28, 47, 56, 58, 67, 86, 95, 97, 106, 125, 134, 136, 145, 164, 173, 175, 184, 203, 212, 214, 223]
-    },
-    "ML-L" : {
-        "CMIds" : [37, 38, 76, 77, 115, 116],
-        "NonConnIds" : [8, 17, 47, 56, 58, 67, 86, 95]
-    },
-    "ML-R" : {
-        "CMIds" : [37, 38, 76, 77, 115, 116],
-        "NonConnIds" : [8, 17, 47, 56, 58, 67, 86, 95]
-    },
-    "HD" : {
-        "CMIds" : [37, 38, 76, 77, 115, 116, 154, 155, 193, 194, 232, 233, 271, 272, 310, 311, 349, 350, 388, 389, 427, 428, 466, 467],
-        "NonConnIds" : [8, 17, 19, 28, 47, 56, 58, 67, 86, 95, 97, 106, 125, 134, 136, 145, 164, 173, 175, 184, 203, 212, 214, 223]
-    },
-}
-
-gcId = global_channel_Id_special_channels
-
-#--------------------------------------------------
-# Coordinates of calib and CM channels
-#--------------------------------------------------
-
-# Coordinates of calibration channels
-calib_distance_factor = 14.
-Coordinates_calib_channels = {
-    14  : (0, 2),
-    62  : (s3, 1),
-    154 : (s3, -1),
-    163 : (0, -2),
-    143 : (-1*s3, -1),
-    70  : (-1*s3, 1),
-}
-
-# Coordinates of CM and NC channels
-cm_ld_theta = [2*p3*(i//4) - p3 for i in range(12)]  # 3 sectors × 4 points each
-cm_hd_theta = [2*p3*(i//8) for i in range(24)]       # 3 sectors × 8 points each
-
-nc_ld_theta = [2*p3*(i//8) - p3/3 for i in range(24)]  # 3 sectors × 8 points each
-nc_hd_theta = [2*p3*(i//16) for i in range(48)]        # 3 sectors × 8 points each
-
-Coordinates_CM_channels = {
-    "ML-F": {
-        'x' : [8.75, 3.75, -3.75, -8.75],
-        'y' : [29, 29, 29, 29],
-        'theta' : cm_ld_theta,
-    },
-    "HD": {
-        'x' : [-14., -10.5, -7.0, -3.5, 3.5, 7.0, 10.5, 14.],
-        'y' : [43, 43, 43, 43, 43, 43, 43, 43],
-        'theta' : cm_hd_theta,
-    },
-    "ML-L": {
-        'x' : [-8.75, -3.75, 3.75, 8.75, 8.75, 3.75],
-        'y' : [29, 29, 29, 29, 29, 29],
-        'theta' : [-p3, -p3, -p3, -p3, p3*3, p3*3]
-    },
-    "ML-R": {
-        'x' : [-8.75, -3.75, 3.75, 8.75, -3.75, -8.75],
-        'y' : [29, 29, 29, 29, 29, 29],
-        'theta' : [p3, p3, p3, p3, p3*3, p3*3]
-    },
-}
-
-Coordinates_NC_channels = {
-    "ML-F": {
-        'x' : [10., 7.5, 5.0, 2.5, -2.5, -5.0, -7.5, -10.],
-        'y' : [32, 32, 32, 32, 32, 32, 32, 32],
-    },
-    "HD": {
-        'x' : [10., 7.5, 5.0, 2.5, -2.5, -5.0, -7.5, -10.],
-        'y' : [32, 32, 32, 32, 32, 32, 32, 32],
-    },
-    "ML-L": {
-        'x' : [-7.5, -5.0, 2.5, 5.0, 7.5, 10., 7.5, 5.0],
-        'y' : [32, 32, 32, 32, 32, 32, 32, 32],
-        'theta' : [-p3, -p3, -p3, -p3, -p3, -p3, p3*3, p3*3]
-    },
-    "ML-R": {
-        'x' : [-7.5, -5.0, 2.5, 5.0, 7.5, 10., -5.0, -7.5],
-        'y' : [32, 32, 32, 32, 32, 32, 32, 32],
-        'theta' : [p3, p3, p3, p3, p3, p3, p3*3, p3*3]
-    },
-}
 
 #----------------------------------------------------------------------------------------------------
 # Define base polygons
@@ -418,7 +329,7 @@ irregular_polygonal_cells = {
         type_partial_wafer_hexagon_corner2 : [8],
         type_hexagon_corner4 : [211],
     },
-    "HD" : {
+    "MH-F" : {
         type_hollow : [29, 150, 157, 36, 387, 411, 297, 267, 261, 87, 207, 381], # cells around a calib channel
         type_pentagon_side1 : [3, 4, 5, 6, 7, 8, 9, 10],
         type_pentagon_side2 : [41, 56, 72, 90, 108, 127, 147, 170, 192],

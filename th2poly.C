@@ -142,13 +142,13 @@ void th2poly(TString inputfile, TString outputfile, double range, bool drawLine=
     std::map<int, int> map_HGCROC_pin;
     std::map<int, int> map_SiCell_pad;
 
-    if(NameTag.Contains("ML-R")) {
+    if(NameTag.Contains("ML_R")) {
         map_HGCROC_pin = map_HGCROC_pin_LD4_partial_wafer;
         map_SiCell_pad = map_SiCell_pad_LD4_partial_wafer;
-    } else if(NameTag.Contains("ML-L")) {
+    } else if(NameTag.Contains("ML_L")) {
         map_HGCROC_pin = map_HGCROC_pin_LD3_partial_wafer;
         map_SiCell_pad = map_SiCell_pad_LD3_partial_wafer;
-    } else if (NameTag.Contains("HD")){
+    } else if (NameTag.Contains("MH_F")){
         map_HGCROC_pin = map_HGCROC_pin_HD_full_wafer;
         map_SiCell_pad = map_SiCell_pad_HD_full_wafer;
     } else { // LD full
@@ -212,17 +212,17 @@ void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag =
         line.SetLineColor(2);
         line.SetLineWidth(2);
 
-        if(NameTag.Contains("ML-L")) {
+        if(NameTag.Contains("ML_L")) {
             for(int i=0; i<14; ++i)
                 line.DrawLine(aux::x1_partial_wafer[i], aux::y1_partial_wafer[i], aux::x1_partial_wafer[i+1], aux::y1_partial_wafer[i+1]);
             for(int i=0; i<16; ++i)
                 line.DrawLine(aux::x2_partial_wafer[i], aux::y2_partial_wafer[i], aux::x2_partial_wafer[i+1], aux::y2_partial_wafer[i+1]);
-        } else if(NameTag.Contains("ML-R")) {
+        } else if(NameTag.Contains("ML_R")) {
             for(int i=0; i<14; ++i)
                 line.DrawLine(aux::x1_LD4_partial_wafer[i], aux::y1_LD4_partial_wafer[i], aux::x1_LD4_partial_wafer[i+1], aux::y1_LD4_partial_wafer[i+1]);
             for(int i=0; i<16; ++i)
                 line.DrawLine(aux::x2_LD4_partial_wafer[i], aux::y2_LD4_partial_wafer[i], aux::x2_LD4_partial_wafer[i+1], aux::y2_LD4_partial_wafer[i+1]);
-        } else if(NameTag.Contains("HD")) {
+        } else if(NameTag.Contains("MH_F")) {
             for(int i=0; i<aux::N_HD_boundary_points-1; ++i) {
                 line.DrawLine(aux::x1_HD_full_wafer[i], aux::y1_HD_full_wafer[i], aux::x1_HD_full_wafer[i+1], aux::y1_HD_full_wafer[i+1]);
                 line.DrawLine(aux::x2_HD_full_wafer[i], aux::y2_HD_full_wafer[i], aux::x2_HD_full_wafer[i+1], aux::y2_HD_full_wafer[i+1]);
@@ -249,7 +249,9 @@ void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag =
         text.SetTextFont(43);
         text.SetTextSize(12);
 
-        if(NameTag.Contains("HD")) {
+        printf("[DEBUG] %s, %s\n", NameTag.Data(), rotationTag.Data());
+
+        if(NameTag.Contains("MH_F")) {
             double theta1 = 0. + extra_angle;
             double theta2 = 4*TMath::Pi()/3. + extra_angle;
             double theta3 = 2*TMath::Pi()/3. + extra_angle;
@@ -273,6 +275,7 @@ void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag =
             for(int i=0; i<6; ++i) {
                 text.SetTextAngle(theta_angle_text[i]);
                 double theta = theta_coordinate_text[i];
+                printf("%.2f ", theta);
                 double cos_theta = TMath::Cos(theta);
                 double sin_theta = TMath::Sin(theta);
 
@@ -286,6 +289,7 @@ void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag =
 
                 text.DrawText(x, y, v_texts[i]);
             }
+            printf("\n");
 
         } else { // LD
             double theta1 = -TMath::Pi()/3. + extra_angle;
@@ -304,8 +308,8 @@ void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag =
 
             // evaluate (r, phi) and apply rotation
             for(int i=0; i<6; ++i) {
-                if(NameTag.Contains("ML-L") && (i==2||i==3||i==4)) continue;
-                if(NameTag.Contains("ML-R") && (i==0||i==1||i==5)) continue;
+                if(NameTag.Contains("ML_L") && (i==2||i==3||i==4)) continue;
+                if(NameTag.Contains("ML_R") && (i==0||i==1||i==5)) continue;
 
                 double angle = theta_angle_text[i] - a;
                 angle = (fabs(angle)<90.) ? angle : angle+180;
@@ -322,13 +326,13 @@ void beautify_plot(bool drawLine = true, bool drawText = true, TString NameTag =
                 x = r*(cos_phi*cos_theta + sin_phi*sin_theta)*arbUnit_to_cm;
                 y = r*(sin_phi*cos_theta - cos_phi*sin_theta)*arbUnit_to_cm;
 
-                if(NameTag.Contains("ML-L") && (i==5))
+                if(NameTag.Contains("ML_L") && (i==5))
                     text.DrawText(x, y, "chip-1, half-0");
-                else if(NameTag.Contains("ML-R") && (i==2))
+                else if(NameTag.Contains("ML_R") && (i==2))
                     text.DrawText(x, y, "chip-1, half-0");
-                else if(NameTag.Contains("ML-R") && (i==3))
+                else if(NameTag.Contains("ML_R") && (i==3))
                     text.DrawText(x, y, "chip-0, half-1");
-                else if(NameTag.Contains("ML-R") && (i==4))
+                else if(NameTag.Contains("ML_R") && (i==4))
                     text.DrawText(x, y, "chip-0, half-0");
                 else
                     text.DrawText(x, y, v_texts[i]);

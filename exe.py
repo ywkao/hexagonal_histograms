@@ -3,10 +3,10 @@ import math
 import argparse
 import subprocess
 from utils.data_loader import WaferDataLoader
-from utils.geometry import gcId
 from utils.polygon_manager import PolygonManager
 from utils.config_handler import get_macro_arguments, get_exported_file_names, get_type_config
 from utils.auxiliary_line_producer import AuxiliaryLineProducer
+from utils.special_channels import gcId
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-n', help="number of cells", type=int, default=9999)
@@ -15,25 +15,6 @@ parser.add_argument('-d', '--drawLine', help="draw boundary lines", action='stor
 parser.add_argument('-v', '--verbose', help="set verbosity level", action='store_true')
 parser.add_argument('--listTypes', help="list available type codes", action='store_true')
 args = parser.parse_args()
-
-"""
-Reminder: range of indices (line numbers) is decided from the text file, ./data/input/WaferCellMapTrg.txt
-"""
-def exe(command):
-    print("\n>>> executing command, ", command)
-    subprocess.call(command, shell=True)
-
-def retrieve_info(line):
-    info = line.strip().split()
-    result = []
-    for ele in info:
-        if "ML" in ele or "MH" in ele or "CALIB" in ele:
-            result.append(str(ele))
-        elif "." in ele:
-            result.append(float(ele))
-        else:
-            result.append(int(ele))
-    return tuple(result)
 
 def main(extra_angle):
     global args
@@ -62,11 +43,10 @@ def main(extra_angle):
 
     # Loop over normal channels & non-connected channels
     for i, line in enumerate(contents):
-        density, roc, halfroc, seq, rocpin, sicell, _, _, iu, iv, _, t = retrieve_info(line)
+        density, roc, halfroc, seq, rocpin, sicell, _, _, iu, iv, _, t = data_loader.retrieve_info(line)
         if(iu==-1 and iv==-1): # treatment for non-connected channels
             cellType, cellIdx, cellName = "NC", polygon_manager.idxNC, "hex_nc"
             polygon_manager.idxNC += 1
-            continue
         else: # default values for normal channels
             cellType, cellIdx, cellName = "", -1, "hex"
         globalId = 78*roc + 39*halfroc + seq
@@ -75,11 +55,11 @@ def main(extra_angle):
         if args.verbose: print(polygon_manager)
         if polygon_manager.counter==args.n : break # manually control how many cells to display
 
-    # # Add additional cells for CM channels
-    # for idx, CM in enumerate(gcId[args.waferType]["CMIds"]):
-    #     channelIds = (CM, -1, -1) # globalId, artificial sicell, rocpin
-    #     polygon_manager.create_and_register_polygon(channelIds, (-1,-1), "CM", idx, "hex_cm")
-    #     if args.verbose: print(polygon_manager)
+    # Add additional cells for CM channels
+    for idx, CM in enumerate(gcId[args.waferType]["CMIds"]):
+        channelIds = (CM, -1, -1) # globalId, artificial sicell, rocpin
+        polygon_manager.create_and_register_polygon(channelIds, (-1,-1), "CM", idx, "hex_cm")
+        if args.verbose: print(polygon_manager)
 
     # Export geometry data
     geometry_rootfile, coordinate_json, mapping_json = get_exported_file_names(args.waferType)
@@ -109,11 +89,15 @@ if __name__ == "__main__":
     if(extra_rotation_tb2024==math.pi/6.):
         rotationTag = "_rotation30"
 
+    # create a c++ header file for auxiliary lines
     geometry_rootfile, coordinate_json, _ = get_exported_file_names(args.waferType)
     if args.drawLine:
         producer = AuxiliaryLineProducer(args.waferType, coordinate_json)
         producer.create_cpp_headers()
 
+    # execute root macro for TH2Poly
     scope, tag, outputName, markerSize = get_macro_arguments(args.waferType)
-    exe(f"root -l -b -q th2poly.C'(\"{geometry_rootfile}\", \"{outputName}\", {scope}, {int(args.drawLine)}, \"{tag}\", {markerSize}, \"{rotationTag}\")'") # execute root macro for TH2Poly
+    command = f"root -l -b -q th2poly.C'(\"{geometry_rootfile}\", \"{outputName}\", {scope}, {int(args.drawLine)}, \"{tag}\", {markerSize}, \"{rotationTag}\")'"
+    print(f"running command: {command}")
+    subprocess.call(command, shell=True)
 
