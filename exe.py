@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import math
+import os, math
 import argparse
 import subprocess
 from utils.data_loader import WaferDataLoader
@@ -14,6 +14,7 @@ parser.add_argument('-t', '--waferType', help="wafer type code (ML-F, MH-F, etc.
 parser.add_argument('-d', '--drawLine', help="draw boundary lines", action='store_true')
 parser.add_argument('-v', '--verbose', help="set verbosity level", action='store_true')
 parser.add_argument('--listTypes', help="list available type codes", action='store_true')
+parser.add_argument('--rotation', choices=['0', '30', '150'], default='0', help="Rotation angle in degrees (0, 30, or 150)")
 args = parser.parse_args()
 
 def main(extra_angle):
@@ -69,35 +70,40 @@ def main(extra_angle):
 
 
 if __name__ == "__main__":
-    # Reminder: create output directories
-
     #----------------------------------------------------------------------------------------------------
+    # create output directories & decide rotation angle
+    # (non-default angles of 30° and 150° are for testing alternative orientations)
+    #----------------------------------------------------------------------------------------------------
+    os.makedirs("output/coordinates", exist_ok=True)
+    os.makedirs("output/mapping", exist_ok=True)
+    os.makedirs("output/geometry", exist_ok=True)
+    os.makedirs("output/waferMaps", exist_ok=True)
+
+    if args.rotation == '0':
+        extra_rotation_tb2024, rotationTag = 0., ""
+    elif args.rotation == '30':
+        extra_rotation_tb2024, rotationTag = math.pi/6., "_rotation30"
+    elif args.rotation == '150':
+        extra_rotation_tb2024, rotationTag = 5*math.pi/6., "_rotation150"
+
+    #--------------------------------------------------
     # generate wafermap geometry root files
-    #----------------------------------------------------------------------------------------------------
-    extra_rotation_tb2024 = 0.
+    #--------------------------------------------------
     main(extra_rotation_tb2024)
+    if args.listTypes: exit()
 
-    if args.listTypes:
-        exit()
-
-    #----------------------------------------------------------------------------------------------------
-    # create plots using C++ root macro (validation for CMSSW DQMEDAnalyzer and DQM GUI rendering plugins)
-    #----------------------------------------------------------------------------------------------------
-    rotationTag = ""
-    if(extra_rotation_tb2024==5*math.pi/6.):
-        rotationTag = "_rotation150"
-    if(extra_rotation_tb2024==math.pi/6.):
-        rotationTag = "_rotation30"
-
+    #--------------------------------------------------
     # create a c++ header file for auxiliary lines
+    #--------------------------------------------------
     geometry_rootfile, coordinate_json, _ = get_exported_file_names(args.waferType)
     if args.drawLine:
         producer = AuxiliaryLineProducer(args.waferType, coordinate_json)
         producer.create_cpp_headers()
 
+    #--------------------------------------------------
     # execute root macro for TH2Poly
+    #--------------------------------------------------
     scope, tag, outputName, markerSize = get_macro_arguments(args.waferType)
     command = f"root -l -b -q th2poly.C'(\"{geometry_rootfile}\", \"{outputName}\", {scope}, {int(args.drawLine)}, \"{tag}\", {markerSize}, \"{rotationTag}\")'"
     print(f"running command: {command}")
     subprocess.call(command, shell=True)
-
