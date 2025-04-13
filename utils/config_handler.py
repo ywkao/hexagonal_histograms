@@ -31,7 +31,7 @@ def setup_logging(verbose=False, module_name="logger", log_file=None):
 
     # Add file handler if log_file is specified and verbosity is enabled
     if log_file and verbose:
-        file_handler = logging.FileHandler(log_file)
+        file_handler = logging.FileHandler(log_file, mode='w')
         file_handler.setLevel(log_level)
         formatter = logging.Formatter(log_format)
         file_handler.setFormatter(formatter)

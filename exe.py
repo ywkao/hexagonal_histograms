@@ -51,7 +51,7 @@ def main(args, logger):
         if(iu==-1 and iv==-1):
             cellType, cellIdx, cellName = "NC", polygon_manager.idxNC, "hex_nc"
             polygon_manager.idxNC += 1
-            if not nc_channels_are_registered: continue
+            # if not nc_channels_are_registered: continue
         else: 
             cellType, cellIdx, cellName = "", -1, "hex"
 
@@ -62,10 +62,25 @@ def main(args, logger):
         logger.debug(polygon_manager)
         if polygon_manager.counter==args.n : break # manually control how many cells to display
 
+    logger.debug(f"Number of unconnected channels: {polygon_manager.idxNC}")
+    logger.debug(f"Number of registered channels: {polygon_manager.counter}")
+    logger.debug(f"Number of expected CM groups: {int(polygon_manager.counter/37)}")
+
     # Add additional cells for CM channels
     if cm_channels_are_registered:
         for idx, CM in enumerate(gcId[args.waferType]["CMIds"]):
             channelIds = (CM, -1, -1) # globalId, artificial sicell, rocpin
+            polygon_manager.create_and_register_polygon(channelIds, (-1,-1), "CM", idx, "hex_cm")
+            logger.debug(polygon_manager)
+
+    else:
+        cm_groups = int(polygon_manager.counter/37)
+        for idx in range(cm_groups):
+            channelIds = (37+idx*39, -1, -1) # globalId, artificial sicell, rocpin
+            polygon_manager.create_and_register_polygon(channelIds, (-1,-1), "CM", idx, "hex_cm")
+            logger.debug(polygon_manager)
+
+            channelIds = (38+idx*39, -1, -1) # globalId, artificial sicell, rocpin
             polygon_manager.create_and_register_polygon(channelIds, (-1,-1), "CM", idx, "hex_cm")
             logger.debug(polygon_manager)
 

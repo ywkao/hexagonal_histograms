@@ -138,12 +138,14 @@ class PolygonManager:
 
         # non-connected channels
         if self.cellType == "NC":
-            x = Coordinates_NC_channels[self.waferType]['x'][self.cellIdx%8]
-            y = Coordinates_NC_channels[self.waferType]['y'][self.cellIdx%8]
+            x = Coordinates_NC_channels[self.waferType]['x'][self.cellIdx%8] if self.waferType in Coordinates_NC_channels else 999.
+            y = Coordinates_NC_channels[self.waferType]['y'][self.cellIdx%8] if self.waferType in Coordinates_NC_channels else 999.
             if self.waferType == "ML-F":
                 theta = 2*math.pi/3. * (self.cellIdx//8) - math.pi/3.
             elif self.waferType == "ML-L" or self.waferType == "ML-R":
-                theta = Coordinates_NC_channels[self.waferType]['theta'][self.cellIdx]
+                theta = Coordinates_NC_channels[self.waferType]['theta'][self.cellIdx] if self.waferType in Coordinates_NC_channels else 0.
+            else:
+                theta = 0.
 
             x, y = self._rotate_coordinate(x, y, theta + self.extra_rotation_tb2024)
             x, y = self._translate_coordinate(x, y, self.arbUnit_to_cm, (0., 0.))
@@ -163,6 +165,8 @@ class PolygonManager:
                 x = Coordinates_CM_channels[self.waferType]['x'][self.cellIdx]
                 y = Coordinates_CM_channels[self.waferType]['y'][self.cellIdx]
                 theta = Coordinates_CM_channels[self.waferType]['theta'][self.cellIdx]
+            else:
+                x, y, theta = 999., 999., 0.
 
             x, y = self._rotate_coordinate(x, y, theta + self.extra_rotation_tb2024)
             x, y = self._translate_coordinate(x, y, self.arbUnit_to_cm, (0., 0.))
