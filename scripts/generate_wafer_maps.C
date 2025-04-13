@@ -63,7 +63,7 @@ void generate_wafer_maps(TString inputfile, TString outputfile, double range, bo
         }
     }
 
-    printf("[DEBUG] ./scripts/generate_wafer_maps::counter = %d\n", counter);
+    printf("[DEBUG] ./scripts/generate_wafer_maps: NameTag = %s, counter = %d\n", NameTag.Data(), counter);
 
     //--------------------------------------------------
     // Test profile

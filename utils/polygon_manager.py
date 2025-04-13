@@ -282,4 +282,12 @@ class PolygonManager:
         return graph
 
     def __str__(self):
-        return "globalId = {0}, rocpin = {1}, sicell = {2}, u-v coordinates = {3}, area = {4} mm^{{2}}".format(self.globalId, self.rocpin, self.sicell, (self.iu,self.iv), "%.2f"%(self.area*pow(self.cm2mm,2)))
+        # Format rocpin differently based on type
+        if isinstance(self.rocpin, str):
+            rocpin_fmt = f"{self.rocpin}"
+        else:
+            rocpin_fmt = f"{self.rocpin:2d}"
+
+        return (f"cellName = {self.cellName:6s}, "
+                f"globalId = {self.globalId:3d}, rocpin = {rocpin_fmt}, sicell = {self.sicell:3d}, "
+                f"u-v coordinates = ({self.iu:2d}, {self.iv:2d}), area = {self.area*pow(self.cm2mm,2):.2f} mm^{{2}}")
