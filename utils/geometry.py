@@ -49,6 +49,10 @@ type_partial_wafer_hexagon_corner6 = 607
 type_partial_wafer_hexagon_corner3 = 608
 type_partial_wafer_hexagon_corner2 = 609
 
+type_pentagon_extended_side1 = 517
+type_pentagon_extended_corner1 = 518
+type_pentagon_extended_corner2 = 519
+
 type_HD_hexagon_side1_corner1 = 621
 type_HD_hexagon_side1_corner2 = 622
 type_HD_hexagon_side3_corner3 = 623 # by rotation
@@ -143,6 +147,18 @@ base = {
     type_pentagon_side6 : {
         'x': [-0.5*s3, 1*s3, 1*s3, 0, -1.5*s3, -0.5*s3],
         'y': [2.5, 1, -1, -2, -0.5, 2.5]
+    },
+    type_pentagon_extended_side1 : {
+        'x': [1*s3, 1*s3, 0, -1*s3, -1*s3, 1*s3],
+        'y': [2, -1, -2, -1, 2, 2]
+    },
+    type_pentagon_extended_corner1 : {
+        'x': [1*s3, 1*s3, 0, -1.5*s3, -1*s3, 1*s3],
+        'y': [2, -1, -2, -0.5, 2, 2]
+    },
+    type_pentagon_extended_corner2 : {
+        'x': [1*s3, 1.5*s3, 0, -1*s3, -1*s3, 1*s3],
+        'y': [2, -0.5, -2, -1, 2, 2]
     },
     type_hexagon_corner1 : {
         'x': [-11.*s3/58., 1*s3, 1*s3, 0, -1.5*s3, -5.*s3/6., -11.*s3/58.],
@@ -328,6 +344,30 @@ irregular_polygonal_cells = {
         type_partial_wafer_hexagon_corner3 : [102],
         type_partial_wafer_hexagon_corner2 : [8],
         type_hexagon_corner4 : [211],
+    },
+    "MH-B" : {
+        type_pentagon_extended_side1 : [182, 183, 184, 185, 186, 187, 188, 190, 191, 192, 193, 194, 195, 196, 198, 199, 200, 201, 202, 203],
+        type_pentagon_extended_corner1 : [181],
+        type_pentagon_extended_corner2 : [204],
+        type_pentagon_side3 : [278, 302, 324, 347, 366, 387, 404, 422, 439],
+        type_pentagon_side4 : [466, 465, 464, 463, 462, 461, 460, 459, 458],
+        type_pentagon_side5 : [279, 303, 325, 348, 367, 388, 405, 423],
+
+        type_HD_hexagon_side3_corner3 : [278], # by rotation
+        type_HD_trpezoid_corner3 : [255], # by rotation
+        type_HD_hexagon_side2_corner3 : [228], # by rotation
+
+        type_HD_hexagon_side3_corner4 : [455], # by rotation
+        type_HD_trpezoid_corner4 : [468], # by rotation
+        type_HD_hexagon_side4_corner4 : [467], # by rotation
+
+        type_HD_hexagon_side5_corner5 : [440], # by rotation
+        type_HD_trpezoid_corner5 : [456], # by rotation
+        type_HD_hexagon_side4_corner5 : [457], # by rotation
+
+        type_HD_hexagon_side5_corner6 : [256], # by rotation
+        type_HD_trpezoid_corner6 : [229], # by rotation
+        type_HD_hexagon_side6_corner6 : [205], # by rotation
     },
     "MH-F" : {
         type_hollow : [29, 150, 157, 36, 387, 411, 297, 267, 261, 87, 207, 381], # cells around a calib channel
