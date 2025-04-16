@@ -327,6 +327,57 @@ irregular_polygonal_cells = {
         type_hexagon_corner5 : [204],
         type_partial_wafer_hexagon_corner6 : [85],
     },
+    "ML-5" : {
+        type_hollow : [12, 64, 159, 168], # cells around a calib channel
+        type_pentagon_hollow : [89], # cells around a calib channel
+        type_hexagon_small : [13, 65, 90, 160, 169], # calibration_cells
+        type_trapezoid_left : [19, 40, 67, 131, 163, 190],
+        type_trapezoid_extended_left : [98, 212],
+        type_pentagon_side1 : [2, 3, 4, 5, 6, 7, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114],
+        type_pentagon_side4 : [86, 87, 88, 91, 92, 93, 95, 96, 97, 205, 206, 207, 209, 210, 211],
+        type_pentagon_side5 : [119, 136, 151, 167, 180, 193],
+        type_pentagon_side6 : [20, 30, 43, 55, 71],
+        type_pentagon_corner1 : [1],
+        type_pentagon_corner5 : [203],
+        type_partial_wafer_pentagon_corner6 : [103],
+        type_hexagon_corner1 : [9],
+        type_hexagon_corner4 : [211],
+        type_hexagon_corner5 : [204],
+        type_parallelogram : [212],
+        type_partial_wafer_hexagon_corner2 : [8],
+        type_partial_wafer_hexagon_corner6 : [85],
+    },
+    "ML-T" : {
+        type_hollow : [12, 64], # cells around a calib channel
+        type_pentagon_hollow : [89], # cells around a calib channel
+        type_hexagon_small : [13, 65, 90], # calibration_cells
+        type_trapezoid_left : [19],
+        type_pentagon_side1 : [2, 3, 4, 5, 6, 7],
+        type_pentagon_side2 : [42, 54, 70, 84],
+        type_pentagon_side4 : [86, 87, 88, 91, 92, 93, 95, 96, 97, 98, 100, 101],
+        type_pentagon_side6 : [20, 30, 43, 55, 71],
+        type_pentagon_corner1 : [1],
+        type_hexagon_corner1 : [9],
+        type_partial_wafer_hexagon_corner2 : [8],
+        type_partial_wafer_hexagon_corner3 : [102],
+        type_partial_wafer_hexagon_corner6 : [85],
+        type_partial_wafer_pentagon_merged_cell_corner2 : [29],
+    },
+    "ML-B" : {
+        type_hollow : [148, 159, 168], # cells around a calib channel
+        type_hexagon_small : [149, 160, 169], # calibration_cells
+        type_pentagon_side1 : [104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117],
+        type_pentagon_side3 : [135, 150, 166, 179, 192],
+        type_pentagon_side4 : [205, 206, 207, 209, 210, 211],
+        type_pentagon_side5 : [119, 136, 151, 167, 180, 193],
+        type_pentagon_corner5 : [203],
+        type_hexagon_corner4 : [211],
+        type_hexagon_corner5 : [204],
+        type_parallelogram : [212],
+        type_partial_wafer_pentagon_corner3 : [118],
+        type_partial_wafer_pentagon_corner6 : [103],
+        type_partial_wafer_pentagon_merged_cell_corner4 : [202],
+    },
     "ML-R" : {
         type_hollow : [64, 148, 159],
         # type_hexagon_small : [65, 149, 160],
