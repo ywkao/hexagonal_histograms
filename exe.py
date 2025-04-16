@@ -101,6 +101,7 @@ if __name__ == "__main__":
 
     os.makedirs("output/coordinates", exist_ok=True)
     os.makedirs("output/mapping", exist_ok=True)
+    os.makedirs("output/mapping_csv", exist_ok=True)
     os.makedirs("output/geometry", exist_ok=True)
     os.makedirs("output/waferMaps", exist_ok=True)
 

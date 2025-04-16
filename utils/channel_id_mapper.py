@@ -32,6 +32,23 @@ class ChannelMapper:
 
             print(self.contents)
 
+    def show_globalId_vs_sicell(self):
+        for wafer_type in self.types:
+            json_file = f"./output/mapping/{wafer_type}_wafer_mapping.json"
+            output_file = f"./output/mapping_csv/{wafer_type}_globalId_vs_sicell.csv"
+
+            with open(json_file, 'r') as f:
+                json_data = json.load(f)
+
+            with open(output_file, 'w') as fout:
+                fout.write("globalId, sicell\n")
+                for globalId, value in json_data.items():
+                    sicell, rocpin = value[0], value[1]
+                    result = "{0},{1}\n".format(globalId, sicell)
+                    fout.write(result)
+
+            print(f"{output_file} is created!")
+
     def _produce_map(self, wafer_type):
         json_file = f"./output/mapping/{wafer_type}_wafer_mapping.json"
 
@@ -87,3 +104,4 @@ if __name__ == "__main__":
     mapper = ChannelMapper()
     mapper.create_channel_mapping_header_file()
     mapper.show_cpp_if_else_statements()
+    mapper.show_globalId_vs_sicell()
