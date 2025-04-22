@@ -1,6 +1,31 @@
 # hexagonal_histograms
 
-The package is used to generate geometry root files for the HGCAL DQM wafer maps.
+The package provides commands to generate geometry root files for the HGCAL DQM wafer maps.
+Each root file contains a collection of polygons/cells/silicon pads as TGraph objects, created using PyROOT.
+
+For each cell, the center position (x, y) is derived using HGCAL DPG tool, `src/HGCalCell.cc`.
+This C++ class is invoked from Python using `ROOT.gInterpreter` in `utils/polygon_manager.py`, as shown below:
+
+```python
+ROOT.gInterpreter.ProcessLine('#include "include/HGCalCell.h"')
+ROOT.gSystem.Load("./build/libHGCalCell.so")
+cell_helper = ROOT.HGCalCell(waferSize, nFine, nCoarse)
+```
+
+The default cell shape is hexagonal.
+Other polygonal shapes are assigned via the `_get_polygon_information()` method in `utils/polygon_manager.py`,
+which uses the `irregular_polygonal_cells` dictionary defined in `utils/geometry.py`.
+
+⚠️  To run the package, ensure that your Python version is compatible with the one used to build ROOT.
+To avoid building ROOT from scratch and potential compatible issues, we recommend using the pre-built CVMFS ROOT from LCG releases.
+
+Workflow in the code
+- Build a c++ shared library that converts HGCAL (u, v) cell indices to (x, y) positions.
+- Import c++ class using PyRoot `gInterpreter` and `gSystem`.
+- Load cell information from `data/input/WaferCellMapTraces.txt`.
+- Generate polygonal bins as `TGraph` object.
+- Output a geometry root file containing the graphs.
+- Use `TH2Poly` in a ROOT macro to create a hexagonal histogram.
 
 | ML-F | ML-L | ML-R |
 | --- | --- | --- |
@@ -11,19 +36,6 @@ The package is used to generate geometry root files for the HGCAL DQM wafer maps
 | ![MH-F](examples/MH_F_wafer_example.png) | ![MH-L](examples/MH_L_wafer_example.png) | ![MH-R](examples/MH_R_wafer_example.png) |
 | MH-T | MH-B | |
 | ![MH-T](examples/MH_T_wafer_example.png) | ![MH-B](examples/MH_B_wafer_example.png) | |
-
-We use PyROOT to create a collection of polygons/cells/silicon pads as TGraph objects in geometry root file.
-For each cell, the center position (x, y) is derived using HGCAL DPG tool, `src/HGCalCell.cc`.
-The C++ class is used in Python script through `ROOT.gInterpreter` in `utils/polygon_manager.py`, as shown the following lines:
-
-```
-ROOT.gInterpreter.ProcessLine('#include "include/HGCalCell.h"')
-ROOT.gSystem.Load("./build/libHGCalCell.so")
-cell_helper = ROOT.HGCalCell(waferSize, nFine, nCoarse)
-```
-
-Therefore, to run the package, we need to ensure that the Python version is compatible with the one used to build ROOT.
-To avoid building ROOT from scratch and potential compatible issues, we recommend using the pre-built CVMFS ROOT from LCG releases.
 
 ## Environment
 
@@ -115,20 +127,14 @@ $ root -l -b -q scripts/tutorial_th2poly.C
 ```
 
 ## Description of main scripts
-| File                         | Description                                                           |
-| ---------------------------- | --------------------------------------------------------------------- |
-| `exe.py`                     | Top-level script steering workflow with the following options:<br> -w, --waferType [full\|LD3\|LD4\|HD] # set wafer type<br> -d, --drawLine # draw boundary lines<br> -v, --verbose # set verbosity level |
-| `utils/polygon_manager.py`   | Methods for generating polygonal bins & producing geometry root files |
-| `utils/geometry.py`          | Parameters of polygons                                                |
-| `th2poly.C`                  | Macro drawing wafer maps from a geometry root file                    |
-
-## Workflow in the code
-- Build a c++ shared library which contains a function to convert HGCAL (u, v) to (x, y)
-- Import c++ class using PyRoot gInterpreter and gSystem
-- Load cell information from `data/input/WaferCellMapTrg.txt`
-- Generate polygonal bins in TGraph
-- Produce a geometry root file with a collection of graphs
-- Make a hexagonal histogram using TH2Poly in a ROOT macro
+| File                             | Description                                                                                                                                                                    |
+| ----------------------------     | ---------------------------------------------------------------------                                                                                                          |
+| `exe.py`                         | Top-level script steering workflow with the following options:<br> `-t`, `--waferType` [ML-F|MH-F|ML-L|...] to set wafer type<br> `-v`, `--verbose` to enable verbose logging  |
+| `utils/polygon_manager.py`       | Contains a class that provides methods to generate polygonal bins & export geometry root files                                                                                 |
+| `utils/geometry.py`              | - Defines all basic polygonal shapes in HGCAL silicon wafers<br>- Implements channel mapping between SiCell ID and irregular polygons                                          |
+| `utils/config_handler.py`        | - Sets up argument parser and logger.<br>- Provides methods to wrap config parameters from `config/wafer_config.yaml`.                                                         |
+| `config/wafer_config.yaml`       | Defines parameters to use for low-density and high-density modules, as well as output string templates.                                                                        |
+| `scripts/generate_wafer_maps.C`  | ROOT macro for drawing wafer maps from a generated geometry root file                                                                                                          |
 
 ## Steps for DQM GUI display (not in this repository)
 - Main idea: txt file -> TGraphs -> TH2Poly -> DQM GUI Display
