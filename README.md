@@ -2,6 +2,19 @@
 
 The package is used to generate geometry root files for the HGCAL DQM wafer maps.
 
+| ML-F | ML-L | ML-R |
+| --- | --- | --- |
+| ![ML-F](examples/ML_F_wafer_example.png) |![ML-L](examples/ML_L_wafer_example.png) | ![ML-R](examples/ML_R_wafer_example.png) |
+| ML-5 | ML-T | ML-B |
+| --- | --- | --- |
+|![ML-5](examples/ML_5_wafer_example.png) |![ML-T](examples/ML_T_wafer_example.png) |![ML-B](examples/ML_B_wafer_example.png) |
+| MH-F | MH-L | MH-R |
+| --- | --- | --- |
+| ![MH-F](examples/MH_F_wafer_example.png) | ![MH-L](examples/MH_L_wafer_example.png) | ![MH-R](examples/MH_R_wafer_example.png) |
+| MH-T | MH-B | |
+| --- | --- | --- |
+| ![MH-T](examples/MH_T_wafer_example.png) | ![MH-B](examples/MH_B_wafer_example.png) | |
+
 We use PyROOT to create a collection of polygons/cells/silicon pads as TGraph objects in geometry root file.
 For each cell, the center position (x, y) is derived using HGCAL DPG tool, `src/HGCalCell.cc`.
 The C++ class is used in Python script through `ROOT.gInterpreter` in `utils/polygon_manager.py`, as shown the following lines:
@@ -43,17 +56,17 @@ $ git clone -b dev git@github.com:ywkao/hexagonal_histograms.git
 $ cd hexagonal_histograms
 $ make
 $ ./exe.py --list-types # List all available wafer types
-$ ./exe.py -t ML-F
-$ ./exe.py -t MH-F
-$ ./exe.py -t ML-T
-$ ./exe.py -t ML-B
-$ ./exe.py -t ML-L
-$ ./exe.py -t ML-R
-$ ./exe.py -t ML-5
-$ ./exe.py -t MH-T
-$ ./exe.py -t MH-B
-$ ./exe.py -t MH-L
-$ ./exe.py -t MH-R
+$ ./exe.py -t ML-F -v
+$ ./exe.py -t MH-F -v
+$ ./exe.py -t ML-T -v
+$ ./exe.py -t ML-B -v
+$ ./exe.py -t ML-L -v
+$ ./exe.py -t ML-R -v
+$ ./exe.py -t ML-5 -v
+$ ./exe.py -t MH-T -v
+$ ./exe.py -t MH-B -v
+$ ./exe.py -t MH-L -v
+$ ./exe.py -t MH-R -v
 
 # Output files will be created in:
 # - output/geometry/: Root geometry files
@@ -61,6 +74,10 @@ $ ./exe.py -t MH-R
 # - output/coordinates/: JSON files with cell coordinates
 # - output/mapping/: JSON files with cell ID mappings
 
+# Adding option `-v` will create log file with the following information
+# - cell name (hex/hex_nc/hex_cm)
+# - cell IDs (global ID / pin / SiCell)
+# - cell area in mm^2
 
 #----------------------------------------------------------------------
 # A command for tutorial purpose
