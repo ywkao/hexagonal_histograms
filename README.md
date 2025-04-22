@@ -23,16 +23,12 @@ To avoid building ROOT from scratch and potential compatible issues, we recommen
 
 On lxplus, set up the environment as follows:
 
-1. Load ROOT
-
-Run the following command to source the ROOT environment:
+1. Source the ROOT environment
 ```
 source /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.34.04/x86_64-almalinux9.5-gcc115-opt/bin/thisroot.sh
 ```
 
-2. Set up Python environment (first time only)
-
-Create a virtual environment for Python dependencies:
+2. Create a Python environment for `pandas` and `pyyaml` (first time only)
 ```
 python3 -m venv pandas_env
 source pandas_env/bin/activate
@@ -40,9 +36,14 @@ pip install pandas
 pip install pyyaml
 ```
 
-3. Routine session (after first setup)
+3. Clone the repository and build the project
+```
+$ git clone git@github.com:ywkao/hexagonal_histograms.git
+$ cd hexagonal_histograms
+$ make
+```
 
-For regular use, activate the environments as follows:
+4. Routine session (after first setup)
 ```
 source /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.34.04/x86_64-almalinux9.5-gcc115-opt/bin/thisroot.sh
 source pandas_env/bin/activate
@@ -51,14 +52,6 @@ source pandas_env/bin/activate
 To deactivate the virtual environment when finished:
 ```
 deactivate # deactivate the environment when finished
-```
-
-## Setup
-Clone the repository and build the project:
-```
-$ git clone git@github.com:ywkao/hexagonal_histograms.git
-$ cd hexagonal_histograms
-$ make
 ```
 
 ## Usage
