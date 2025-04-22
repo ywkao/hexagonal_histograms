@@ -19,24 +19,6 @@ which uses the `irregular_polygonal_cells` dictionary defined in `utils/geometry
 ⚠️  To run the package, ensure that your Python version is compatible with the one used to build ROOT.
 To avoid building ROOT from scratch and potential compatible issues, we recommend using the pre-built CVMFS ROOT from LCG releases.
 
-Workflow in the code
-- Build a c++ shared library that converts HGCAL (u, v) cell indices to (x, y) positions.
-- Import c++ class using PyRoot `gInterpreter` and `gSystem`.
-- Load cell information from `data/input/WaferCellMapTraces.txt`.
-- Generate polygonal bins as `TGraph` object.
-- Output a geometry root file containing the graphs.
-- Use `TH2Poly` in a ROOT macro to create a hexagonal histogram.
-
-| ML-F | ML-L | ML-R |
-| --- | --- | --- |
-| ![ML-F](examples/ML_F_wafer_example.png) |![ML-L](examples/ML_L_wafer_example.png) | ![ML-R](examples/ML_R_wafer_example.png) |
-| ML-5 | ML-T | ML-B |
-|![ML-5](examples/ML_5_wafer_example.png) |![ML-T](examples/ML_T_wafer_example.png) |![ML-B](examples/ML_B_wafer_example.png) |
-| MH-F | MH-L | MH-R |
-| ![MH-F](examples/MH_F_wafer_example.png) | ![MH-L](examples/MH_L_wafer_example.png) | ![MH-R](examples/MH_R_wafer_example.png) |
-| MH-T | MH-B | |
-| ![MH-T](examples/MH_T_wafer_example.png) | ![MH-B](examples/MH_B_wafer_example.png) | |
-
 ## Environment
 
 On lxplus, set up the environment as follows:
@@ -108,7 +90,6 @@ Verbose option `-v` includes:
 - cell IDs (Global ID / ROC Pin / SiCell)
 - cell area in mm^2
 
-
 Produce {global_channel_id: sicell/rocpin} maps
 ```
 $ python3 utils/channel_id_mapper.py
@@ -136,13 +117,32 @@ $ root -l -b -q scripts/tutorial_th2poly.C
 | `config/wafer_config.yaml`       | Defines parameters to use for low-density and high-density modules, as well as output string templates.                                                                        |
 | `scripts/generate_wafer_maps.C`  | ROOT macro for drawing wafer maps from a generated geometry root file                                                                                                          |
 
+## Processing flow in the code
+- Build a c++ shared library that converts HGCAL (u, v) cell indices to (x, y) positions.
+- Import c++ class using PyRoot `gInterpreter` and `gSystem`.
+- Load cell information from `data/input/WaferCellMapTraces.txt`.
+- Generate polygonal bins as `TGraph` object.
+- Output a geometry root file containing the graphs.
+- Use `TH2Poly` in a ROOT macro to create a hexagonal histogram.
+
 ## Steps for DQM GUI display (not in this repository)
 - Main idea: txt file -> TGraphs -> TH2Poly -> DQM GUI Display
-- Require TH2Poly implemented in DQM EDAnalyzer
+- Require TH2Poly implemented in DQM EDAnalyzer (PR#41932 on CMSSW has merged)
 - Load the geometry root file in DQM EDAnalyzer
 - Fill entries & produce plots
 
-## Reference
+## References
 - https://root.cern/manual/python/
 - https://root.cern/doc/master/th2polyEurope_8C.html
 - https://github.com/cms-sw/cmssw/blob/master/Geometry/HGCalCommonData/src/HGCalCell.cc
+
+## Examples
+| ML-F | ML-L | ML-R |
+| --- | --- | --- |
+| ![ML-F](examples/ML_F_wafer_example.png) |![ML-L](examples/ML_L_wafer_example.png) | ![ML-R](examples/ML_R_wafer_example.png) |
+| ML-5 | ML-T | ML-B |
+|![ML-5](examples/ML_5_wafer_example.png) |![ML-T](examples/ML_T_wafer_example.png) |![ML-B](examples/ML_B_wafer_example.png) |
+| MH-F | MH-L | MH-R |
+| ![MH-F](examples/MH_F_wafer_example.png) | ![MH-L](examples/MH_L_wafer_example.png) | ![MH-R](examples/MH_R_wafer_example.png) |
+| MH-T | MH-B | |
+| ![MH-T](examples/MH_T_wafer_example.png) | ![MH-B](examples/MH_B_wafer_example.png) | |
