@@ -1,4 +1,3 @@
-#!/usr/bin/env python2
 import math
 
 #--------------------------------------------------
@@ -50,6 +49,18 @@ type_partial_wafer_hexagon_corner6 = 607
 type_partial_wafer_hexagon_corner3 = 608
 type_partial_wafer_hexagon_corner2 = 609
 
+type_pentagon_extended_side1 = 517
+type_pentagon_truncated_side4 = 518
+type_pentagon_extended_corner1 = 519
+type_pentagon_extended_corner2 = 520
+
+type_HD_quadrilaterals_corner3 = 407
+type_HD_quadrilaterals_corner6 = 408
+type_HD_quadrilaterals_left_side1 = 409
+type_HD_quadrilaterals_right_side1 = 410
+type_HD_quadrilaterals_extended_left_side1 = 411
+type_HD_quadrilaterals_extended_right_side1 = 412
+
 type_HD_hexagon_side1_corner1 = 621
 type_HD_hexagon_side1_corner2 = 622
 type_HD_hexagon_side3_corner3 = 623 # by rotation
@@ -68,86 +79,6 @@ type_HD_hexagon_side2_corner3 = 652 # by rotation
 type_HD_hexagon_side4_corner4 = 653 # by rotation
 type_HD_hexagon_side4_corner5 = 654 # by rotation
 type_HD_hexagon_side6_corner6 = 655 # by rotation
-
-# information of CM and NC in global Id (readout sequence)
-global_channel_Id_special_channels = {
-    "full" : {
-        "CMIds" : [37, 38, 76, 77, 115, 116, 154, 155, 193, 194, 232, 233],
-        "NonConnIds" : [8, 17, 19, 28, 47, 56, 58, 67, 86, 95, 97, 106, 125, 134, 136, 145, 164, 173, 175, 184, 203, 212, 214, 223]
-    },
-    "LD3" : {
-        "CMIds" : [37, 38, 76, 77, 115, 116],
-        "NonConnIds" : [8, 17, 47, 56, 58, 67, 86, 95]
-    },
-    "LD4" : {
-        "CMIds" : [37, 38, 76, 77, 115, 116],
-        "NonConnIds" : [8, 17, 47, 56, 58, 67, 86, 95]
-    },
-    "HD" : {
-        "CMIds" : [37, 38, 76, 77, 115, 116, 154, 155, 193, 194, 232, 233, 271, 272, 310, 311, 349, 350, 388, 389, 427, 428, 466, 467],
-        "NonConnIds" : [8, 17, 19, 28, 47, 56, 58, 67, 86, 95, 97, 106, 125, 134, 136, 145, 164, 173, 175, 184, 203, 212, 214, 223]
-    },
-}
-
-gcId = global_channel_Id_special_channels
-
-#--------------------------------------------------
-# Coordinates of calib and CM channels
-#--------------------------------------------------
-
-# Coordinates of calibration channels
-calib_distance_factor = 14.
-Coordinates_calib_channels = {
-    14  : (0, 2),
-    62  : (s3, 1),
-    154 : (s3, -1),
-    163 : (0, -2),
-    143 : (-1*s3, -1),
-    70  : (-1*s3, 1),
-}
-
-# Coordinates of CM and NC channels
-Coordinates_CM_channels = {
-    "LD3": {
-        'x' : [-8.75, -3.75, 3.75, 8.75, 8.75, 3.75],
-        'y' : [29, 29, 29, 29, 29, 29],
-        'theta' : [-p3, -p3, -p3, -p3, p3*3, p3*3]
-    },
-    "LD4": {
-        'x' : [-8.75, -3.75, 3.75, 8.75, -3.75, -8.75],
-        'y' : [29, 29, 29, 29, 29, 29],
-        'theta' : [p3, p3, p3, p3, p3*3, p3*3]
-    },
-    "full": {
-        'x' : [8.75, 3.75, -3.75, -8.75],
-        'y' : [29, 29, 29, 29],
-    },
-    "HD": {
-        'x' : [-14., -10.5, -7.0, -3.5, 3.5, 7.0, 10.5, 14.],
-        'y' : [43, 43, 43, 43, 43, 43, 43, 43],
-    },
-}
-
-Coordinates_NC_channels = {
-    "full": {
-        'x' : [10., 7.5, 5.0, 2.5, -2.5, -5.0, -7.5, -10.],
-        'y' : [32, 32, 32, 32, 32, 32, 32, 32],
-    },
-    "LD3": {
-        'x' : [-7.5, -5.0, 2.5, 5.0, 7.5, 10., 7.5, 5.0],
-        'y' : [32, 32, 32, 32, 32, 32, 32, 32],
-        'theta' : [-p3, -p3, -p3, -p3, -p3, -p3, p3*3, p3*3]
-    },
-    "LD4": {
-        'x' : [-7.5, -5.0, 2.5, 5.0, 7.5, 10., -5.0, -7.5],
-        'y' : [32, 32, 32, 32, 32, 32, 32, 32],
-        'theta' : [p3, p3, p3, p3, p3, p3, p3*3, p3*3]
-    },
-    "HD": {
-        'x' : [10., 7.5, 5.0, 2.5, -2.5, -5.0, -7.5, -10.],
-        'y' : [32, 32, 32, 32, 32, 32, 32, 32],
-    },
-}
 
 #----------------------------------------------------------------------------------------------------
 # Define base polygons
@@ -224,6 +155,46 @@ base = {
     type_pentagon_side6 : {
         'x': [-0.5*s3, 1*s3, 1*s3, 0, -1.5*s3, -0.5*s3],
         'y': [2.5, 1, -1, -2, -0.5, 2.5]
+    },
+    type_pentagon_extended_side1 : {
+        'x': [1*s3, 1*s3, 0, -1*s3, -1*s3, 1*s3],
+        'y': [2, -1, -2, -1, 2, 2]
+    },
+    type_pentagon_truncated_side4 : {
+        'x': [0, 1*s3, 1*s3, -1*s3, -1*s3, 0],
+        'y': [2, 1, -1, -1, 1, 2]
+    },
+    type_HD_quadrilaterals_extended_left_side1 : {
+        'x': [0, 0, -1*s3, -1*s3, 0],
+        'y': [2, -2, -1, 2, 2]
+    },
+    type_HD_quadrilaterals_extended_right_side1 : {
+        'x': [1*s3, 1*s3, 0, 0, 1*s3],
+        'y': [2, -1, -2, 2, 2]
+    },
+    type_HD_quadrilaterals_left_side1 : {
+        'x': [0, 0, -1*s3, -1*s3, 0],
+        'y': [1, -2, -1, 1, 1]
+    },
+    type_HD_quadrilaterals_right_side1 : {
+        'x': [1*s3, 1*s3, 0, 0, 1*s3],
+        'y': [1, -1, -2, 1, 1]
+    },
+    type_pentagon_extended_corner1 : {
+        'x': [1*s3, 1*s3, 0, -1.5*s3, -2./s3, 1*s3],
+        'y': [2, -1, -2, -0.5, 2, 2]
+    },
+    type_pentagon_extended_corner2 : {
+        'x': [2./s3, 1.5*s3, 0, -1*s3, -1*s3, 2./s3],
+        'y': [2, -0.5, -2, -1, 2, 2]
+    },
+    type_HD_quadrilaterals_corner3 : {
+        'x': [0.5*s3, 5./s3, -1*s3, -1*s3, 0.5*s3],
+        'y': [2.5, -1, -1, 1, 2.5]
+    },
+    type_HD_quadrilaterals_corner6 : {
+        'x': [-0.5*s3, 1*s3, 1*s3, -5./s3, -0.5*s3],
+        'y': [2.5, 1, -1, -1, 2.5]
     },
     type_hexagon_corner1 : {
         'x': [-11.*s3/58., 1*s3, 1*s3, 0, -1.5*s3, -5.*s3/6., -11.*s3/58.],
@@ -353,7 +324,7 @@ base.update(base_derived_types)
 # Irregular polygons mapping using SiCell padID 
 #----------------------------------------------------------------------------------------------------
 irregular_polygonal_cells = {
-    "full": {
+    "ML-F": {
         type_pentagon_side1 : [2, 3, 4, 5, 6, 7],
         type_pentagon_side2 : [18, 28, 39, 51, 65, 80, 95],
         type_pentagon_side3 : [126, 140, 155, 168, 179, 189],
@@ -375,7 +346,7 @@ irregular_polygonal_cells = {
         type_hollow : [13, 61, 69, 142, 153, 162], # cells around a calib channel
         # type_hexagon_small : [14, 62, 70, 143, 154, 163], # calibration_cells
     },
-    "LD3" : {
+    "ML-L" : {
         type_hollow : [12, 168], # cells around a calib channel
         type_pentagon_hollow : [89], # cells around a calib channel
         # type_hexagon_small : [13, 90, 169], # calibration_cells
@@ -392,7 +363,58 @@ irregular_polygonal_cells = {
         type_hexagon_corner5 : [204],
         type_partial_wafer_hexagon_corner6 : [85],
     },
-    "LD4" : {
+    "ML-5" : {
+        type_hollow : [12, 64, 159, 168], # cells around a calib channel
+        type_pentagon_hollow : [89], # cells around a calib channel
+        type_hexagon_small : [13, 65, 90, 160, 169], # calibration_cells
+        type_trapezoid_left : [19, 40, 67, 131, 163, 190],
+        type_trapezoid_extended_left : [98, 212],
+        type_pentagon_side1 : [2, 3, 4, 5, 6, 7, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114],
+        type_pentagon_side4 : [86, 87, 88, 91, 92, 93, 95, 96, 97, 205, 206, 207, 209, 210, 211],
+        type_pentagon_side5 : [119, 136, 151, 167, 180, 193],
+        type_pentagon_side6 : [20, 30, 43, 55, 71],
+        type_pentagon_corner1 : [1],
+        type_pentagon_corner5 : [203],
+        type_partial_wafer_pentagon_corner6 : [103],
+        type_hexagon_corner1 : [9],
+        type_hexagon_corner4 : [211],
+        type_hexagon_corner5 : [204],
+        type_parallelogram : [212],
+        type_partial_wafer_hexagon_corner2 : [8],
+        type_partial_wafer_hexagon_corner6 : [85],
+    },
+    "ML-T" : {
+        type_hollow : [12, 64], # cells around a calib channel
+        type_pentagon_hollow : [89], # cells around a calib channel
+        type_hexagon_small : [13, 65, 90], # calibration_cells
+        type_trapezoid_left : [19],
+        type_pentagon_side1 : [2, 3, 4, 5, 6, 7],
+        type_pentagon_side2 : [42, 54, 70, 84],
+        type_pentagon_side4 : [86, 87, 88, 91, 92, 93, 95, 96, 97, 98, 100, 101],
+        type_pentagon_side6 : [20, 30, 43, 55, 71],
+        type_pentagon_corner1 : [1],
+        type_hexagon_corner1 : [9],
+        type_partial_wafer_hexagon_corner2 : [8],
+        type_partial_wafer_hexagon_corner3 : [102],
+        type_partial_wafer_hexagon_corner6 : [85],
+        type_partial_wafer_pentagon_merged_cell_corner2 : [29],
+    },
+    "ML-B" : {
+        type_hollow : [148, 159, 168], # cells around a calib channel
+        type_hexagon_small : [149, 160, 169], # calibration_cells
+        type_pentagon_side1 : [104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117],
+        type_pentagon_side3 : [135, 150, 166, 179, 192],
+        type_pentagon_side4 : [205, 206, 207, 209, 210, 211],
+        type_pentagon_side5 : [119, 136, 151, 167, 180, 193],
+        type_pentagon_corner5 : [203],
+        type_hexagon_corner4 : [211],
+        type_hexagon_corner5 : [204],
+        type_parallelogram : [212],
+        type_partial_wafer_pentagon_corner3 : [118],
+        type_partial_wafer_pentagon_corner6 : [103],
+        type_partial_wafer_pentagon_merged_cell_corner4 : [202],
+    },
+    "ML-R" : {
         type_hollow : [64, 148, 159],
         # type_hexagon_small : [65, 149, 160],
         type_trapezoid_right : [15, 36, 62, 127, 158, 186], # 41, 68, 132, 164, 191],
@@ -410,7 +432,7 @@ irregular_polygonal_cells = {
         type_partial_wafer_hexagon_corner2 : [8],
         type_hexagon_corner4 : [211],
     },
-    "HD" : {
+    "MH-F" : {
         type_hollow : [29, 150, 157, 36, 387, 411, 297, 267, 261, 87, 207, 381], # cells around a calib channel
         type_pentagon_side1 : [3, 4, 5, 6, 7, 8, 9, 10],
         type_pentagon_side2 : [41, 56, 72, 90, 108, 127, 147, 170, 192],
@@ -440,5 +462,112 @@ irregular_polygonal_cells = {
         type_HD_hexagon_side5_corner6 : [241], # by rotation
         type_HD_trpezoid_corner6 : [217], # by rotation
         type_HD_hexagon_side6_corner6 : [193], # by rotation
+    },
+    "MH-T" : {
+        type_hollow : [30, 38, 113, 138, 145], # cells around a calib channel
+        type_hexagon_small : [31, 39, 114, 139, 146], # calibration_cells
+        type_pentagon_side1 : [3, 5, 6, 7, 8, 9, 10, 11],
+        type_pentagon_side2 : [45, 60, 78, 95, 116, 135, 159],
+        type_pentagon_side6 : [28, 46, 61, 79, 96, 117, 136],
+
+        type_HD_quadrilaterals_corner3 : [180],
+        type_HD_quadrilaterals_corner6 : [160],
+        type_pentagon_truncated_side4 : [161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179],
+
+        type_HD_trpezoid_corner1 : [1],
+        type_HD_trpezoid_corner2 : [14],
+        type_HD_hexagon_side1_corner1 : [2],
+        type_HD_hexagon_side1_corner2 : [13],
+        type_HD_hexagon_side6_corner1 : [15],
+        type_HD_hexagon_side2_corner2 : [27],
+    },
+    "MH-B" : {
+        type_hollow : [220, 252, 305, 334, 384, 425, 432], # cells around a calib channel
+        type_hexagon_small : [221, 253, 306, 335, 385, 426, 433], # calibration_cells
+
+        type_pentagon_extended_side1 : [182, 183, 184, 185, 186, 187, 188, 190, 191, 192, 193, 194, 195, 196, 198, 199, 200, 201, 202, 203],
+        type_pentagon_extended_corner1 : [181],
+        type_pentagon_extended_corner2 : [204],
+        type_pentagon_side3 : [278, 302, 324, 347, 366, 387, 404, 422, 439],
+        type_pentagon_side4 : [466, 465, 464, 463, 462, 461, 460, 459, 458],
+        type_pentagon_side5 : [279, 303, 325, 348, 367, 388, 405, 423],
+
+        type_HD_hexagon_side3_corner3 : [278], # by rotation
+        type_HD_trpezoid_corner3 : [255], # by rotation
+        type_HD_hexagon_side2_corner3 : [228], # by rotation
+
+        type_HD_hexagon_side3_corner4 : [455], # by rotation
+        type_HD_trpezoid_corner4 : [468], # by rotation
+        type_HD_hexagon_side4_corner4 : [467], # by rotation
+
+        type_HD_hexagon_side5_corner5 : [440], # by rotation
+        type_HD_trpezoid_corner5 : [456], # by rotation
+        type_HD_hexagon_side4_corner5 : [457], # by rotation
+
+        type_HD_hexagon_side5_corner6 : [256], # by rotation
+        type_HD_trpezoid_corner6 : [229], # by rotation
+        type_HD_hexagon_side6_corner6 : [205], # by rotation
+    },
+    "MH-L" : {
+        type_hollow : [30, 138, 305, 425], # cells around a calib channel
+        type_hexagon_small : [31, 139, 306, 426], # calibration_cells
+
+        type_pentagon_side6 : [28, 46, 61, 79, 96, 117, 136],
+        type_pentagon_extended_side1 : [182, 183, 184, 185, 186, 187],
+        type_pentagon_side4 : [458],
+        type_pentagon_side5 : [279, 303, 325, 348, 367, 388, 405, 423],
+
+        type_trapezoid_left : [32, 65, 101, 143, 237, 286, 331, 372, 409, 443],
+        type_HD_quadrilaterals_left_side1 : [3],
+        type_HD_quadrilaterals_extended_left_side1 : [188],
+
+        type_HD_quadrilaterals_corner6 : [160],
+        type_pentagon_truncated_side4 : [161, 162, 163, 164, 165, 166],
+
+        type_HD_trpezoid_corner1 : [1],
+        type_HD_hexagon_side1_corner1 : [2],
+        type_HD_hexagon_side6_corner1 : [15],
+        type_pentagon_extended_corner1 : [181],
+
+        type_HD_hexagon_side5_corner5 : [440], # by rotation
+        type_HD_trpezoid_corner5 : [456], # by rotation
+        type_HD_hexagon_side4_corner5 : [457], # by rotation
+
+        type_HD_hexagon_side5_corner6 : [256], # by rotation
+        type_HD_trpezoid_corner6 : [229], # by rotation
+        type_HD_hexagon_side6_corner6 : [205], # by rotation
+    },
+    "MH-R" : {
+        type_hollow : [113, 220, 252, 384], # cells around a calib channel
+        type_hexagon_small : [114, 221, 253, 385], # calibration_cells
+
+        # left edge
+        type_HD_quadrilaterals_right_side1 : [12],
+        type_HD_quadrilaterals_extended_right_side1 : [197],
+        type_trapezoid_right : [42, 74, 110, 153, 246, 295, 341, 381, 418, 452],
+
+        # upper edges
+        type_pentagon_side2 : [45, 60, 78, 95, 116, 135, 159],
+        type_HD_quadrilaterals_corner3 : [180],
+        type_pentagon_truncated_side4 : [174, 175, 176, 177, 178, 179],
+
+        # top corner
+        type_HD_trpezoid_corner2 : [14],
+        type_HD_hexagon_side1_corner2 : [13],
+        type_HD_hexagon_side2_corner2 : [27],
+
+        # lower edges
+        type_pentagon_extended_side1 : [198, 199, 200, 201, 202, 203],
+        type_pentagon_extended_corner2 : [204],
+        type_pentagon_side3 : [278, 302, 324, 347, 366, 387, 404, 422, 439],
+        type_pentagon_side4 : [466],
+
+        type_HD_hexagon_side3_corner3 : [278], # by rotation
+        type_HD_trpezoid_corner3 : [255], # by rotation
+        type_HD_hexagon_side2_corner3 : [228], # by rotation
+
+        type_HD_hexagon_side3_corner4 : [455], # by rotation
+        type_HD_trpezoid_corner4 : [468], # by rotation
+        type_HD_hexagon_side4_corner4 : [467], # by rotation
     },
 }

@@ -1,45 +1,26 @@
-# wafer_config.yaml
-wafer_types:
-  HD:
-    begin_idx: 223
-    end_idx: 667
+# config/wafer_config.yaml
+default_params:
+  scope: 14
+  marker_size: 0.7
+  offset_x: -1.20840
+  offset_y: 2.09301
+
+type_specific_params:
+  ML:
+    scope: 14
+    marker_size: 0.7
+    offset_x: -1.20840
+    offset_y: 2.09301
+  MH:
     scope: 12
     marker_size: 0.5
-    tag: "HD_wafer"
-    cell_coordinate_json_file: "output/coordinates/hd_wafer_coordinates.json"
-    cell_id_mapping_json_file: "output/mapping/hd_wafer_mapping.json"
-    geometry_root_file: "output/geometry/hd_wafer_geometry.root"
-    output_name: "output/waferMaps/hd_wafer_map.png"
+    offset_x: 0.805403625519528
+    offset_y: -1.395
+  # Add other type codes with their specific parameters
+  # If a parameter is not specified, it will use the default value
 
-  full:  # LD full
-    begin_idx: 1
-    end_idx: 223
-    scope: 14
-    marker_size: 0.7
-    tag: "LD_wafer"
-    cell_coordinate_json_file: "output/coordinates/ld_wafer_coordinates.json"
-    cell_id_mapping_json_file: "output/mapping/ld_wafer_mapping.json"
-    geometry_root_file: "output/geometry/ld_wafer_geometry.root"
-    output_name: "output/waferMaps/ld_wafer_map.png"
-  
-  LD3:
-    begin_idx: 667
-    end_idx: 778
-    scope: 14
-    marker_size: 0.7
-    tag: "LD3_partial_wafer"
-    cell_coordinate_json_file: "output/coordinates/ld3_wafer_coordinates.json"
-    cell_id_mapping_json_file: "output/mapping/ld3_wafer_mapping.json"
-    geometry_root_file: "output/geometry/ld3_wafer_geometry.root"
-    output_name: "output/waferMaps/ld3_wafer_map.png"
-  
-  LD4:
-    begin_idx: 778
-    end_idx: 889
-    scope: 14
-    marker_size: 0.7
-    tag: "LD4_partial_wafer"
-    cell_coordinate_json_file: "output/coordinates/ld4_wafer_coordinates.json"
-    cell_id_mapping_json_file: "output/mapping/ld4_wafer_mapping.json"
-    geometry_root_file: "output/geometry/ld4_wafer_geometry.root"
-    output_name: "output/waferMaps/ld4_wafer_map.png"
+output_paths:
+  cell_coordinate_json: "output/coordinates/{type_code}_wafer_coordinates.json"
+  cell_id_mapping_json: "output/mapping/{type_code}_wafer_mapping.json"
+  geometry_root_file: "output/geometry/{type_code}_wafer_geometry.root"
+  output_name: "output/waferMaps/{type_code}_wafer_map.png"

@@ -70,7 +70,7 @@ class AuxiliaryLineProducer():
 
     def create_cpp_headers(self):
         if self.waferType == "full": # LD full
-            fname = "include/auxiliary_boundary_lines.h"
+            fname = "./scripts/include/auxiliary_boundary_lines.h"
             self.fout = open(fname, 'w')
             self.fout.write("#ifndef __auxiliary_boundary_lines__\n")
             self.fout.write("#define __auxiliary_boundary_lines__\n")
@@ -92,7 +92,7 @@ class AuxiliaryLineProducer():
             self.fout.close()
 
         elif self.waferType == "LD3":
-            fname = "include/auxiliary_boundary_lines_partial_wafer.h"
+            fname = "./scripts/include/auxiliary_boundary_lines_partial_wafer.h"
             self.fout = open(fname, 'w')
             self.fout.write("#ifndef __auxiliary_boundary_lines_partial_wafer__\n")
             self.fout.write("#define __auxiliary_boundary_lines_partial_wafer__\n")
@@ -108,7 +108,7 @@ class AuxiliaryLineProducer():
             self.fout.close()
 
         elif self.waferType == "LD4":
-            fname = "include/auxiliary_boundary_lines_LD4_partial_wafer.h"
+            fname = "./scripts/include/auxiliary_boundary_lines_LD4_partial_wafer.h"
             self.fout = open(fname, 'w')
             self.fout.write("#ifndef __auxiliary_boundary_lines_LD4_partial_wafer__\n")
             self.fout.write("#define __auxiliary_boundary_lines_LD4_partial_wafer__\n")
@@ -124,7 +124,7 @@ class AuxiliaryLineProducer():
             self.fout.close()
 
         elif self.waferType == "HD":
-            fname = "include/auxiliary_boundary_lines_HD_full_wafer.h"
+            fname = "./scripts/include/auxiliary_boundary_lines_HD_full_wafer.h"
             self.fout = open(fname, 'w')
             self.fout.write("#ifndef __auxiliary_boundary_lines_HD_full_wafer__\n")
             self.fout.write("#define __auxiliary_boundary_lines_HD_full_wafer__\n")
