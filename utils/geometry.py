@@ -56,6 +56,10 @@ type_pentagon_extended_corner2 = 520
 
 type_HD_quadrilaterals_corner3 = 407
 type_HD_quadrilaterals_corner6 = 408
+type_HD_quadrilaterals_left_side1 = 409
+type_HD_quadrilaterals_right_side1 = 410
+type_HD_quadrilaterals_extended_left_side1 = 411
+type_HD_quadrilaterals_extended_right_side1 = 412
 
 type_HD_hexagon_side1_corner1 = 621
 type_HD_hexagon_side1_corner2 = 622
@@ -160,12 +164,28 @@ base = {
         'x': [0, 1*s3, 1*s3, -1*s3, -1*s3, 0],
         'y': [2, 1, -1, -1, 1, 2]
     },
+    type_HD_quadrilaterals_extended_left_side1 : {
+        'x': [0, 0, -1*s3, -1*s3, 0],
+        'y': [2, -2, -1, 2, 2]
+    },
+    type_HD_quadrilaterals_extended_right_side1 : {
+        'x': [1*s3, 1*s3, 0, 0, 1*s3],
+        'y': [2, -1, -2, 2, 2]
+    },
+    type_HD_quadrilaterals_left_side1 : {
+        'x': [0, 0, -1*s3, -1*s3, 0],
+        'y': [1, -2, -1, 1, 1]
+    },
+    type_HD_quadrilaterals_right_side1 : {
+        'x': [1*s3, 1*s3, 0, 0, 1*s3],
+        'y': [1, -1, -2, 1, 1]
+    },
     type_pentagon_extended_corner1 : {
-        'x': [1*s3, 1*s3, 0, -1.5*s3, -1*s3, 1*s3],
+        'x': [1*s3, 1*s3, 0, -1.5*s3, -2./s3, 1*s3],
         'y': [2, -1, -2, -0.5, 2, 2]
     },
     type_pentagon_extended_corner2 : {
-        'x': [1*s3, 1.5*s3, 0, -1*s3, -1*s3, 1*s3],
+        'x': [2./s3, 1.5*s3, 0, -1*s3, -1*s3, 2./s3],
         'y': [2, -0.5, -2, -1, 2, 2]
     },
     type_HD_quadrilaterals_corner3 : {
@@ -462,6 +482,9 @@ irregular_polygonal_cells = {
         type_HD_hexagon_side2_corner2 : [27],
     },
     "MH-B" : {
+        type_hollow : [220, 252, 305, 334, 384, 425, 432], # cells around a calib channel
+        type_hexagon_small : [221, 253, 306, 335, 385, 426, 433], # calibration_cells
+
         type_pentagon_extended_side1 : [182, 183, 184, 185, 186, 187, 188, 190, 191, 192, 193, 194, 195, 196, 198, 199, 200, 201, 202, 203],
         type_pentagon_extended_corner1 : [181],
         type_pentagon_extended_corner2 : [204],
@@ -484,5 +507,67 @@ irregular_polygonal_cells = {
         type_HD_hexagon_side5_corner6 : [256], # by rotation
         type_HD_trpezoid_corner6 : [229], # by rotation
         type_HD_hexagon_side6_corner6 : [205], # by rotation
+    },
+    "MH-L" : {
+        type_hollow : [30, 138, 305, 425], # cells around a calib channel
+        type_hexagon_small : [31, 139, 306, 426], # calibration_cells
+
+        type_pentagon_side6 : [28, 46, 61, 79, 96, 117, 136],
+        type_pentagon_extended_side1 : [182, 183, 184, 185, 186, 187],
+        type_pentagon_side4 : [458],
+        type_pentagon_side5 : [279, 303, 325, 348, 367, 388, 405, 423],
+
+        type_trapezoid_left : [32, 65, 101, 143, 237, 286, 331, 372, 409, 443],
+        type_HD_quadrilaterals_left_side1 : [3],
+        type_HD_quadrilaterals_extended_left_side1 : [188],
+
+        type_HD_quadrilaterals_corner6 : [160],
+        type_pentagon_truncated_side4 : [161, 162, 163, 164, 165, 166],
+
+        type_HD_trpezoid_corner1 : [1],
+        type_HD_hexagon_side1_corner1 : [2],
+        type_HD_hexagon_side6_corner1 : [15],
+        type_pentagon_extended_corner1 : [181],
+
+        type_HD_hexagon_side5_corner5 : [440], # by rotation
+        type_HD_trpezoid_corner5 : [456], # by rotation
+        type_HD_hexagon_side4_corner5 : [457], # by rotation
+
+        type_HD_hexagon_side5_corner6 : [256], # by rotation
+        type_HD_trpezoid_corner6 : [229], # by rotation
+        type_HD_hexagon_side6_corner6 : [205], # by rotation
+    },
+    "MH-R" : {
+        type_hollow : [113, 220, 252, 384], # cells around a calib channel
+        type_hexagon_small : [114, 221, 253, 385], # calibration_cells
+
+        # left edge
+        type_HD_quadrilaterals_right_side1 : [12],
+        type_HD_quadrilaterals_extended_right_side1 : [197],
+        type_trapezoid_right : [42, 74, 110, 153, 246, 295, 341, 381, 418, 452],
+
+        # upper edges
+        type_pentagon_side2 : [45, 60, 78, 95, 116, 135, 159],
+        type_HD_quadrilaterals_corner3 : [180],
+        type_pentagon_truncated_side4 : [174, 175, 176, 177, 178, 179],
+
+        # top corner
+        type_HD_trpezoid_corner2 : [14],
+        type_HD_hexagon_side1_corner2 : [13],
+        type_HD_hexagon_side2_corner2 : [27],
+
+        # lower edges
+        type_pentagon_extended_side1 : [198, 199, 200, 201, 202, 203],
+        type_pentagon_extended_corner2 : [204],
+        type_pentagon_side3 : [278, 302, 324, 347, 366, 387, 404, 422, 439],
+        type_pentagon_side4 : [466],
+
+        type_HD_hexagon_side3_corner3 : [278], # by rotation
+        type_HD_trpezoid_corner3 : [255], # by rotation
+        type_HD_hexagon_side2_corner3 : [228], # by rotation
+
+        type_HD_hexagon_side3_corner4 : [455], # by rotation
+        type_HD_trpezoid_corner4 : [468], # by rotation
+        type_HD_hexagon_side4_corner4 : [467], # by rotation
     },
 }
