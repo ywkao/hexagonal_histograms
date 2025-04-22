@@ -145,7 +145,7 @@ class PolygonManager:
             elif self.waferType == "ML-L" or self.waferType == "ML-R":
                 theta = Coordinates_NC_channels[self.waferType]['theta'][self.cellIdx] if self.waferType in Coordinates_NC_channels else 0.
             else:
-                theta = 0.
+                theta = 0. + self.cellIdx*math.pi/60.
 
             x, y = self._rotate_coordinate(x, y, theta + self.extra_rotation_tb2024)
             x, y = self._translate_coordinate(x, y, self.arbUnit_to_cm, (0., 0.))
@@ -166,7 +166,7 @@ class PolygonManager:
                 y = Coordinates_CM_channels[self.waferType]['y'][self.cellIdx]
                 theta = Coordinates_CM_channels[self.waferType]['theta'][self.cellIdx]
             else:
-                x, y, theta = 999., 999., 0.
+                x, y, theta = 999., 999., math.pi + self.cellIdx*math.pi/60.
 
             x, y = self._rotate_coordinate(x, y, theta + self.extra_rotation_tb2024)
             x, y = self._translate_coordinate(x, y, self.arbUnit_to_cm, (0., 0.))
