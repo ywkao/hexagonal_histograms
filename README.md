@@ -6,13 +6,10 @@ The package is used to generate geometry root files for the HGCAL DQM wafer maps
 | --- | --- | --- |
 | ![ML-F](examples/ML_F_wafer_example.png) |![ML-L](examples/ML_L_wafer_example.png) | ![ML-R](examples/ML_R_wafer_example.png) |
 | ML-5 | ML-T | ML-B |
-| --- | --- | --- |
 |![ML-5](examples/ML_5_wafer_example.png) |![ML-T](examples/ML_T_wafer_example.png) |![ML-B](examples/ML_B_wafer_example.png) |
 | MH-F | MH-L | MH-R |
-| --- | --- | --- |
 | ![MH-F](examples/MH_F_wafer_example.png) | ![MH-L](examples/MH_L_wafer_example.png) | ![MH-R](examples/MH_R_wafer_example.png) |
 | MH-T | MH-B | |
-| --- | --- | --- |
 | ![MH-T](examples/MH_T_wafer_example.png) | ![MH-B](examples/MH_B_wafer_example.png) | |
 
 We use PyROOT to create a collection of polygons/cells/silicon pads as TGraph objects in geometry root file.
@@ -30,12 +27,16 @@ To avoid building ROOT from scratch and potential compatible issues, we recommen
 
 ## Environment
 
-On lxplus,
+On lxplus, set up the environment as follows:
+
+1. Load ROOT
+Run the following command to source the ROOT environment:
 ```
 source /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.34.04/x86_64-almalinux9.5-gcc115-opt/bin/thisroot.sh
 ```
 
-Create env to use pandas module (only for the first time)
+2. Set up Python environment (first time only)
+Create a virtual environment for Python dependencies:
 ```
 python3 -m venv pandas_env
 source pandas_env/bin/activate
@@ -43,19 +44,34 @@ pip install pandas
 pip install pyyaml
 ```
 
-Routine environment setting
+3. Routine session (after first setup)
+For regular use, activate the environments as follows:
 ```
 source /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.34.04/x86_64-almalinux9.5-gcc115-opt/bin/thisroot.sh
 source pandas_env/bin/activate
+```
+
+To deactivate the virtual environment when finished:
+```
 deactivate # deactivate the environment when finished
 ```
 
-## Commands
+## Setup
+Clone the repository and build the project:
 ```
 $ git clone -b dev git@github.com:ywkao/hexagonal_histograms.git
 $ cd hexagonal_histograms
 $ make
+```
+
+## Usage
+List available wafer types
+```
 $ ./exe.py --list-types # List all available wafer types
+```
+
+Generate outputs for specific wafer types (with verbose logging)
+```
 $ ./exe.py -t ML-F -v
 $ ./exe.py -t MH-F -v
 $ ./exe.py -t ML-T -v
@@ -67,33 +83,35 @@ $ ./exe.py -t MH-T -v
 $ ./exe.py -t MH-B -v
 $ ./exe.py -t MH-L -v
 $ ./exe.py -t MH-R -v
+```
 
-# Output files will be created in:
-# - output/geometry/: Root geometry files
-# - output/waferMaps/: Wafer map visualizations
-# - output/coordinates/: JSON files with cell coordinates
-# - output/mapping/: JSON files with cell ID mappings
+Output directories
+- `output/geometry/`: Root geometry files
+- `output/waferMaps/`: Wafer map visualizations
+- `output/coordinates/`: JSON files with cell coordinates
+- `output/mapping/`: JSON files with cell ID mappings
 
-# Adding option `-v` will create log file with the following information
-# - cell name (hex/hex_nc/hex_cm)
-# - cell IDs (global ID / pin / SiCell)
-# - cell area in mm^2
+Verbose option `-v` includes:
+- cell name (e.g., `hex`, `hex_nc`, `hex_cm`)
+- cell IDs (Global ID / ROC Pin / SiCell)
+- cell area in mm^2
 
-#----------------------------------------------------------------------
-# A command for tutorial purpose
-#----------------------------------------------------------------------
-$ root -l -b -q scripts/tutorial_th2poly.C
 
-# Expected output:
-#   ./output/waferMaps/tutorial.png
-
-#----------------------------------------------------------------------
-# Command to produce {global_channel_id: sicell/rocpin} maps
-#----------------------------------------------------------------------
+Produce {global_channel_id: sicell/rocpin} maps
+```
 $ python3 utils/channel_id_mapper.py
 
 # Expected output:
 #   ./scripts/include/map_channel_numbers.h
+#   ./output/mapping_csv/{wafer_type}_globalId_vs_sicell.csv
+```
+
+Demonstration of how to `TH2Poly` with a geometry ROOT file
+```
+$ root -l -b -q scripts/tutorial_th2poly.C
+
+# Expected output:
+#   ./output/waferMaps/tutorial.png
 ```
 
 ## Description of main scripts
