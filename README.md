@@ -3,7 +3,7 @@
 The package provides commands to generate geometry root files for the HGCAL DQM wafer maps.
 Each root file contains a collection of polygons/cells/silicon pads as TGraph objects, created using PyROOT.
 
-For each cell, the center position (x, y) is derived using HGCAL DPG tool, `src/HGCalCell.cc`.
+For each cell, the center position (x, y) is derived using a HGCAL DPG tool, `scripts/src/HGCalCell.cc`.
 This C++ class is invoked from Python using `ROOT.gInterpreter` in `utils/polygon_manager.py`, as shown below:
 
 ```python
@@ -24,12 +24,14 @@ To avoid building ROOT from scratch and potential compatible issues, we recommen
 On lxplus, set up the environment as follows:
 
 1. Load ROOT
+
 Run the following command to source the ROOT environment:
 ```
 source /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.34.04/x86_64-almalinux9.5-gcc115-opt/bin/thisroot.sh
 ```
 
 2. Set up Python environment (first time only)
+
 Create a virtual environment for Python dependencies:
 ```
 python3 -m venv pandas_env
@@ -39,6 +41,7 @@ pip install pyyaml
 ```
 
 3. Routine session (after first setup)
+
 For regular use, activate the environments as follows:
 ```
 source /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.34.04/x86_64-almalinux9.5-gcc115-opt/bin/thisroot.sh
@@ -53,7 +56,7 @@ deactivate # deactivate the environment when finished
 ## Setup
 Clone the repository and build the project:
 ```
-$ git clone -b dev git@github.com:ywkao/hexagonal_histograms.git
+$ git clone git@github.com:ywkao/hexagonal_histograms.git
 $ cd hexagonal_histograms
 $ make
 ```
@@ -80,15 +83,15 @@ $ ./exe.py -t MH-R -v
 ```
 
 Output directories
-- `output/geometry/`: Root geometry files
-- `output/waferMaps/`: Wafer map visualizations
-- `output/coordinates/`: JSON files with cell coordinates
-- `output/mapping/`: JSON files with cell ID mappings
+- `output/geometry/` -- Root geometry files
+- `output/waferMaps/` -- Wafer map visualizations
+- `output/coordinates/` -- JSON files with cell coordinates
+- `output/mapping/` -- JSON files with cell ID mappings
 
 Verbose option `-v` includes:
 - cell name (e.g., `hex`, `hex_nc`, `hex_cm`)
 - cell IDs (Global ID / ROC Pin / SiCell)
-- cell area in mm^2
+- cell area in $mm^{2}$
 
 Produce {global_channel_id: sicell/rocpin} maps
 ```
@@ -108,14 +111,14 @@ $ root -l -b -q scripts/tutorial_th2poly.C
 ```
 
 ## Description of main scripts
-| File                             | Description                                                                                                                                                                    |
-| ----------------------------     | ---------------------------------------------------------------------                                                                                                          |
-| `exe.py`                         | Top-level script steering workflow with the following options:<br> `-t`, `--waferType` [ML-F|MH-F|ML-L|...] to set wafer type<br> `-v`, `--verbose` to enable verbose logging  |
-| `utils/polygon_manager.py`       | Contains a class that provides methods to generate polygonal bins & export geometry root files                                                                                 |
-| `utils/geometry.py`              | - Defines all basic polygonal shapes in HGCAL silicon wafers<br>- Implements channel mapping between SiCell ID and irregular polygons                                          |
-| `utils/config_handler.py`        | - Sets up argument parser and logger.<br>- Provides methods to wrap config parameters from `config/wafer_config.yaml`.                                                         |
-| `config/wafer_config.yaml`       | Defines parameters to use for low-density and high-density modules, as well as output string templates.                                                                        |
-| `scripts/generate_wafer_maps.C`  | ROOT macro for drawing wafer maps from a generated geometry root file                                                                                                          |
+| File                              | Description                                                                                                                                                                       |
+| --------------------------------  | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `exe.py`                          | Top-level script steering workflow with the following options:<br> `-t`, `--waferType` [ML-F, MH-F, ML-L, ...] to set wafer type<br> `-v`, `--verbose` to enable verbose logging  |
+| `utils/polygon_manager.py`        | Contains a class that provides methods to generate polygonal bins & export geometry root files                                                                                    |
+| `utils/geometry.py`               | - Defines all basic polygonal shapes in HGCAL silicon wafers<br>- Implements channel mapping between SiCell ID and irregular polygons                                             |
+| `utils/config_handler.py`         | - Sets up argument parser and logger.<br>- Provides methods to wrap parameters from `config/wafer_config.yaml`                                                                    |
+| `config/wafer_config.yaml`        | Defines parameters to use for low-density and high-density modules, as well as output string templates                                                                            |
+| `scripts/generate_wafer_maps.C`   | ROOT macro for drawing wafer maps from a generated root file                                                                                                                      |
 
 ## Processing flow in the code
 - Build a c++ shared library that converts HGCAL (u, v) cell indices to (x, y) positions.
@@ -127,9 +130,10 @@ $ root -l -b -q scripts/tutorial_th2poly.C
 
 ## Steps for DQM GUI display (not in this repository)
 - Main idea: txt file -> TGraphs -> TH2Poly -> DQM GUI Display
-- Require TH2Poly implemented in DQM EDAnalyzer (PR#41932 on CMSSW has merged)
-- Load the geometry root file in DQM EDAnalyzer
-- Fill entries & produce plots
+- Require TH2Poly implemented in CMS DQM Service ([PR#41932](https://github.com/cms-sw/cmssw/pull/41932) on CMSSW has merged).
+- Load the geometry root file in DQM EDAnalyzer (as demonstrated in the ROOT macro).
+- Fill entries & store polygonal monitor elements in DQM root file.
+- Upload the DQM root file to the CMS DQM GUI.
 
 ## References
 - https://root.cern/manual/python/
