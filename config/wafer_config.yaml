@@ -22,5 +22,5 @@ type_specific_params:
 output_paths:
   cell_coordinate_json: "output/coordinates/{type_code}_wafer_coordinates.json"
   cell_id_mapping_json: "output/mapping/{type_code}_wafer_mapping.json"
-  geometry_root_file: "output/geometry/{type_code}_wafer_geometry.root"
+  geometry_root_file: "output/geometry/geometry_{type_code}_wafer.root"
   output_name: "output/waferMaps/{type_code}_wafer_map.png"
