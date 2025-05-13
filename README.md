@@ -57,7 +57,7 @@ deactivate # deactivate the environment when finished
 ## Usage
 List available wafer types
 ```
-$ ./exe.py --list-types # List all available wafer types
+$ ./exe.py --listTypes # List all available wafer types
 ```
 
 Generate outputs for specific wafer types (with verbose logging)
